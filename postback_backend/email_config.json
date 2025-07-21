@@ -1,0 +1,8 @@
+{
+  "host": "smtp.gmail.com",
+  "port": 465,
+  "secure": true,
+  "user": "01agarwal.jayant@gmail.com",
+  "pass": "nxeljxenchvybszz",
+  "from": "01agarwal.jayant@gmail.com"
+}

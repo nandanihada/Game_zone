@@ -1,0 +1,20 @@
+[
+  {
+    "id": "e4a0ec61-7165-4690-9df9-8be1c1ecb330",
+    "offerId": "670",
+    "url": "https://www.youtube.com",
+    "startDate": "2025-07-19",
+    "endDate": "2025-07-19",
+    "startTime": "16:30",
+    "endTime": "16:40"
+  },
+  {
+    "id": "fc3f7364-0f1b-4932-bb9a-1f51abe70ef5",
+    "offerId": "668",
+    "url": "https://www.google.com",
+    "startDate": "2025-07-19",
+    "endDate": "2025-07-19",
+    "startTime": "17:38",
+    "endTime": "17:44"
+  }
+]

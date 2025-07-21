@@ -1,0 +1,122 @@
+[
+  {
+    "timestamp": "2025-07-17T04:50:28.975Z",
+    "ip": "::1",
+    "gameId": "1752576809975",
+    "utm_source": null,
+    "utm_medium": null,
+    "utm_campaign": null,
+    "utm_term": null,
+    "utm_content": null,
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "referrer": "",
+    "extra": {},
+    "geo": {
+      "status": "fail",
+      "message": "reserved range",
+      "query": "::1"
+    }
+  },
+  {
+    "timestamp": "2025-07-17T05:07:58.474Z",
+    "ip": "::1",
+    "gameId": "1752576809975",
+    "utm_source": null,
+    "utm_medium": null,
+    "utm_campaign": null,
+    "utm_term": null,
+    "utm_content": null,
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "referrer": "",
+    "extra": {},
+    "geo": {
+      "status": "fail",
+      "message": "reserved range",
+      "query": "::1"
+    }
+  },
+  {
+    "timestamp": "2025-07-17T05:14:02.308Z",
+    "ip": "::1",
+    "gameId": "1752576809975",
+    "utm_source": null,
+    "utm_medium": null,
+    "utm_campaign": null,
+    "utm_term": null,
+    "utm_content": null,
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "referrer": "",
+    "extra": {},
+    "geo": {}
+  },
+  {
+    "timestamp": "2025-07-17T05:34:30.401Z",
+    "ip": "::1",
+    "gameId": "1752576809975",
+    "utm_source": null,
+    "utm_medium": null,
+    "utm_campaign": null,
+    "utm_term": null,
+    "utm_content": null,
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "referrer": "",
+    "extra": {},
+    "geo": {}
+  },
+  {
+    "timestamp": "2025-07-17T05:57:10.685Z",
+    "ip": "::1",
+    "gameId": "1752576809975",
+    "utm_source": null,
+    "utm_medium": null,
+    "utm_campaign": null,
+    "utm_term": null,
+    "utm_content": null,
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "referrer": "",
+    "extra": {},
+    "geo": {}
+  },
+  {
+    "timestamp": "2025-07-17T06:00:26.576Z",
+    "ip": "::1",
+    "gameId": "1752576809975",
+    "utm_source": null,
+    "utm_medium": null,
+    "utm_campaign": null,
+    "utm_term": null,
+    "utm_content": null,
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "referrer": "",
+    "extra": {},
+    "geo": {}
+  },
+  {
+    "timestamp": "2025-07-17T06:01:45.630Z",
+    "ip": "::1",
+    "gameId": "1752576809975",
+    "utm_source": "whatsapp",
+    "utm_medium": "social",
+    "utm_campaign": "refer_earn",
+    "utm_term": null,
+    "utm_content": null,
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "referrer": "",
+    "extra": {},
+    "geo": {}
+  },
+  {
+    "timestamp": "2025-07-17T10:32:42.153Z",
+    "ip": "::1",
+    "gameId": "1752576809975",
+    "utm_source": "whatsapp",
+    "utm_medium": "social",
+    "utm_campaign": "refer_earn",
+    "utm_term": null,
+    "utm_content": null,
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "referrer": "",
+    "extra": {},
+    "geo": {}
+  }
+]

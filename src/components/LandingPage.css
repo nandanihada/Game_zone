@@ -1,0 +1,318 @@
+/* ✅ FINAL LandingPage.css */
+
+/************ 1. RESET & ROOT ************/
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  min-height: 100%;
+  width: 100vw;
+  margin: 0 !important;
+  padding: 0 !important;
+  font-family: 'Montserrat', 'Poppins', sans-serif;
+
+  color: white;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+h1, h2, h3 {
+  font-family: 'Montserrat', sans-serif;
+}
+
+/************ 2. SHELL LAYOUT ************/
+.container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  scroll-behavior: smooth;
+  z-index: 1;
+  position: relative;
+  background: transparent;
+}
+
+.video-container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.bg-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+}
+
+.top-content {
+  position: absolute;
+  top: 20px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 30px;
+  z-index: 2;
+}
+
+.logo {
+  font-size: 40px;
+  font-weight: bold;
+  color: #facc15;
+  text-align: center;
+  flex-grow: 1;
+}
+
+.auth-buttons button {
+  margin-left: 10px;
+  padding: 10px 18px;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  background: #facc15;
+  color: black;
+  cursor: pointer;
+}
+
+/************ 3. HERO ************/
+.center-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 2;
+  color: white;
+  padding: 0 20px;
+}
+
+.center-text h1 {
+  font-size: 50px;
+  font-weight: 700;
+}
+
+.center-text p {
+  margin-top: 10px;
+  font-size: 24px;
+  color: #eee;
+}
+
+.highlight { color: #facc15; }
+
+/************ 4. AUTH MODAL ************/
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  backdrop-filter: blur(6px);
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+}
+
+.modal-box {
+  background: rgba(0, 0, 0, 0.9);
+  padding: 30px;
+  border-radius: 12px;
+  width: 350px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+}
+
+.modal-box h2 { margin-bottom: 8px; }
+.modal-box input { padding: 10px; border-radius: 6px; border: none; }
+.modal-box button {
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  background: white;
+  color: black;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.buttons { display: flex; flex-direction: column; gap: 10px; }
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: transparent;
+  color: white;
+  font-size: 20px;
+  border: none;
+  cursor: pointer;
+}
+
+/************ 5. SCROLL ANIMATION ************/
+.scroll-animate {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+
+/************ 6. REWARD SECTION (3‑D) ************/
+.rewards-section {
+  background: linear-gradient(#0f0f1a, #0f0f1a) padding-box,
+              linear-gradient(135deg, #0cf556, #3d72f9, hsl(279, 92%, 50%)) border-box;
+  border: 4px solid transparent;
+  border-radius: 20px;
+  padding: 20px;
+  color: white;
+  min-height: 100vh;
+  width: fit-content;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 30px 60px rgba(255, 215, 0, 0.3), inset 0 0 20px rgba(255, 215, 0, 0.1);
+  margin-left: 40px;
+  margin-right: auto;
+  transform: perspective(1200px) rotateX(2deg) rotateY(-2deg);
+}
+
+.rewards-title {
+  font-size: 36px;
+  font-weight: 700;
+  margin: 0 0 40px 80px;
+}
+
+.neon-rewards-grid {
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 50px 40px;
+  padding: 0 10px;
+  justify-content: start;
+}
+
+.neon-rewards-grid:has(.neon-reward-card:hover) .neon-reward-card:not(:hover) {
+  filter: blur(1px) brightness(0.9);
+  transform: scale(0.98);
+  transition: all 0.3s ease;
+}
+
+/************ 7. CARD ************/
+.neon-reward-card {
+  background: linear-gradient(to bottom right, #141427, #1f1f3a);
+  border-radius: 15px;
+  padding: 20px;
+  width: 165px;
+  position: relative;
+  overflow: hidden;
+  border: 2px solid rgb(45, 26, 219);
+  box-shadow: 0 0 12px rgba(0, 255, 255, 0.1);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.neon-reward-card:hover {
+  transform: scale(1.05) rotateX(1deg) rotateY(-1deg);
+  box-shadow: 0 12px 24px rgba(255,215,0,0.3), 0 6px 20px rgba(255,255,255,0.1);
+}
+
+.neon-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  position: relative;
+  z-index: 2;
+}
+
+.neon-game-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.neon-tag {
+  font-size: 12px;
+  font-weight: bold;
+  padding: 4px 10px;
+  border-radius: 12px;
+  background: #6a0dad;
+  color: white;
+  text-transform: uppercase;
+  position: absolute;
+  bottom: 30px;
+  left: 80px;
+  z-index: 2;
+}
+.neon-tag.app { background: #0f82f8; }
+.neon-tag.game { background: #8a2be2; }
+
+.neon-card-body { position: relative; z-index: 2; }
+.neon-card-body h3 { font-size: 16px; font-weight: 600; margin-top: 10px; }
+.neon-amount { font-size: 18px; color: #00ffcc; font-weight: bold; margin-top: 6px; }
+.neon-task { font-size: 13px; color:  #00ffcc; margin-top: 4px; }
+
+/************ 8. PLAY BUTTON ************/
+.neon-play-button {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100%);
+  opacity: 0;
+  background: linear-gradient(to right, #ff00cc, #00ffee);
+  color: white;
+  padding: 10px 40px;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 1px;
+  border: 2px solid #ffffff;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.4s ease, opacity 0.4s ease, box-shadow 0.4s ease;
+  box-shadow: 0 0 8px rgba(0, 255, 255, 0.4);
+  z-index: 5;
+}
+
+.neon-reward-card:hover .neon-play-button {
+  transform: translateX(-50%) translateY(0%);
+  opacity: 1;
+}
+
+.our-offer-page {
+  padding: 2rem;
+}
+.offer-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+.offer-card {
+  background: #222;
+  color: #fff;
+  border-radius: 8px;
+  padding: 1rem;
+  width: 220px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  text-align: center;
+}
+.offer-card img {
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+}
+.btn {
+  display: inline-block;
+  margin: 0.25rem 0.5rem 0 0.5rem;
+  padding: 0.4rem 1rem;
+  border-radius: 4px;
+  text-decoration: none;
+  color: #fff;
+}
+.btn-primary { background: #007bff; }
+.btn-secondary { background: #6c757d; }

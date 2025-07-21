@@ -1,0 +1,356 @@
+/* General Body and Container Styles */
+body {
+    margin: 0;
+    font-family: 'Inter', sans-serif; /* Assuming Inter font is desired, or use a system font */
+    background-color: #1a202c; /* bg-gray-900 */
+    color: #ffffff; /* text-white */
+}
+
+.app-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem; /* p-4 */
+}
+
+/* Responsive padding for app-container */
+@media (min-width: 640px) { /* sm:p-6 */
+    .app-container {
+        padding: 1.5rem;
+    }
+}
+
+/* User ID Display */
+.user-id-display {
+    position: absolute;
+    top: 1rem; /* top-4 */
+    right: 1rem; /* right-4 */
+    background-color: #2563eb; /* bg-blue-600 */
+    color: #ffffff; /* text-white */
+    padding: 0.75rem 1rem; /* px-3 py-1 */
+    border-radius: 0.5rem; /* rounded-md */
+    font-size: 0.875rem; /* text-sm */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-lg */
+}
+
+/* Main Content Area */
+.main-content {
+    flex: 1; /* flex-1 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem; /* p-4 */
+}
+
+/* Responsive padding for main-content */
+@media (min-width: 640px) { /* sm:p-10 */
+    .main-content {
+        padding: 2.5rem;
+    }
+}
+
+/* Refer & Earn Card */
+.refer-earn-card {
+    background-color: #6b21a8; /* bg-purple-700 */
+    padding: 1.5rem; /* p-6 */
+    border-radius: 1rem; /* rounded-2xl */
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-xl */
+    max-width: 42rem; /* max-w-2xl */
+    width: 100%; /* w-full */
+    text-align: center; /* text-center */
+}
+
+/* Responsive padding for refer-earn-card */
+@media (min-width: 640px) { /* sm:p-8 */
+    .refer-earn-card {
+        padding: 2rem;
+    }
+}
+@media (min-width: 768px) { /* md:p-12 */
+    .refer-earn-card {
+        padding: 3rem;
+    }
+}
+
+/* Card Title */
+.card-title {
+    font-size: 1.875rem; /* text-3xl */
+    font-weight: 800; /* font-extrabold */
+    margin-bottom: 1rem; /* mb-4 */
+}
+
+/* Responsive font size for card-title */
+@media (min-width: 640px) { /* sm:text-4xl */
+    .card-title {
+        font-size: 2.25rem;
+    }
+}
+
+/* Card Description */
+.card-description {
+    color: #d1d5db; /* text-gray-300 */
+    margin-bottom: 1.5rem; /* mb-6 */
+    font-size: 1rem; /* text-base */
+}
+
+/* Responsive margin and font size for card-description */
+@media (min-width: 640px) { /* sm:mb-8, sm:text-lg */
+    .card-description {
+        margin-bottom: 2rem;
+        font-size: 1.125rem;
+    }
+}
+
+/* Referral Link Section */
+.referral-link-section {
+    margin-bottom: 1.5rem; /* mb-6 */
+}
+
+/* Responsive margin for referral-link-section */
+@media (min-width: 640px) { /* sm:mb-8 */
+    .referral-link-section {
+        margin-bottom: 2rem;
+    }
+}
+
+.referral-link-label {
+    display: block;
+    color: #d1d5db; /* text-gray-300 */
+    font-size: 1rem; /* text-base */
+    font-weight: 500; /* font-medium */
+    margin-bottom: 0.5rem; /* mb-2 */
+}
+
+/* Responsive font size for referral-link-label */
+@media (min-width: 640px) { /* sm:text-lg */
+    .referral-link-label {
+        font-size: 1.125rem;
+    }
+}
+
+.referral-link-input-group {
+    display: flex;
+    flex-direction: column; /* flex-col */
+    align-items: center;
+    justify-content: center;
+    gap: 1rem; /* gap-4 */
+}
+
+/* Responsive flex direction for referral-link-input-group */
+@media (min-width: 640px) { /* sm:flex-row */
+    .referral-link-input-group {
+        flex-direction: row;
+    }
+}
+
+.referral-link-input {
+    flex: 1; /* flex-1 */
+    padding: 0.75rem; /* p-3 */
+    border-radius: 0.5rem; /* rounded-lg */
+    background-color: #7e22ce; /* bg-purple-600 */
+    color: #ffffff; /* text-white */
+    border: 1px solid #8b5cf6; /* border border-purple-500 */
+    outline: none;
+    width: 100%; /* w-full */
+}
+
+.referral-link-input:focus {
+    box-shadow: 0 0 0 2px #a78bfa; /* focus:ring-2 focus:ring-purple-400 */
+}
+
+.copy-button {
+    background-color: #3b82f6; /* bg-blue-500 */
+    color: #ffffff; /* text-white */
+    font-weight: bold;
+    padding: 0.75rem 1.5rem; /* py-3 px-6 */
+    border-radius: 0.5rem; /* rounded-lg */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
+    transition: all 0.3s ease-in-out; /* transition-all duration-300 ease-in-out */
+    border: none;
+    cursor: pointer;
+}
+
+.copy-button:hover {
+    background-color: #2563eb; /* hover:bg-blue-600 */
+    transform: scale(1.05); /* hover:scale-105 */
+}
+
+.copy-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px #60a5fa; /* focus:ring-2 focus:ring-blue-400 */
+}
+
+.copied-message {
+    color: #4ade80; /* text-green-400 */
+    margin-top: 0.5rem; /* mt-2 */
+    font-size: 0.875rem; /* text-sm */
+    animation: fadeIn 0.5s forwards; /* animate-fade-in */
+}
+
+/* Responsive font size for copied-message */
+@media (min-width: 640px) { /* sm:text-base */
+    .copied-message {
+        font-size: 1rem;
+    }
+}
+
+/* Keyframes for fade-in animation */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Users Referred Section */
+.users-referred-section {
+    margin-bottom: 1.5rem; /* mb-6 */
+    padding: 1rem; /* p-4 */
+    background-color: #7e22ce; /* bg-purple-600 */
+    border-radius: 0.5rem; /* rounded-lg */
+    box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06); /* shadow-inner */
+}
+
+/* Responsive margin for users-referred-section */
+@media (min-width: 640px) { /* sm:mb-8 */
+    .users-referred-section {
+        margin-bottom: 2rem;
+    }
+}
+
+.users-referred-label {
+    color: #e5e7eb; /* text-gray-200 */
+    font-size: 1.125rem; /* text-lg */
+    font-weight: 600; /* font-semibold */
+    margin-bottom: 0.5rem; /* mb-2 */
+}
+
+/* Responsive font size for users-referred-label */
+@media (min-width: 640px) { /* sm:text-xl */
+    .users-referred-label {
+        font-size: 1.25rem;
+    }
+}
+
+.users-referred-count {
+    font-size: 3rem; /* text-5xl */
+    font-weight: 800; /* font-extrabold */
+    color: #facc15; /* text-yellow-400 */
+}
+
+/* Responsive font size for users-referred-count */
+@media (min-width: 640px) { /* sm:text-6xl */
+    .users-referred-count {
+        font-size: 3.75rem;
+    }
+}
+
+/* Social Share Section */
+.social-share-section {
+    margin-top: 1rem; /* mt-4 */
+}
+
+.social-share-label {
+    color: #d1d5db; /* text-gray-300 */
+    font-size: 1rem; /* text-base */
+    font-weight: 500; /* font-medium */
+    margin-bottom: 1rem; /* mb-4 */
+}
+
+/* Responsive font size for social-share-label */
+@media (min-width: 640px) { /* sm:text-lg */
+    .social-share-label {
+        font-size: 1.125rem;
+    }
+}
+
+.social-buttons-group {
+    display: flex;
+    justify-content: center;
+    gap: 1rem; /* space-x-4 */
+}
+
+/* Responsive spacing for social-buttons-group */
+@media (min-width: 640px) { /* sm:space-x-6 */
+    .social-buttons-group {
+        gap: 1.5rem;
+    }
+}
+
+.social-button {
+    padding: 0.75rem; /* p-3 */
+    border-radius: 9999px; /* rounded-full */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-lg */
+    transition: all 0.3s ease-in-out; /* transition-all duration-300 ease-in-out */
+    border: none;
+    cursor: pointer;
+    display: flex; /* To center SVG */
+    align-items: center; /* To center SVG */
+    justify-content: center; /* To center SVG */
+}
+
+/* Responsive padding for social-button */
+@media (min-width: 640px) { /* sm:p-4 */
+    .social-button {
+        padding: 1rem;
+    }
+}
+
+.social-button:hover {
+    transform: scale(1.1); /* hover:scale-110 */
+}
+
+.social-button:focus {
+    outline: none;
+}
+
+.social-icon {
+    width: 1.5rem; /* w-6 */
+    height: 1.5rem; /* h-6 */
+}
+
+/* Responsive icon size */
+@media (min-width: 640px) { /* sm:w-8 sm:h-8 */
+    .social-icon {
+        width: 2rem;
+        height: 2rem;
+    }
+}
+
+.facebook-button {
+    background-color: #1d4ed8; /* bg-blue-700 */
+    color: #ffffff; /* text-white */
+}
+
+.facebook-button:hover {
+    background-color: #1e40af; /* hover:bg-blue-800 */
+}
+
+.facebook-button:focus {
+    box-shadow: 0 0 0 2px #3b82f6; /* focus:ring-2 focus:ring-blue-500 */
+}
+
+.twitter-button {
+    background-color: #60a5fa; /* bg-blue-400 */
+    color: #ffffff; /* text-white */
+}
+
+.twitter-button:hover {
+    background-color: #3b82f6; /* hover:bg-blue-500 */
+}
+
+.twitter-button:focus {
+    box-shadow: 0 0 0 2px #93c5fd; /* focus:ring-2 focus:ring-blue-300 */
+}
+
+.whatsapp-button {
+    background-color: #22c55e; /* bg-green-500 */
+    color: #ffffff; /* text-white */
+}
+
+.whatsapp-button:hover {
+    background-color: #16a34a; /* hover:bg-green-600 */
+}
+
+.whatsapp-button:focus {
+    box-shadow: 0 0 0 2px #4ade80; /* focus:ring-2 focus:ring-green-400 */
+}

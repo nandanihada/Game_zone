@@ -1,0 +1,344 @@
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body, html {
+  font-family: 'Poppins', sans-serif;
+  height: 100%;
+  
+   /* Changed to a darker background for the whole page */
+}
+
+/* Wrapper */
+.dashboard-wrapper {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  border-radius: 15px; /* Rounded corners for the entire dashboard */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+  
+  /* Removed background image */
+  background-image: none; /* Background image removed */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  /* Removed background-color and background-blend-mode to show only the image */
+  /* This ensures only the image is visible as the background for the wrapper */
+}
+
+/* Sidebar */
+.sidebar {
+  width: 250px; /* Slightly wider sidebar */
+  background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%); /* Dark gradient background */
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1.5rem 1.2rem;
+  color: #ecf0f1; /* Light text color */
+  max-height: 100vh;
+  overflow-y: auto;
+}
+.logo {
+  font-size: 28px; /* Larger logo font */
+  font-weight: 800; /* Bolder logo */
+  text-align: center;
+  margin-bottom: 2rem;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+.logo span {
+  color: #facc15; /* Accent color for the span */
+}
+.sidebar ul {
+  list-style: none;
+  margin-top: 0; /* Adjust margin */
+  flex-grow: 1; /* Allow ul to take available space */
+  overflow-y: auto;
+}
+.sidebar li {
+  padding: 14px 18px; /* More padding */
+  margin-bottom: 12px; /* More margin */
+  border-radius: 8px; /* More rounded corners */
+  transition: background 0.3s ease, transform 0.2s ease; /* Smooth transitions */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Space between icon and text if icons were added */
+}
+.sidebar li:hover {
+  background-color: rgba(255, 255, 255, 0.1); /* Lighter hover background */
+  transform: translateX(5px); /* Slight slide effect on hover */
+}
+.sidebar li.active {
+  background-color: #facc15; /* Accent color for active state */
+  color: #2c3e50; /* Dark text for active state */
+  font-weight: bold;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Shadow for active item */
+}
+.bottom-links {
+  font-size: 1rem; /* Slightly larger font */
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; /* More gap */
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 1rem;
+  margin-top: 2rem;
+}
+.bottom-links span {
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+.bottom-links span:hover {
+  color: #facc15; /* Accent color on hover */
+}
+.bottom-links span.active { /* Added active state for bottom links */
+  color: #facc15;
+  font-weight: bold;
+}
+
+/* Main Content */
+.dashboard-main {
+  flex: 1;
+  padding: 2.5rem; /* More padding */
+  overflow-y: auto;
+  background-color: transparent; 
+}
+
+/* Topbar */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 3rem; /* More margin */
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+.topbar h1 {
+  font-size: 2rem; /* Larger heading */
+  font-weight: bold;
+  color: #333;
+}
+.actions button {
+  margin-left: 1rem; /* More space between buttons */
+  background-color: #facc15;
+  border: none;
+  color: #2c3e50; /* Darker text for buttons */
+  font-weight: bold;
+  padding: 12px 24px; /* More padding */
+  border-radius: 8px; /* More rounded corners */
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+.actions button:hover {
+  background-color: #eab308;
+  transform: translateY(-2px); /* Slight lift effect */
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+/* Stat Boxes */
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem; /* More gap */
+  margin-bottom: 3rem;
+}
+.stat-box {
+  flex: 1 1 200px; /* Adjust flex basis */
+  background: #ffffff;
+  padding: 1.5rem; /* More padding */
+  border-radius: 12px; /* More rounded corners */
+  box-shadow: 0 5px 15px rgba(0,0,0,0.08); /* Stronger shadow */
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  overflow: hidden; /* Hide overflow for pseudo-elements */
+}
+.stat-box::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background-color: #facc15; /* Accent line at the top */
+  transform: translateY(-100%);
+  transition: transform 0.3s ease-out;
+}
+.stat-box:hover::before {
+  transform: translateY(0);
+}
+.stat-box:hover {
+  transform: translateY(-5px); /* Lift effect on hover */
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+.stat-box strong {
+  font-size: 1.1rem;
+  color: #555;
+  display: block; /* Ensure strong takes full width */
+  margin-bottom: 0.5rem;
+}
+.stat-box br {
+  display: none; /* Hide default line break */
+}
+.stat-box span { /* New span for the value */
+  font-size: 2.2rem; /* Larger value font */
+  font-weight: bold;
+  color: #333;
+  display: block;
+  margin-top: 0.5rem;
+}
+
+
+/* Progress */
+.progress-section {
+  background-color: #ffffff;
+  padding: 2rem; /* More padding */
+  border-radius: 12px; /* More rounded corners */
+  box-shadow: 0 5px 15px rgba(0,0,0,0.08); /* Stronger shadow */
+}
+.progress-section h2 {
+  font-size: 1.5rem; /* Larger heading */
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+.progress-bar {
+  width: 100%;
+  height: 15px; /* Thicker progress bar */
+  background-color: #e5e5e5;
+  border-radius: 8px; /* More rounded corners */
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); /* Inner shadow for depth */
+}
+.progress-bar div {
+  height: 100%;
+  background: linear-gradient(90deg, #facc15 0%, #eab308 100%); /* Gradient for progress */
+  border-radius: 8px;
+  transition: width 0.6s ease-out; /* Slower, smoother transition */
+}
+.milestone {
+  font-size: 1rem; /* Slightly larger font */
+  color: #666;
+  font-weight: 500;
+}
+
+/* Loader */
+.loading {
+  text-align: center;
+  margin-top: 10rem; /* More margin */
+  font-size: 1.5rem; /* Larger font */
+  color: #555;
+  animation: pulse 1.5s infinite alternate; /* Simple pulse animation */
+}
+
+@keyframes pulse {
+  from { opacity: 0.7; }
+  to { opacity: 1; }
+}
+
+/* Rewards Section Specific Styles */
+.rewards-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 1rem;
+}
+
+.reward-item {
+  margin-bottom: 0.5rem;
+  padding: 0.8rem;
+  background-color: #ffffff; /* Changed from #f9f9f9 to white for consistency */
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  transition: transform 0.2s ease;
+}
+
+.reward-item:hover {
+  transform: translateY(-2px);
+}
+
+/* Logged Out Button Styles */
+.logged-out-button {
+  margin-top: 2rem;
+  padding: 10px 20px;
+  background-color: #facc15;
+  color: #2c3e50;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.logged-out-button:hover {
+  background-color: #eab308;
+  transform: translateY(-2px);
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .dashboard-wrapper {
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+    border-radius: 0;
+    box-shadow: none;
+    /* Removed background-color and background-blend-mode to show only the image */
+    background-image: none; /* Background image removed */
+    background-size: cover;
+    background-position: center;
+  }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    padding: 1rem;
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .sidebar ul {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 1rem;
+  }
+  .sidebar li {
+    margin: 5px;
+    padding: 10px 15px;
+  }
+  .bottom-links {
+    flex-direction: row;
+    justify-content: center;
+    gap: 1.5rem;
+    padding-top: 0.5rem;
+    margin-top: 1rem;
+    border-top: none;
+  }
+  .dashboard-main {
+    padding: 1.5rem;
+  }
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+  }
+  .topbar h1 {
+    margin-bottom: 1rem;
+  }
+  .actions button {
+    margin-left: 0;
+    margin-right: 0.5rem;
+    margin-top: 0.5rem;
+    width: auto;
+  }
+  .stats {
+    flex-direction: column;
+  }
+  .stat-box {
+    flex: 1 1 auto;
+    width: 100%;
+  }
+}
