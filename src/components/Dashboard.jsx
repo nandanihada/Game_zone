@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import ReactJson from 'react-json-view';
 import './Dashboard.css';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'; // Import Recharts components
 
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, signOut } from 'firebase/auth';
@@ -282,6 +283,8 @@ export default function Dashboard() {
       navigate('/task'); 
     } else if (view === 'home') {
       navigate('/home'); 
+    } else if (view === 'manage') {
+      navigate('/manage'); 
     } else if (view === 'profile') {
       navigate('/profile');  // Navigate to the Profile page (assuming settings is profile)
     } else if (view === 'condition') {
@@ -294,6 +297,8 @@ export default function Dashboard() {
       setCurrentView('postback-tester');
     } else if (view === 'responses') {
       setCurrentView('responses');
+    } else if (view === 'ab-test-history') { // New view for A/B test history
+      setCurrentView('ab-test-history');
     }
     else {
       setCurrentView(view); // For internal dashboard views
@@ -737,9 +742,9 @@ export default function Dashboard() {
             <form onSubmit={handleGameFormSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               <label>Title:<input name="title" value={gameForm.title} onChange={handleGameFormChange} required style={{ padding: 8, borderRadius: 4, border: '1px solid #ccc' }} /></label>
               <label>Genre:<input name="genre" value={gameForm.genre} onChange={handleGameFormChange} required style={{ padding: 8, borderRadius: 4, border: '1px solid #ccc' }} /></label>
-              <label>Rating:<input name="rating" value={gameForm.rating} onChange={handleGameFormChange} required style={{ padding: 8, borderRadius: 4, border: '1px solid #ccc' }} /></label>
-              <label>Image Link:<input name="image" value={gameForm.image} onChange={handleGameFormChange} required style={{ padding: 8, borderRadius: 4, border: '1px solid #ccc' }} /></label>
-              <label>Final Link:<input name="link" value={gameForm.link} onChange={handleGameFormChange} required style={{ padding: 8, borderRadius: 4, border: '1px solid #ccc' }} /></label>
+              <label>Rating:<input name="rating" value={gameForm.rating} onChange={e => setGameForm({ ...gameForm, rating: e.target.value })} required style={{ padding: 8, borderRadius: 4, border: '1px solid #ccc' }} /></label>
+              <label>Image Link:<input name="image" value={gameForm.image} onChange={e => setGameForm({ ...gameForm, image: e.target.value })} required style={{ padding: 8, borderRadius: 4, border: '1px solid #ccc' }} /></label>
+              <label>Final Link:<input name="link" value={gameForm.link} onChange={e => setGameForm({ ...gameForm, link: e.target.value })} required style={{ padding: 8, borderRadius: 4, border: '1px solid #ccc' }} /></label>
               {gameFormError && <div style={{ color: 'red' }}>{gameFormError}</div>}
               <button type="submit" disabled={gameFormLoading} style={{ padding: 10, borderRadius: 4, background: '#1976d2', color: '#fff', border: 'none', fontWeight: 'bold' }}>{gameFormLoading ? 'Submitting...' : 'Submit'}</button>
             </form>
@@ -861,7 +866,14 @@ export default function Dashboard() {
         return (
           <div style={{ maxWidth: 600, margin: '2rem auto', padding: 24, background: '#fff', borderRadius: 8, boxShadow: '0 2px 8px #eee' }}>
             <h2>Email Configuration</h2>
-            <EmailConfigSection />
+            <EmailConfigSection setCurrentView={setCurrentView} /> {/* Pass setCurrentView */}
+          </div>
+        );
+      case 'ab-test-history': // New case for A/B Test History
+        return (
+          <div style={{ maxWidth: 800, margin: '2rem auto', padding: 24, background: '#fff', borderRadius: 8, boxShadow: '0 2px 8px #eee' }}>
+            <h2>A/B Test History</h2>
+            <ABTestHistorySection />
           </div>
         );
       case 'domain-checker':
@@ -941,11 +953,17 @@ export default function Dashboard() {
           <li className={currentView === 'email-config' ? 'active' : ''} onClick={() => handleNavigationClick('email-config')}>
             Email Config
           </li>
+          <li className={currentView === 'ab-test-history' ? 'active' : ''} onClick={() => handleNavigationClick('ab-test-history')}>
+            A/B Test History
+          </li>
           <li className={currentView === 'domain-checker' ? 'active' : ''} onClick={() => handleNavigationClick('domain-checker')}>
             Domain Checker
           </li>
           <li className={currentView === 'bulk-scheduling' ? 'active' : ''} onClick={() => handleNavigationClick('bulk-scheduling')}>
             Bulk Scheduling
+          </li>
+          <li className={location.pathname === '/manage' ? 'active' : ''} onClick={() => handleNavigationClick('manage')}>
+            management
           </li>
         </ul>
         <div className="bottom-links">
@@ -1127,6 +1145,7 @@ function ApiKeysSection() {
                       ) : (
                         <>
                           {k.name || <span style={{ color: '#aaa' }}>(no name)</span>}
+                          <button onClick={() => document.execCommand('copy', false, k.key)} style={{ marginLeft: 6, color: '#1976d2', border: 'none', background: 'none', fontWeight: 'bold', cursor: 'pointer' }}>Copy</button>
                           <button onClick={() => handleEdit(k.key, k.name)} style={{ marginLeft: 6, color: '#1976d2', border: 'none', background: 'none', fontWeight: 'bold', cursor: 'pointer' }}>Edit</button>
                         </>
                       )}
@@ -1135,7 +1154,6 @@ function ApiKeysSection() {
                     <td style={{ padding: '8px' }}>{new Date(k.createdAt).toLocaleString()}</td>
                     <td style={{ padding: '8px' }}>{usage} / 10</td>
                     <td style={{ padding: '8px' }}>
-                      <button onClick={() => navigator.clipboard.writeText(k.key)} style={{ marginRight: 8 }}>Copy</button>
                       <button onClick={() => handleRevoke(k.key)} disabled={revoking === k.key} style={{ color: 'red', border: 'none', background: 'none', fontWeight: 'bold', cursor: 'pointer' }}>{revoking === k.key ? 'Revoking...' : 'Revoke'}</button>
                     </td>
                   </tr>
@@ -1375,7 +1393,7 @@ function ApiFetcherSection() {
         }
         return sortDir === 'asc'
           ? String(a[sortCol]).localeCompare(String(b[sortCol]))
-          : String(b[sortCol]).localeCompare(String(a[sortCol]));
+          : String(b[sortCol]).localeCompare(String(a[col]));
       });
     }
     return filtered;
@@ -1687,7 +1705,7 @@ function ApiFetcherSection() {
             </div>
             <div>
               <button
-                onClick={() => navigator.clipboard.writeText(JSON.stringify(data, null, 2))}
+                onClick={() => document.execCommand('copy', false, JSON.stringify(data, null, 2))}
                 style={{
                   background: '#1976d2',
                   color: '#fff',
@@ -2020,7 +2038,7 @@ function FetchHistorySection() {
   );
 }
 
-function EmailConfigSection() {
+function EmailConfigSection({ setCurrentView }) {
   const [config, setConfig] = React.useState({ host: '', port: 465, secure: true, user: '', pass: '', from: '' });
   const [to, setTo] = React.useState('');
   const [subject, setSubject] = React.useState('');
@@ -2029,6 +2047,30 @@ function EmailConfigSection() {
   const [sending, setSending] = React.useState(false);
   const [offers, setOffers] = React.useState([]);
   const [selectedOffers, setSelectedOffers] = React.useState([]);
+  const [showABTestForms, setShowABTestForms] = React.useState(false); // New state for A/B test forms
+  const [emailA, setEmailA] = React.useState({ to: '', subject: '', body: '' });
+  const [emailB, setEmailB] = React.useState({ to: '', subject: '', body: '' });
+  const [abTestStatus, setAbTestStatus] = React.useState('');
+  // Initialize abTestHistory from localStorage
+  const [abTestHistory, setAbTestHistory] = React.useState(() => {
+    try {
+      const storedHistory = localStorage.getItem('abTestHistory');
+      return storedHistory ? JSON.parse(storedHistory) : [];
+    } catch (error) {
+      console.error("Failed to parse abTestHistory from localStorage", error);
+      return [];
+    }
+  });
+
+  // Save abTestHistory to localStorage whenever it changes
+  React.useEffect(() => {
+    try {
+      localStorage.setItem('abTestHistory', JSON.stringify(abTestHistory));
+    } catch (error) {
+      console.error("Failed to save abTestHistory to localStorage", error);
+    }
+  }, [abTestHistory]);
+
 
   React.useEffect(() => {
     fetch('http://localhost:5000/api/fetch-history')
@@ -2058,6 +2100,8 @@ function EmailConfigSection() {
       `Offer: ${offer.title || offer.id}\nLink: http://localhost:5000/go/${offer.id || offer.offer_id || offer._id}`
     ).join('\n\n');
     setBody(offersText);
+    setEmailA(prev => ({ ...prev, body: offersText }));
+    setEmailB(prev => ({ ...prev, body: offersText }));
   }, [selectedOffers]);
 
   // Toggle offer selection
@@ -2089,28 +2133,141 @@ function EmailConfigSection() {
     }
   };
 
+
   // Send test email
+  // Extract first name from email
+ function getFirstNameFromEmail(email) {
+  if (!email) return '';
+
+  const localPart = email.split('@')[0]; // eg. sunilsivasp21
+  const cleaned = localPart.replace(/[0-9]/g, '').toLowerCase(); // eg. sunilsivasp
+
+  // List of known suffixes that are often attached (you can add more)
+  const knownSuffixes = ['siva', 'raj', 'kumar', 'reddy', 'sp', 'dev', 'info'];
+
+  // Remove known suffixes from the end of the string
+  let name = cleaned;
+  for (let suffix of knownSuffixes) {
+    if (name.endsWith(suffix)) {
+      name = name.slice(0, -suffix.length);
+      break;
+    }
+  }
+
+  // Capitalize and return
+  return name.charAt(0).toUpperCase() + name.slice(1);
+}
+
+
   const sendEmail = async () => {
     setSending(true);
     setStatus('');
+
+    const firstName = getFirstNameFromEmail(to);
+    const personalizedText = `heyy ${firstName},\n\n${body}`;
+
     try {
       const res = await fetch('http://localhost:5000/api/send-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ to, subject, text: body })
+        body: JSON.stringify({ to, subject, text: personalizedText })
       });
+
       const data = await res.json();
       if (res.ok) setStatus('Email sent!');
       else setStatus(data.error || 'Failed to send email');
     } catch (e) {
       setStatus('Failed to send email');
     }
+
     setSending(false);
   };
 
+  // Handle A/B Test Email Send (Simulated)
+  const sendABTestEmails = async () => {
+    setSending(true);
+    setAbTestStatus('');
+
+    // Simulate sending to different groups
+    const recipientsA = emailA.to.split(',').map(s => s.trim()).filter(Boolean);
+    const recipientsB = emailB.to.split(',').map(s => s.trim()).filter(Boolean);
+
+    const results = {
+      id: Date.now(), // Unique ID for the test
+      emailA: { sent: 0, failed: 0, opened: 0, notOpened: 0 },
+      emailB: { sent: 0, failed: 0, opened: 0, notOpened: 0 },
+      timestamp: new Date().toLocaleString(),
+      subjectA: emailA.subject,
+      subjectB: emailB.subject,
+      totalRecipients: recipientsA.length + recipientsB.length,
+    };
+
+    // Simulate sending Email A
+    for (const recipient of recipientsA) {
+      const firstName = getFirstNameFromEmail(recipient);
+      const personalizedText = `heyy ${firstName},\n\n${emailA.body}`;
+      try {
+        const res = await fetch('http://localhost:5000/api/send-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ to: recipient, subject: emailA.subject, text: personalizedText })
+        });
+        if (res.ok) {
+          results.emailA.sent++;
+          // Simulate open rate (e.g., 70% chance to open)
+          if (Math.random() < 0.7) {
+            results.emailA.opened++;
+          } else {
+            results.emailA.notOpened++;
+          }
+        } else {
+          results.emailA.failed++;
+        }
+      } catch (e) {
+        results.emailA.failed++;
+      }
+    }
+
+    // Simulate sending Email B
+    for (const recipient of recipientsB) {
+      const firstName = getFirstNameFromEmail(recipient);
+      const personalizedText = `heyy ${firstName},\n\n${emailB.body}`;
+      try {
+        const res = await fetch('http://localhost:5000/api/send-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ to: recipient, subject: emailB.subject, text: personalizedText })
+        });
+        if (res.ok) {
+          results.emailB.sent++;
+          // Simulate open rate (e.g., 60% chance to open)
+          if (Math.random() < 0.6) {
+            results.emailB.opened++;
+          } else {
+            results.emailB.notOpened++;
+          }
+        } else {
+          results.emailB.failed++;
+        }
+      } catch (e) {
+        results.emailB.failed++;
+      }
+    }
+
+    setAbTestStatus('A/B Test emails sent. Check history for results.');
+    setAbTestHistory(prev => [...prev, results]); // Add to history
+    setSending(false);
+  };
+
+
   return (
     <div>
-      <h3>SMTP Config</h3>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+        <h3>SMTP Config</h3>
+        <button onClick={() => setCurrentView('ab-test-history')} style={{ padding: '8px 16px', borderRadius: 4, background: '#007bff', color: '#fff', border: 'none', cursor: 'pointer' }}>
+          History
+        </button>
+      </div>
       <input placeholder="Host" value={config.host} onChange={e => setConfig(c => ({ ...c, host: e.target.value }))} style={{ width: '100%', marginBottom: 8 }} />
       <input placeholder="Port" type="number" value={config.port} onChange={e => setConfig(c => ({ ...c, port: Number(e.target.value) }))} style={{ width: '100%', marginBottom: 8 }} />
       <label>
@@ -2121,50 +2278,177 @@ function EmailConfigSection() {
       <input placeholder="Password" type="password" value={config.pass} onChange={e => setConfig(c => ({ ...c, pass: e.target.value }))} style={{ width: '100%', marginBottom: 8 }} />
       <input placeholder="From Email" value={config.from} onChange={e => setConfig(c => ({ ...c, from: e.target.value }))} style={{ width: '100%', marginBottom: 8 }} />
       <button onClick={saveConfig} style={{ marginBottom: 16 }}>Save Config</button>
-      <h3>Send Test Email</h3>
-      <input placeholder="To Email" value={to} onChange={e => setTo(e.target.value)} style={{ width: '100%', marginBottom: 8 }} />
-      <input placeholder="Subject" value={subject} onChange={e => setSubject(e.target.value)} style={{ width: '100%', marginBottom: 8 }} />
-      {/* Offer Picker */}
-      <label style={{ fontWeight: 500, marginBottom: 4 }}>Choose Offers to Include:</label>
-      <div style={{
-        display: 'flex',
-        overflowX: 'auto',
-        gap: 12,
-        padding: '8px 0',
-        marginBottom: 12,
-        borderBottom: '1px solid #eee'
-      }}>
-        {offers.map((offer, idx) => {
-          const id = offer.id || offer.offer_id || offer._id;
-          const isSelected = selectedOffers.some(o => (o.id || o.offer_id || o._id) === id);
-          return (
-            <button
-              key={id || idx}
-              style={{
-                minWidth: 180,
-                border: isSelected ? '2px solid #3182ce' : '1px solid #ccc',
-                borderRadius: 8,
-                background: isSelected ? '#e6f0fa' : '#fafbfc',
-                padding: 8,
-                cursor: 'pointer',
-                boxShadow: isSelected ? '0 2px 8px #3182ce33' : '0 1px 4px #eee'
-              }}
-              onClick={() => toggleOffer(offer)}
-            >
-              <div style={{ fontWeight: 600 }}>{offer.title || id}</div>
-              {offer.image && <img src={offer.image} alt={offer.title} style={{ width: '100%', height: 60, objectFit: 'cover', borderRadius: 6, margin: '6px 0' }} />}
-              <div style={{ fontSize: 13, color: '#555' }}>{offer.genre}</div>
-              <div style={{ fontSize: 13, color: '#888' }}>{offer.rating && `⭐ ${offer.rating}`}</div>
-            </button>
-          );
-        })}
+
+      <h3 style={{ marginTop: '1rem' }}>Send Email</h3>
+      <div style={{ marginBottom: '1rem' }}>
+        <button onClick={() => setShowABTestForms(false)} style={{ marginRight: '0.5rem', padding: '8px 16px', borderRadius: 4, background: showABTestForms ? '#ccc' : '#28a745', color: '#fff', border: 'none', cursor: 'pointer' }}>
+          Single Email
+        </button>
+        <button onClick={() => setShowABTestForms(true)} style={{ padding: '8px 16px', borderRadius: 4, background: showABTestForms ? '#28a745' : '#ccc', color: '#fff', border: 'none', cursor: 'pointer' }}>
+          A/B Test
+        </button>
       </div>
-      <textarea placeholder="Body" value={body} onChange={e => setBody(e.target.value)} style={{ width: '100%', marginBottom: 8 }} />
-      <button onClick={sendEmail} disabled={sending}>{sending ? 'Sending...' : 'Send Email'}</button>
-      {status && <div style={{ marginTop: 12, color: status.includes('fail') ? 'red' : 'green' }}>{status}</div>}
+
+      {!showABTestForms ? (
+        <>
+          <input placeholder="To Email" value={to} onChange={e => setTo(e.target.value)} style={{ width: '100%', marginBottom: 8 }} />
+          <input placeholder="Subject" value={subject} onChange={e => setSubject(e.target.value)} style={{ width: '100%', marginBottom: 8 }} />
+          {/* Offer Picker */}
+          <label style={{ fontWeight: 500, marginBottom: 4 }}>Choose Offers to Include:</label>
+          <div style={{
+            display: 'flex',
+            overflowX: 'auto',
+            gap: 12,
+            padding: '8px 0',
+            marginBottom: 12,
+            borderBottom: '1px solid #eee'
+          }}>
+            {offers.map((offer, idx) => {
+              const id = offer.id || offer.offer_id || offer._id;
+              const isSelected = selectedOffers.some(o => (o.id || o.offer_id || o._id) === id);
+              return (
+                <button
+                  key={id || idx}
+                  style={{
+                    minWidth: 180,
+                    border: isSelected ? '2px solid #3182ce' : '1px solid #ccc',
+                    borderRadius: 8,
+                    background: isSelected ? '#e6f0fa' : '#fafbfc',
+                    padding: 8,
+                    cursor: 'pointer',
+                    boxShadow: isSelected ? '0 2px 8px #3182ce33' : '0 1px 4px #eee'
+                  }}
+                  onClick={() => toggleOffer(offer)}
+                >
+                  <div style={{ fontWeight: 600 }}>{offer.title || id}</div>
+                  {offer.image && <img src={offer.image} alt={offer.title} style={{ width: '100%', height: 60, objectFit: 'cover', borderRadius: 6, margin: '6px 0' }} />}
+                  <div style={{ fontSize: 13, color: '#555' }}>{offer.genre}</div>
+                  <div style={{ fontSize: 13, color: '#888' }}>{offer.rating && `⭐ ${offer.rating}`}</div>
+                </button>
+              );
+            })}
+          </div>
+          <textarea placeholder="Body" value={body} onChange={e => setBody(e.target.value)} style={{ width: '100%', marginBottom: 8 }} />
+          <button onClick={sendEmail} disabled={sending}>{sending ? 'Sending...' : 'Send Email'}</button>
+          {status && <div style={{ marginTop: 12, color: status.includes('fail') ? 'red' : 'green' }}>{status}</div>}
+        </>
+      ) : (
+        // A/B Test Forms
+        <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
+          <div style={{ flex: 1, minWidth: '280px', border: '1px solid #ddd', borderRadius: 8, padding: 16, background: '#f9f9f9' }}>
+            <h4>Email A</h4>
+            <input placeholder="To Email (comma-separated)" value={emailA.to} onChange={e => setEmailA(prev => ({ ...prev, to: e.target.value }))} style={{ width: '100%', marginBottom: 8 }} />
+            <input placeholder="Subject" value={emailA.subject} onChange={e => setEmailA(prev => ({ ...prev, subject: e.target.value }))} style={{ width: '100%', marginBottom: 8 }} />
+            <textarea placeholder="Body" value={emailA.body} onChange={e => setEmailA(prev => ({ ...prev, body: e.target.value }))} style={{ width: '100%', marginBottom: 8 }} />
+          </div>
+          <div style={{ flex: 1, minWidth: '280px', border: '1px solid #ddd', borderRadius: 8, padding: 16, background: '#f9f9f9' }}>
+            <h4>Email B</h4>
+            <input placeholder="To Email (comma-separated)" value={emailB.to} onChange={e => setEmailB(prev => ({ ...prev, to: e.target.value }))} style={{ width: '100%', marginBottom: 8 }} />
+            <input placeholder="Subject" value={emailB.subject} onChange={e => setEmailB(prev => ({ ...prev, subject: e.target.value }))} style={{ width: '100%', marginBottom: 8 }} />
+            <textarea placeholder="Body" value={emailB.body} onChange={e => setEmailB(prev => ({ ...prev, body: e.target.value }))} style={{ width: '100%', marginBottom: 8 }} />
+          </div>
+          <button onClick={sendABTestEmails} disabled={sending} style={{ width: '100%', padding: '10px', background: '#007bff', color: '#fff', border: 'none', borderRadius: 4, cursor: 'pointer', marginTop: '1rem' }}>
+            {sending ? 'Sending A/B Test...' : 'Send A/B Test Emails'}
+          </button>
+          {abTestStatus && <div style={{ marginTop: 12, color: abTestStatus.includes('fail') ? 'red' : 'green' }}>{abTestStatus}</div>}
+        </div>
+      )}
     </div>
   );
 }
+
+function ABTestHistorySection() {
+  // Retrieve history from localStorage
+  const [history, setHistory] = React.useState(() => {
+    try {
+      const storedHistory = localStorage.getItem('abTestHistory');
+      return storedHistory ? JSON.parse(storedHistory) : [];
+    } catch (error) {
+      console.error("Failed to parse abTestHistory from localStorage", error);
+      return [];
+    }
+  });
+
+  const getWinner = (emailA, emailB) => {
+    if (emailA.opened > emailB.opened) {
+      return 'Email A';
+    } else if (emailB.opened > emailA.opened) {
+      return 'Email B';
+    } else {
+      return 'Tie';
+    }
+  };
+
+  // Prepare data for the bar chart
+  const chartData = history.map(test => ({
+    name: `${new Date(test.timestamp).toLocaleDateString()} - ${test.subjectA.substring(0, 15)}... vs ${test.subjectB.substring(0, 15)}...`,
+    'Opened A': test.emailA.opened,
+    'Not Opened A': test.emailA.notOpened,
+    'Opened B': test.emailB.opened,
+    'Not Opened B': test.emailB.notOpened,
+  }));
+
+  return (
+    <div style={{ overflowX: 'auto', padding: '20px', background: '#f8f8f8', borderRadius: '10px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
+      {history.length === 0 ? (
+        <p style={{ textAlign: 'center', color: '#555', fontSize: '1.1em' }}>No A/B test history yet. Run some A/B tests from the Email Config section!</p>
+      ) : (
+        <>
+          <h3 style={{ textAlign: 'center', marginBottom: '20px', color: '#333' }}>A/B Test Performance Overview</h3>
+          <ResponsiveContainer width="100%" height={400}>
+            <BarChart
+              data={chartData}
+              margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+              <XAxis dataKey="name" angle={-15} textAnchor="end" height={80} interval={0} tick={{ fontSize: 12, fill: '#555' }} />
+              <YAxis allowDecimals={false} tick={{ fill: '#555' }} />
+              <Tooltip cursor={{ fill: 'rgba(0,0,0,0.05)' }} contentStyle={{ borderRadius: '8px', boxShadow: '0 2px 10px rgba(0,0,0,0.1)', border: 'none' }} />
+              <Legend wrapperStyle={{ paddingTop: '20px' }} />
+              <Bar dataKey="Opened A" stackId="a" fill="#4CAF50" name="Email A Opened" radius={[10, 10, 0, 0]} />
+              <Bar dataKey="Not Opened A" stackId="a" fill="#FFC107" name="Email A Not Opened" radius={[0, 0, 10, 10]} />
+              <Bar dataKey="Opened B" stackId="b" fill="#2196F3" name="Email B Opened" radius={[10, 10, 0, 0]} />
+              <Bar dataKey="Not Opened B" stackId="b" fill="#9C27B0" name="Email B Not Opened" radius={[0, 0, 10, 10]} />
+            </BarChart>
+          </ResponsiveContainer>
+
+          <h3 style={{ textAlign: 'center', marginTop: '40px', marginBottom: '20px', color: '#333' }}>Detailed A/B Test Results (Table)</h3>
+          <table style={{ width: '100%', borderCollapse: 'collapse', background: '#fff', borderRadius: '8px', overflow: 'hidden', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}>
+            <thead>
+              <tr style={{ background: '#e0e0e0' }}>
+                <th style={{ padding: 12, textAlign: 'left', borderBottom: '1px solid #ccc' }}>Date/Time</th>
+                <th style={{ padding: 12, textAlign: 'left', borderBottom: '1px solid #ccc' }}>Email A Subject</th>
+                <th style={{ padding: 12, textAlign: 'left', borderBottom: '1px solid #ccc' }}>Email B Subject</th>
+                <th style={{ padding: 12, textAlign: 'center', borderBottom: '1px solid #ccc' }}>Total Sent</th>
+                <th style={{ padding: 12, textAlign: 'center', borderBottom: '1px solid #ccc' }}>Opened A</th>
+                <th style={{ padding: 12, textAlign: 'center', borderBottom: '1px solid #ccc' }}>Not Opened A</th>
+                <th style={{ padding: 12, textAlign: 'center', borderBottom: '1px solid #ccc' }}>Opened B</th>
+                <th style={{ padding: 12, textAlign: 'center', borderBottom: '1px solid #ccc' }}>Not Opened B</th>
+                <th style={{ padding: 12, textAlign: 'center', borderBottom: '1px solid #ccc' }}>Winner</th>
+              </tr>
+            </thead>
+            <tbody>
+              {history.map((test) => (
+                <tr key={test.id} style={{ borderBottom: '1px solid #eee' }}>
+                  <td style={{ padding: 12 }}>{test.timestamp}</td>
+                  <td style={{ padding: 12 }}>{test.subjectA}</td>
+                  <td style={{ padding: 12 }}>{test.subjectB}</td>
+                  <td style={{ padding: 12, textAlign: 'center' }}>{test.emailA.sent + test.emailB.sent}</td>
+                  <td style={{ padding: 12, textAlign: 'center' }}>{test.emailA.opened}</td>
+                  <td style={{ padding: 12, textAlign: 'center' }}>{test.emailA.notOpened}</td>
+                  <td style={{ padding: 12, textAlign: 'center' }}>{test.emailB.opened}</td>
+                  <td style={{ padding: 12, textAlign: 'center' }}>{test.emailB.notOpened}</td>
+                  <td style={{ padding: 12, textAlign: 'center', fontWeight: 'bold' }}>{getWinner(test.emailA, test.emailB)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </>
+      )}
+    </div>
+  );
+}
+
 
 function DomainCheckerSection() {
   const [offers, setOffers] = React.useState([]);
@@ -2675,3 +2959,4 @@ function BulkSchedulingSection() {
     </div>
   );
 }
+

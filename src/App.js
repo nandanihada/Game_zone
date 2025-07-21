@@ -7,6 +7,7 @@ import DashboardPage from './components/Dashboard';
 import Profile from './components/profile';
 import SupportPage from './components/SupportPage';
 import Homepage from './components/home';
+import Manage from './components/manage';
 import Condition from './components/condition';
 import Refer from './components/refer';
 import OurOffer from './components/OurOffer';
@@ -23,6 +24,7 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/SupportPage" element={<SupportPage/>} />
         <Route path="/home" element={<Homepage/>}/>
+        <Route path="/manage" element={<Manage/>}/>
         <Route path="/task" element={<Task/>}/>
         <Route path="/condition" element={<Condition/>}/>
         <Route path="/refer" element={<Refer/>}/>
