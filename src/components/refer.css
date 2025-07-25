@@ -1,356 +1,488 @@
-/* General Body and Container Styles */
-body {
-    margin: 0;
-    font-family: 'Inter', sans-serif; /* Assuming Inter font is desired, or use a system font */
-    background-color: #1a202c; /* bg-gray-900 */
-    color: #ffffff; /* text-white */
+/* refer.css */
+.refer-container {
+  background: #1a1b23;
+  color: white;
+  min-height: 100vh;
+  padding: 40px;
+  display: grid;
+  grid-template-columns: 300px 1fr 350px;
+  grid-template-rows: auto 1fr;
+  grid-template-areas: 
+    "left center right"
+    "bottom-section bottom-section bottom-section";
+  gap: 50px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  align-items: start;
 }
 
-.app-container {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1rem; /* p-4 */
+/* Left Section */
+.left-section {
+  grid-area: left;
 }
 
-/* Responsive padding for app-container */
-@media (min-width: 640px) { /* sm:p-6 */
-    .app-container {
-        padding: 1.5rem;
-    }
+.main-title {
+  font-size: 28px;
+  font-weight: 600;
+  margin: 0 0 30px 0;
+  color: white;
 }
 
-/* User ID Display */
-.user-id-display {
-    position: absolute;
-    top: 1rem; /* top-4 */
-    right: 1rem; /* right-4 */
-    background-color: #2563eb; /* bg-blue-600 */
-    color: #ffffff; /* text-white */
-    padding: 0.75rem 1rem; /* px-3 py-1 */
-    border-radius: 0.5rem; /* rounded-md */
-    font-size: 0.875rem; /* text-sm */
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-lg */
+.referral-code-section {
+  /* background: linear-gradient(135deg, #000000 0%, #810141 50%, #026070 100%); */
+  background-color: #0b0f1a; /* dark navy instead of pure black */
+  background-image: radial-gradient(circle at bottom left, #a1169a 0%, transparent 60%),
+                    radial-gradient(circle at bottom right, #0f7d84 0%, transparent 60%);
+  background-repeat: no-repeat;
+  background-size: 80% 100%;
+  background-position: bottom left, bottom right;
+  
+  
+  box-shadow: 0 0 20px rgba(174, 108, 255, 0.4);
+  border-radius: 16px;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Main Content Area */
-.main-content {
-    flex: 1; /* flex-1 */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1rem; /* p-4 */
+.section-title {
+  font-size: 20px;
+  font-weight: 500;
+  margin: 0 0 20px 0;
+  position: relative;
+  z-index: 1;
+  color: white;
 }
 
-/* Responsive padding for main-content */
-@media (min-width: 640px) { /* sm:p-10 */
-    .main-content {
-        padding: 2.5rem;
-    }
+.code-buttons {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  position: relative;
+  z-index: 1;
 }
 
-/* Refer & Earn Card */
-.refer-earn-card {
-    background-color: #6b21a8; /* bg-purple-700 */
-    padding: 1.5rem; /* p-6 */
-    border-radius: 1rem; /* rounded-2xl */
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-xl */
-    max-width: 42rem; /* max-w-2xl */
-    width: 100%; /* w-full */
-    text-align: center; /* text-center */
+.refer-code-btn, .succeeded-btn {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  font-size: 13px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: rgba(0, 0, 0, 0.2);
+  color: white;
 }
 
-/* Responsive padding for refer-earn-card */
-@media (min-width: 640px) { /* sm:p-8 */
-    .refer-earn-card {
-        padding: 2rem;
-    }
-}
-@media (min-width: 768px) { /* md:p-12 */
-    .refer-earn-card {
-        padding: 3rem;
-    }
+.refer-code-btn:hover, .succeeded-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
 }
 
-/* Card Title */
-.card-title {
-    font-size: 1.875rem; /* text-3xl */
-    font-weight: 800; /* font-extrabold */
-    margin-bottom: 1rem; /* mb-4 */
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  position: relative;
+  z-index: 1;
 }
 
-/* Responsive font size for card-title */
-@media (min-width: 640px) { /* sm:text-4xl */
-    .card-title {
-        font-size: 2.25rem;
-    }
+.share-btn, .livestop-btn {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: none;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-/* Card Description */
-.card-description {
-    color: #d1d5db; /* text-gray-300 */
-    margin-bottom: 1.5rem; /* mb-6 */
-    font-size: 1rem; /* text-base */
+.share-btn {
+  background: #ec4899;
+  color: white;
 }
 
-/* Responsive margin and font size for card-description */
-@media (min-width: 640px) { /* sm:mb-8, sm:text-lg */
-    .card-description {
-        margin-bottom: 2rem;
-        font-size: 1.125rem;
-    }
+.livestop-btn {
+  background: #06b6d4;
+  color: white;
 }
 
-/* Referral Link Section */
-.referral-link-section {
-    margin-bottom: 1.5rem; /* mb-6 */
+.share-btn:hover, .livestop-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-/* Responsive margin for referral-link-section */
-@media (min-width: 640px) { /* sm:mb-8 */
-    .referral-link-section {
-        margin-bottom: 2rem;
-    }
+/* Center Section */
+.center-section {
+  grid-area: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  padding-top: 80px;
 }
 
-.referral-link-label {
-    display: block;
-    color: #d1d5db; /* text-gray-300 */
-    font-size: 1rem; /* text-base */
-    font-weight: 500; /* font-medium */
-    margin-bottom: 0.5rem; /* mb-2 */
-}
-
-/* Responsive font size for referral-link-label */
-@media (min-width: 640px) { /* sm:text-lg */
-    .referral-link-label {
-        font-size: 1.125rem;
-    }
-}
-
-.referral-link-input-group {
-    display: flex;
-    flex-direction: column; /* flex-col */
-    align-items: center;
-    justify-content: center;
-    gap: 1rem; /* gap-4 */
-}
-
-/* Responsive flex direction for referral-link-input-group */
-@media (min-width: 640px) { /* sm:flex-row */
-    .referral-link-input-group {
-        flex-direction: row;
-    }
-}
-
-.referral-link-input {
-    flex: 1; /* flex-1 */
-    padding: 0.75rem; /* p-3 */
-    border-radius: 0.5rem; /* rounded-lg */
-    background-color: #7e22ce; /* bg-purple-600 */
-    color: #ffffff; /* text-white */
-    border: 1px solid #8b5cf6; /* border border-purple-500 */
-    outline: none;
-    width: 100%; /* w-full */
-}
-
-.referral-link-input:focus {
-    box-shadow: 0 0 0 2px #a78bfa; /* focus:ring-2 focus:ring-purple-400 */
-}
-
-.copy-button {
-    background-color: #3b82f6; /* bg-blue-500 */
-    color: #ffffff; /* text-white */
-    font-weight: bold;
-    padding: 0.75rem 1.5rem; /* py-3 px-6 */
-    border-radius: 0.5rem; /* rounded-lg */
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
-    transition: all 0.3s ease-in-out; /* transition-all duration-300 ease-in-out */
-    border: none;
-    cursor: pointer;
-}
-
-.copy-button:hover {
-    background-color: #2563eb; /* hover:bg-blue-600 */
-    transform: scale(1.05); /* hover:scale-105 */
-}
-
-.copy-button:focus {
-    outline: none;
-    box-shadow: 0 0 0 2px #60a5fa; /* focus:ring-2 focus:ring-blue-400 */
-}
-
-.copied-message {
-    color: #4ade80; /* text-green-400 */
-    margin-top: 0.5rem; /* mt-2 */
-    font-size: 0.875rem; /* text-sm */
-    animation: fadeIn 0.5s forwards; /* animate-fade-in */
-}
-
-/* Responsive font size for copied-message */
-@media (min-width: 640px) { /* sm:text-base */
-    .copied-message {
-        font-size: 1rem;
-    }
-}
-
-/* Keyframes for fade-in animation */
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-/* Users Referred Section */
-.users-referred-section {
-    margin-bottom: 1.5rem; /* mb-6 */
-    padding: 1rem; /* p-4 */
-    background-color: #7e22ce; /* bg-purple-600 */
-    border-radius: 0.5rem; /* rounded-lg */
-    box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06); /* shadow-inner */
-}
-
-/* Responsive margin for users-referred-section */
-@media (min-width: 640px) { /* sm:mb-8 */
-    .users-referred-section {
-        margin-bottom: 2rem;
-    }
-}
-
-.users-referred-label {
-    color: #e5e7eb; /* text-gray-200 */
-    font-size: 1.125rem; /* text-lg */
-    font-weight: 600; /* font-semibold */
-    margin-bottom: 0.5rem; /* mb-2 */
-}
-
-/* Responsive font size for users-referred-label */
-@media (min-width: 640px) { /* sm:text-xl */
-    .users-referred-label {
-        font-size: 1.25rem;
-    }
-}
-
-.users-referred-count {
-    font-size: 3rem; /* text-5xl */
-    font-weight: 800; /* font-extrabold */
-    color: #facc15; /* text-yellow-400 */
-}
-
-/* Responsive font size for users-referred-count */
-@media (min-width: 640px) { /* sm:text-6xl */
-    .users-referred-count {
-        font-size: 3.75rem;
-    }
-}
-
-/* Social Share Section */
-.social-share-section {
-    margin-top: 1rem; /* mt-4 */
-}
-
-.social-share-label {
-    color: #d1d5db; /* text-gray-300 */
-    font-size: 1rem; /* text-base */
-    font-weight: 500; /* font-medium */
-    margin-bottom: 1rem; /* mb-4 */
-}
-
-/* Responsive font size for social-share-label */
-@media (min-width: 640px) { /* sm:text-lg */
-    .social-share-label {
-        font-size: 1.125rem;
-    }
-}
-
-.social-buttons-group {
-    display: flex;
-    justify-content: center;
-    gap: 1rem; /* space-x-4 */
-}
-
-/* Responsive spacing for social-buttons-group */
-@media (min-width: 640px) { /* sm:space-x-6 */
-    .social-buttons-group {
-        gap: 1.5rem;
-    }
-}
-
-.social-button {
-    padding: 0.75rem; /* p-3 */
-    border-radius: 9999px; /* rounded-full */
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-lg */
-    transition: all 0.3s ease-in-out; /* transition-all duration-300 ease-in-out */
-    border: none;
-    cursor: pointer;
-    display: flex; /* To center SVG */
-    align-items: center; /* To center SVG */
-    justify-content: center; /* To center SVG */
-}
-
-/* Responsive padding for social-button */
-@media (min-width: 640px) { /* sm:p-4 */
-    .social-button {
-        padding: 1rem;
-    }
-}
-
-.social-button:hover {
-    transform: scale(1.1); /* hover:scale-110 */
-}
-
-.social-button:focus {
-    outline: none;
+.social-icons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
 }
 
 .social-icon {
-    width: 1.5rem; /* w-6 */
-    height: 1.5rem; /* h-6 */
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.3s ease;
 }
 
-/* Responsive icon size */
-@media (min-width: 640px) { /* sm:w-8 sm:h-8 */
-    .social-icon {
-        width: 2rem;
-        height: 2rem;
-    }
+.social-icon:hover {
+  transform: translateY(-3px);
 }
 
-.facebook-button {
-    background-color: #1d4ed8; /* bg-blue-700 */
-    color: #ffffff; /* text-white */
+.social-icon.twitter {
+  background: #ec4899;
 }
 
-.facebook-button:hover {
-    background-color: #1e40af; /* hover:bg-blue-800 */
+.social-icon.facebook {
+  background: #6366f1;
 }
 
-.facebook-button:focus {
-    box-shadow: 0 0 0 2px #3b82f6; /* focus:ring-2 focus:ring-blue-500 */
+.social-icon.instagram {
+  background: #06b6d4;
 }
 
-.twitter-button {
-    background-color: #60a5fa; /* bg-blue-400 */
-    color: #ffffff; /* text-white */
+.social-icon svg {
+  width: 24px;
+  height: 24px;
+  color: white;
 }
 
-.twitter-button:hover {
-    background-color: #3b82f6; /* hover:bg-blue-500 */
+.notification-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: #ec4899;
+  color: white;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: bold;
 }
 
-.twitter-button:focus {
-    box-shadow: 0 0 0 2px #93c5fd; /* focus:ring-2 focus:ring-blue-300 */
+.info-text {
+  text-align: center;
 }
 
-.whatsapp-button {
-    background-color: #22c55e; /* bg-green-500 */
-    color: #ffffff; /* text-white */
+.info-text p {
+  font-size: 14px;
+  line-height: 1.4;
+  color: #9ca3af;
+  margin: 0;
+  max-width: 280px;
 }
 
-.whatsapp-button:hover {
-    background-color: #16a34a; /* hover:bg-green-600 */
+/* Right Section */
+.right-section {
+  grid-area: right;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 60px;
 }
 
-.whatsapp-button:focus {
-    box-shadow: 0 0 0 2px #4ade80; /* focus:ring-2 focus:ring-green-400 */
+.info-card {
+  background: linear-gradient(135deg, 
+    rgba(30, 41, 59, 0.8) 0%, 
+    rgba(51, 65, 85, 0.9) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 24px;
+  backdrop-filter: blur(20px);
+  width: 100%;
+  text-align: center;
+}
+
+.card-title {
+  font-size: 20px;
+  font-weight: 500;
+  margin: 0 0 12px 0;
+  color: white;
+}
+
+.card-description {
+  font-size: 12px;
+  line-height: 1.5;
+  color: #9ca3af;
+  margin: 0;
+}
+
+/* Bottom Section */
+.bottom-section {
+  grid-area: bottom-section;
+  margin-top: 40px;
+}
+
+.referrals-title {
+  font-size: 18px;
+  font-weight: 500;
+  margin: 0 0 20px 0;
+  color: white;
+  text-align: center;
+}
+
+/* Horizontal Layout for Referral Cards */
+.referral-cards {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* Individual Referral Cards with Glassmorphism */
+.referral-card {
+  width: 160px;
+  height: 140px;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.referral-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+/* Card Colors to Match Screenshot */
+.referral-card.card-1 {
+  background: linear-gradient(135deg, 
+    rgba(139, 69, 19, 0.4) 0%, 
+    rgba(75, 0, 130, 0.5) 50%, 
+    rgba(139, 69, 19, 0.4) 100%);
+  border-left: 3px solid #8b4513;
+}
+
+.referral-card.card-2 {
+  background: linear-gradient(135deg, 
+    rgba(0, 100, 100, 0.4) 0%, 
+    rgba(0, 139, 139, 0.5) 50%, 
+    rgba(0, 191, 255, 0.4) 100%);
+  border-left: 3px solid #008b8b;
+}
+
+.referral-card.card-3 {
+  background: linear-gradient(135deg, 
+    rgba(75, 0, 130, 0.4) 0%, 
+    rgba(138, 43, 226, 0.5) 50%, 
+    rgba(147, 112, 219, 0.4) 100%);
+  border-left: 3px solid #9370db;
+}
+
+.referral-card.card-4 {
+  background: linear-gradient(135deg, 
+    rgba(0, 139, 139, 0.4) 0%, 
+    rgba(236, 72, 153, 0.5) 50%, 
+    rgba(6, 182, 212, 0.4) 100%);
+  border-right: 3px solid #ec4899;
+}
+
+.referral-card.card-5 {
+  background: linear-gradient(135deg, 
+    rgba(30, 41, 59, 0.5) 0%, 
+    rgba(51, 65, 85, 0.6) 50%, 
+    rgba(71, 85, 105, 0.5) 100%);
+  border-right: 3px solid #ec4899;
+}
+
+.card-icon {
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+  color: white;
+  margin-bottom: 12px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.card-icon svg {
+  width: 16px;
+  height: 16px;
+  color: white;
+}
+
+.card-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.reward-label {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0 0 4px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 400;
+}
+
+.reward-amount {
+  font-size: 22px;
+  font-weight: 600;
+  color: white;
+  margin: 0 0 auto 0;
+}
+
+.referrer-label {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 400;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .refer-container {
+    grid-template-columns: 280px 1fr 320px;
+    gap: 30px;
+    padding: 30px;
+  }
+  
+  .referral-cards {
+    gap: 10px;
+  }
+  
+  .referral-card {
+    width: 150px;
+    height: 130px;
+  }
+  
+  .reward-amount {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .refer-container {
+    grid-template-columns: 1fr;
+    grid-template-areas: 
+      "left"
+      "center"
+      "right"
+      "bottom-section";
+    gap: 30px;
+    padding: 20px;
+  }
+  
+  .left-section {
+    max-width: 400px;
+    margin: 0 auto;
+  }
+  
+  .center-section {
+    padding-top: 0;
+  }
+  
+  .right-section {
+    padding-top: 0;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+  
+  .main-title {
+    text-align: center;
+  }
+  
+  .referral-cards {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-title {
+    font-size: 24px;
+  }
+  
+  .section-title, .card-title {
+    font-size: 18px;
+  }
+  
+  .referrals-title {
+    font-size: 16px;
+  }
+  
+  .code-buttons, .action-buttons {
+    flex-wrap: wrap;
+  }
+  
+  .social-icons {
+    flex-wrap: wrap;
+  }
+  
+  .referral-cards {
+    gap: 8px;
+  }
+  
+  .referral-card {
+    width: 140px;
+    height: 120px;
+  }
+  
+  .reward-amount {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .referral-cards {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .referral-card {
+    width: 280px;
+    height: 100px;
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+  }
+  
+  .card-content {
+    text-align: left;
+  }
+}
+/* Promo Image Box */
+.promo-image-box {
+  margin-top: 20px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.promo-image-box img {
+  width: 100%;
+  display: block;
+  border-radius: 12px;
 }

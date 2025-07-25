@@ -7,7 +7,7 @@ const axios = require('axios'); // Add at the top if not already
 const nodemailer = require('nodemailer');
 const fetch = require('node-fetch'); // If not already installed: npm install node-fetch
 const { v4: uuidv4 } = require('uuid'); // npm install uuid
-
+const copilotGemini = require('./routes/copilotGemini');
 const app = express();
 const PORT = 5000;
 const DATA_FILE = path.join(__dirname, 'postbacks.json');
@@ -157,6 +157,7 @@ const publicApiLimiter = rateLimit({
 
 app.use(cors());
 app.use(express.json());
+app.use('/api/copilot-chat', copilotGemini);
 
 // Endpoint to receive postbacks (POST)
 app.post('/api/receive-postback', async (req, res) => {

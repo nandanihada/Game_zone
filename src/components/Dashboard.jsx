@@ -200,20 +200,24 @@ export default function Dashboard() {
         setUserId(user.uid);
         const docRef = doc(firestoreDb, `artifacts/${appId}/users/${user.uid}/user_data`, 'profile');
         const docSnap = await getDoc(docRef);
+
+        const defaultData = {
+          coins: 0,
+          balance: 0,
+          totalEarnings: 0,
+          pendingRewards: 0,
+          completedTasks: 0,
+          weeklyGoal: 10,
+          level: 1,
+          // Removed totalGamesPlayed and achievementsUnlocked from default data
+        };
+
         if (docSnap.exists()) {
-          setUserData(docSnap.data());
+          const fetchedData = docSnap.data();
+          // Merge fetched data with default data to ensure all keys exist
+          setUserData({ ...defaultData, ...fetchedData });
         } else {
           console.log('No user data found! Creating default data.');
-          // Create default user data if none exists
-          const defaultData = {
-            coins: 0,
-            balance: 0,
-            totalEarnings: 0,
-            pendingRewards: 0,
-            completedTasks: 0,
-            weeklyGoal: 10,
-            level: 1,
-          };
           await setDoc(docRef, defaultData);
           setUserData(defaultData);
         }
@@ -258,6 +262,7 @@ export default function Dashboard() {
     completedTasks,
     weeklyGoal,
     level,
+    // Removed totalGamesPlayed and achievementsUnlocked from destructuring
   } = userData;
 
   const progress = Math.min((completedTasks / weeklyGoal) * 100, 100);
@@ -283,6 +288,10 @@ export default function Dashboard() {
       navigate('/task'); 
     } else if (view === 'home') {
       navigate('/home'); 
+    } else if (view === 'dash') {
+      navigate('/dash'); 
+    } else if (view === 'earn') {
+      navigate('/earn'); 
     } else if (view === 'manage') {
       navigate('/manage'); 
     } else if (view === 'profile') {
@@ -422,33 +431,34 @@ export default function Dashboard() {
 
             <div className="stats">
               <div className="stat-box">
-                <strong>Coins</strong>
+                <strong><img src="/icon1.png" alt="Coins" style={{ width: 25, height: 25, marginRight: 8, verticalAlign: 'middle' }} /> Coins</strong>
                 <span>{coins}</span>
               </div>
               <div className="stat-box">
-                <strong>Balance</strong>
+                <strong><img src="/icon2.png" alt="Balance" style={{ width: 25, height: 25, marginRight: 8, verticalAlign: 'middle' }} /> Balance</strong>
                 <span>₹{balance}</span>
               </div>
               <div className="stat-box">
-                <strong>Total Earnings</strong>
+                <strong><img src="/icon3.png" alt="Total Earnings" style={{ width: 25, height: 25, marginRight: 8, verticalAlign: 'middle' }} /> Total Earnings</strong>
                 <span>₹{totalEarnings}</span>
               </div>
               <div className="stat-box">
-                <strong>Pending Rewards</strong>
+                <strong><img src="/icon4.png" alt="Pending Rewards" style={{ width: 25, height: 25, marginRight: 8, verticalAlign: 'middle' }} /> Pending Rewards</strong>
                 <span>₹{pendingRewards}</span>
               </div>
               <div className="stat-box">
-                <strong>Tasks Completed</strong>
+                <strong><img src="/icon5.png" alt="Tasks Completed" style={{ width: 25, height: 25, marginRight: 8, verticalAlign: 'middle' }} /> Tasks Completed</strong>
                 <span>{completedTasks}</span>
               </div>
+              {/* Removed "Total Games Played" and "Achievements Unlocked" stat boxes */}
               <div className="stat-box">
-                <strong>Level</strong>
+                <strong><img src="/icon6.png" alt="Level" style={{ width: 25, height: 25, marginRight: 8, verticalAlign: 'middle' }} /> Level</strong>
                 <span>{level}</span>
               </div>
             </div>
 
             <div className="progress-section">
-              <h2>Weekly Goal Progress</h2>
+              <h2><img src="/icon7.png" alt="Weekly Goal" style={{ width: 25, height: 25, marginRight: 8, verticalAlign: 'middle' }} /> Weekly Goal Progress</h2>
               <div className="progress-bar">
                 <div style={{ width: `${progress}%` }}></div>
               </div>
@@ -965,6 +975,12 @@ export default function Dashboard() {
           <li className={location.pathname === '/manage' ? 'active' : ''} onClick={() => handleNavigationClick('manage')}>
             management
           </li>
+          <li className={location.pathname === '/earn' ? 'active' : ''} onClick={() => handleNavigationClick('earn')}>
+            refer&earn
+          </li>
+          <li className={location.pathname === '/dash' ? 'active' : ''} onClick={() => handleNavigationClick('dash')}>
+            Dash
+          </li>
         </ul>
         <div className="bottom-links">
           {/* Settings link with active state based on route */}
@@ -1223,22 +1239,39 @@ function ApiFetcherSection() {
 
   // --- Data normalization for nested structures ---
   function normalizeData(raw) {
-    if (!raw || typeof raw !== 'object') return raw;
-    // Try to find a nested array-like structure
-    // 1. If raw has a 'response' or 'data' property, drill down
+    // If raw is null, undefined, or an empty object, return an empty array.
+    if (!raw || (typeof raw === 'object' && Object.keys(raw).length === 0)) {
+      return [];
+    }
+    // If raw is a primitive (string, number, boolean), wrap it in an array.
+    if (typeof raw !== 'object') {
+      return [raw];
+    }
+
     let obj = raw;
-    if (obj.response && typeof obj.response === 'object') obj = obj.response;
-    if (obj.data && typeof obj.data === 'object') obj = obj.data;
-    // 2. If obj is an object whose values are all objects (array-like)
+    // Drill down if 'response' or 'data' properties exist
+    if (obj.response && typeof obj.response === 'object' && obj.response !== null) {
+      obj = obj.response;
+    }
+    if (obj.data && typeof obj.data === 'object' && obj.data !== null) {
+      obj = obj.data;
+    }
+
+    // If it's already an array, return it.
+    if (Array.isArray(obj)) {
+      return obj;
+    }
+
+    // If it's an object whose values are all objects (array-like, e.g., { "0": {...}, "1": {...} })
+    // and it's not an array itself.
     if (
-      obj &&
       typeof obj === 'object' &&
       !Array.isArray(obj) &&
       Object.values(obj).length > 0 &&
       Object.values(obj).every(v => typeof v === 'object' && v !== null)
     ) {
       let arr = Object.values(obj);
-      // 3. If all values are objects with a single property, extract that property (regardless of value type)
+      // If all values are objects with a single property, extract that property
       if (arr.every(x => x && typeof x === 'object' && Object.keys(x).length === 1)) {
         arr = arr.map(x => x[Object.keys(x)[0]]);
       }
@@ -1246,13 +1279,16 @@ function ApiFetcherSection() {
       if (arr.every(x => typeof x === 'string')) {
         try {
           arr = arr.map(x => JSON.parse(x));
-        } catch {
+        } catch (e) {
           // If parsing fails, leave as is
+          console.warn("Failed to parse string array to JSON in normalizeData:", e);
         }
       }
       return arr;
     }
-    return raw;
+
+    // If it's a non-empty object that doesn't fit the above patterns, treat it as a single item array.
+    return [obj];
   }
 
   // Move isArray/type here so all functions can use them
@@ -1393,7 +1429,7 @@ function ApiFetcherSection() {
         }
         return sortDir === 'asc'
           ? String(a[sortCol]).localeCompare(String(b[sortCol]))
-          : String(b[sortCol]).localeCompare(String(a[col]));
+          : String(b[sortCol]).localeCompare(String(a[sortCol]));
       });
     }
     return filtered;
@@ -1959,7 +1995,7 @@ const OurOffer = () => {
         <div className="offer-list">
           {offers.map((offer, idx) => (
             <div key={offer.id || offer.offer_id || offer._id || idx} className="offer-card">
-              {offer.image && <img src={offer.image} alt={offer.title || offer.id} style={{ width: 120, height: 80, objectFit: "cover" }} />}
+              {offer.image && <img src={offer.image} alt={offer.title} style={{ width: 120, height: 80, objectFit: "cover" }} />}
               <h3>{offer.title || offer.id || offer.offer_id || offer._id}</h3>
               {offer.genre && <p>Genre: {offer.genre}</p>}
               {offer.rating && <p>Rating: {offer.rating}</p>}
@@ -2142,7 +2178,7 @@ function EmailConfigSection({ setCurrentView }) {
   const localPart = email.split('@')[0]; // eg. sunilsivasp21
   const cleaned = localPart.replace(/[0-9]/g, '').toLowerCase(); // eg. sunilsivasp
 
-  // List of known suffixes that are often attached (you can add more)
+  // List of known suffixes that1 are often attached (you can add more)
   const knownSuffixes = ['siva', 'raj', 'kumar', 'reddy', 'sp', 'dev', 'info'];
 
   // Remove known suffixes from the end of the string
@@ -2424,7 +2460,7 @@ function ABTestHistorySection() {
                 <th style={{ padding: 12, textAlign: 'center', borderBottom: '1px solid #ccc' }}>Not Opened A</th>
                 <th style={{ padding: 12, textAlign: 'center', borderBottom: '1px solid #ccc' }}>Opened B</th>
                 <th style={{ padding: 12, textAlign: 'center', borderBottom: '1px solid #ccc' }}>Not Opened B</th>
-                <th style={{ padding: 12, textAlign: 'center', borderBottom: '1px solid #ccc' }}>Winner</th>
+                <th style={{ padding: 12, textAlign: 'center', fontWeight: 'bold' }}>Winner</th>
               </tr>
             </thead>
             <tbody>
