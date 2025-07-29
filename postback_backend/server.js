@@ -401,7 +401,9 @@ async function checkApiKeyAndRateLimit(req, res) {
   await saveApiKeys(keys);
   return keyObj;
 }
-
+app.get('/', (req, res) => {
+  res.send('Backend is running ✅');
+});
 // Public API endpoint for games with API key and per-key rate limiting
 app.get('/api/public/games', async (req, res) => {
   const keyObj = await checkApiKeyAndRateLimit(req, res);
