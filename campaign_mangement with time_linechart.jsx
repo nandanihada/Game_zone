@@ -46,7 +46,7 @@ function App() {
     useEffect(() => {
         const fetchCampaigns = async () => {
             try {
-                const response = await fetch('http://localhost:5000/api/campaigns');
+                const response = await fetch('https://game-zone-islx.onrender.com/api/campaigns');
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -131,7 +131,7 @@ function App() {
         if (selectedCampaignId) {
             const fetchCampaignData = async () => {
                 try {
-                    const response = await fetch(`http://localhost:5000/api/campaigns/${selectedCampaignId}`);
+                    const response = await fetch(`https://game-zone-islx.onrender.com/api/campaigns/${selectedCampaignId}`);
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }

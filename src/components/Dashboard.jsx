@@ -173,7 +173,7 @@ export default function Dashboard() {
     setLoadingPostbacks(true);
     setErrorPostbacks(null);
     try {
-      const res = await fetch('http://localhost:5000/api/received-postbacks');
+      const res = await fetch('https://game-zone-islx.onrender.com/api/received-postbacks');
       const data = await res.json();
       setReceivedPostbacks(data);
     } catch (err) {
@@ -247,7 +247,7 @@ export default function Dashboard() {
   // Fetch games from backend
   const fetchGames = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/games');
+      const res = await fetch('https://game-zone-islx.onrender.com/api/games');
       const data = await res.json();
       setGames(data);
     } catch (err) {
@@ -440,7 +440,7 @@ export default function Dashboard() {
     setGameFormError('');
     setGameFormLoading(true);
     try {
-      const res = await fetch('http://localhost:5000/api/games', {
+      const res = await fetch('https://game-zone-islx.onrender.com/api/games', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(gameForm),
@@ -459,7 +459,7 @@ export default function Dashboard() {
   };
   // Delete game
   const handleDeleteGame = async (id) => {
-    await fetch(`http://localhost:5000/api/games/${id}`, { method: 'DELETE' });
+    await fetch(`https://game-zone-islx.onrender.com/api/games/${id}`, { method: 'DELETE' });
     fetchGames();
   };
 
@@ -821,7 +821,7 @@ export default function Dashboard() {
                 <li style={{ marginBottom: 12 }}>
                   <b>GET /api/public/games</b><br />
                   <span style={{ color: '#888' }}>Returns all games.</span>
-                  <pre style={{ background: '#eee', padding: 8, borderRadius: 4, margin: '8px 0' }}>{`fetch('http://localhost:5000/api/public/games', {
+                  <pre style={{ background: '#eee', padding: 8, borderRadius: 4, margin: '8px 0' }}>{`fetch('https://game-zone-islx.onrender.com/api/public/games', {
   headers: { 'x-api-key': 'YOUR_API_KEY' }
 })
   .then(res => res.json())
@@ -843,7 +843,7 @@ export default function Dashboard() {
                 <li style={{ marginBottom: 12 }}>
                   <b>GET /api/public/postbacks</b><br />
                   <span style={{ color: '#888' }}>Returns all received postbacks.</span>
-                  <pre style={{ background: '#eee', padding: 8, borderRadius: 4, margin: '8px 0' }}>{`fetch('http://localhost:5000/api/public/postbacks', {
+                  <pre style={{ background: '#eee', padding: 8, borderRadius: 4, margin: '8px 0' }}>{`fetch('https://game-zone-islx.onrender.com/api/public/postbacks', {
   headers: { 'x-api-key': 'YOUR_API_KEY' }
 })
   .then(res => res.json())
@@ -862,7 +862,7 @@ export default function Dashboard() {
                 <li style={{ marginBottom: 12 }}>
                   <b>GET /api/public/users</b><br />
                   <span style={{ color: '#888' }}>Returns a list of user stats (placeholder data).</span>
-                  <pre style={{ background: '#eee', padding: 8, borderRadius: 4, margin: '8px 0' }}>{`fetch('http://localhost:5000/api/public/users', {
+                  <pre style={{ background: '#eee', padding: 8, borderRadius: 4, margin: '8px 0' }}>{`fetch('https://game-zone-islx.onrender.com/api/public/users', {
   headers: { 'x-api-key': 'YOUR_API_KEY' }
 })
   .then(res => res.json())
@@ -1055,7 +1055,7 @@ function ApiKeysSection() {
     setLoading(true);
     setError('');
     try {
-      const res = await fetch('http://localhost:5000/api/apikeys');
+      const res = await fetch('https://game-zone-islx.onrender.com/api/apikeys');
       const data = await res.json();
       setKeys(data);
     } catch (err) {
@@ -1073,7 +1073,7 @@ function ApiKeysSection() {
     setCreating(true);
     setError('');
     try {
-      const res = await fetch('http://localhost:5000/api/apikeys', {
+      const res = await fetch('https://game-zone-islx.onrender.com/api/apikeys', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: newKeyName }),
@@ -1100,7 +1100,7 @@ function ApiKeysSection() {
     setSavingEdit(true);
     setError('');
     try {
-      const res = await fetch(`http://localhost:5000/api/apikeys/${key}`, {
+      const res = await fetch(`https://game-zone-islx.onrender.com/api/apikeys/${key}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: editingName }),
@@ -1128,7 +1128,7 @@ function ApiKeysSection() {
     setRevoking(key);
     setError('');
     try {
-      const res = await fetch(`http://localhost:5000/api/apikeys/${key}`, { method: 'DELETE' });
+      const res = await fetch(`https://game-zone-islx.onrender.com/api/apikeys/${key}`, { method: 'DELETE' });
       if (!res.ok) {
         const err = await res.json();
         setError(err.error || 'Failed to revoke API key');
@@ -1246,7 +1246,7 @@ function ApiKeysSection() {
       <div style={{ marginTop: 32, background: '#f6f6f6', padding: 16, borderRadius: 6 }}>
         <strong>How to use your API key:</strong>
         <div style={{ margin: '10px 0' }}>Include your API key in the <code>x-api-key</code> header when making requests to the public API endpoint:</div>
-        <pre style={{ background: '#222', color: '#fff', padding: 12, borderRadius: 6 }}>{`fetch('http://localhost:5000/api/public/games', {
+        <pre style={{ background: '#222', color: '#fff', padding: 12, borderRadius: 6 }}>{`fetch('https://game-zone-islx.onrender.com/api/public/games', {
   headers: { 'x-api-key': 'YOUR_API_KEY' }
 })
   .then(res => res.json())
@@ -1260,7 +1260,7 @@ function ApiKeysSection() {
 }
 
 // function ApiFetcherSection() {
-//   const [url, setUrl] = React.useState('http://localhost:5000/api/public/games');
+//   const [url, setUrl] = React.useState('https://game-zone-islx.onrender.com/api/public/games');
 //   const [method, setMethod] = React.useState('GET');
 //   const [headers, setHeaders] = React.useState([{ key: 'x-api-key', value: '' }]);
 //   const [params, setParams] = React.useState([]); // <-- new
@@ -1399,7 +1399,7 @@ function ApiKeysSection() {
 //       } else {
 //         setData(result);
 //         // Save fetch to backend
-//         fetch('http://localhost:5000/api/fetch-history', {
+//         fetch('https://game-zone-islx.onrender.com/api/fetch-history', {
 //           method: 'POST',
 //           headers: { 'Content-Type': 'application/json' },
 //           body: JSON.stringify({
@@ -1476,7 +1476,7 @@ function ApiKeysSection() {
 //       <div style={{ fontWeight: 'bold', fontSize: 18 }}>{game.title}</div>
 //       <div style={{ color: '#555', margin: '4px 0' }}>{game.genre}</div>
 //       <div style={{ color: '#888', fontSize: 14 }}>Rating: {game.rating}</div>
-//       <a href={`http://localhost:5000/go/${game.id}`} target="_blank" rel="noopener noreferrer" style={{ color: '#1976d2', fontWeight: 'bold', textDecoration: 'none', marginTop: 8, display: 'inline-block' }}>Play</a>
+//       <a href={`https://game-zone-islx.onrender.com/go/${game.id}`} target="_blank" rel="noopener noreferrer" style={{ color: '#1976d2', fontWeight: 'bold', textDecoration: 'none', marginTop: 8, display: 'inline-block' }}>Play</a>
 //     </div>
 //   );
 //   const renderPostbackCard = (pb, idx) => (
@@ -1589,7 +1589,7 @@ function ApiKeysSection() {
 //                     if (link && id) {
 //                       return (
 //                         <td key={col.key} style={{ padding: 4 }}>
-//                           <a href={`http://localhost:5000/go/${id}`} target="_blank" rel="noopener noreferrer" style={{ color: '#1976d2', fontWeight: 600, textDecoration: 'underline' }}>Preview</a>
+//                           <a href={`https://game-zone-islx.onrender.com/go/${id}`} target="_blank" rel="noopener noreferrer" style={{ color: '#1976d2', fontWeight: 600, textDecoration: 'underline' }}>Preview</a>
 //                         </td>
 //                       );
 //                     } else {
@@ -2076,7 +2076,7 @@ function ApiFetcherSection() {
                       return (
                         <td key={col.key} className="table-cell">
                           <a
-                            href={`http://localhost:5000/go/${id}`}
+                            href={`https://game-zone-islx.onrender.com/go/${id}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="preview-link"
@@ -3057,7 +3057,7 @@ function ResponsesSection() {
       setLoading(true);
       setError('');
       try {
-        const res = await fetch('http://localhost:5000/api/play-responses');
+        const res = await fetch('https://game-zone-islx.onrender.com/api/play-responses');
         if (!res.ok) throw new Error('Failed to fetch');
         const data = await res.json();
         setResponses(data.reverse()); // newest first
@@ -3205,7 +3205,7 @@ const OurOffer = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get("http://localhost:5000/api/fetch-history")
+    axios.get("https://game-zone-islx.onrender.com/api/fetch-history")
       .then(res => {
         const allOffers = flattenOffers(res.data);
         // Only keep offers with numeric id and deduplicate by id
@@ -3240,7 +3240,7 @@ const OurOffer = () => {
               <h3>{offer.title || offer.id || offer.offer_id || offer._id}</h3>
               {offer.genre && <p>Genre: {offer.genre}</p>}
               {offer.rating && <p>Rating: {offer.rating}</p>}
-              <a href={`http://localhost:5000/go/${offer.id || offer.offer_id || offer._id}`} target="_blank" rel="noopener noreferrer" className="btn btn-primary">
+              <a href={`https://game-zone-islx.onrender.com/go/${offer.id || offer.offer_id || offer._id}`} target="_blank" rel="noopener noreferrer" className="btn btn-primary">
                 Masked Link
               </a>
               <br />
@@ -3269,7 +3269,7 @@ function FetchHistorySection() {
       setLoading(true);
       setError('');
       try {
-        const res = await fetch('http://localhost:5000/api/fetch-history');
+        const res = await fetch('https://game-zone-islx.onrender.com/api/fetch-history');
         if (!res.ok) throw new Error('Failed to fetch');
         const data = await res.json();
         setHistory(data);
@@ -3326,7 +3326,7 @@ function FetchHistorySection() {
 //   const [selectedOffers, setSelectedOffers] = React.useState([]);
 
 //   React.useEffect(() => {
-//     fetch('http://localhost:5000/api/fetch-history')
+//     fetch('https://game-zone-islx.onrender.com/api/fetch-history')
 //       .then(res => res.json())
 //       .then(data => {
 //         const allOffers = flattenOffers(data);
@@ -3350,7 +3350,7 @@ function FetchHistorySection() {
 //   React.useEffect(() => {
 //     if (selectedOffers.length === 0) return;
 //     const offersText = selectedOffers.map(offer =>
-//       `Offer: ${offer.title || offer.id}\nLink: http://localhost:5000/go/${offer.id || offer.offer_id || offer._id}`
+//       `Offer: ${offer.title || offer.id}\nLink: https://game-zone-islx.onrender.com/go/${offer.id || offer.offer_id || offer._id}`
 //     ).join('\n\n');
 //     setBody(offersText);
 //   }, [selectedOffers]);
@@ -3371,7 +3371,7 @@ function FetchHistorySection() {
 //   const saveConfig = async () => {
 //     setStatus('');
 //     try {
-//       const res = await fetch('http://localhost:5000/api/email-config', {
+//       const res = await fetch('https://game-zone-islx.onrender.com/api/email-config', {
 //         method: 'POST',
 //         headers: { 'Content-Type': 'application/json' },
 //         body: JSON.stringify(config)
@@ -3389,7 +3389,7 @@ function FetchHistorySection() {
 //     setSending(true);
 //     setStatus('');
 //     try {
-//       const res = await fetch('http://localhost:5000/api/send-email', {
+//       const res = await fetch('https://game-zone-islx.onrender.com/api/send-email', {
 //         method: 'POST',
 //         headers: { 'Content-Type': 'application/json' },
 //         body: JSON.stringify({ to, subject, text: body })
@@ -3510,7 +3510,7 @@ function EmailConfigSection() {
         const fetchConfigAndOffers = async () => {
             // Fetch configuration
             try {
-                const configRes = await fetch('http://localhost:5000/api/email-config');
+                const configRes = await fetch('https://game-zone-islx.onrender.com/api/email-config');
                 if (configRes.ok) {
                     const configData = await configRes.json();
                     setConfig(prevConfig => ({ ...prevConfig, ...configData }));
@@ -3522,7 +3522,7 @@ function EmailConfigSection() {
             
             // Fetch scheduled emails
             try {
-                const scheduledRes = await fetch('http://localhost:5000/api/scheduled-emails');
+                const scheduledRes = await fetch('https://game-zone-islx.onrender.com/api/scheduled-emails');
                 if (scheduledRes.ok) {
                     const scheduledData = await scheduledRes.json();
                     setScheduledEmails(scheduledData);
@@ -3534,7 +3534,7 @@ function EmailConfigSection() {
 
             // Fetch offers
             try {
-                const res = await fetch('http://localhost:5000/api/fetch-history');
+                const res = await fetch('https://game-zone-islx.onrender.com/api/fetch-history');
                 const data = await res.json();
                 const allOffers = flattenOffers(data);
                 // Deduplicate offers by a composite key to ensure uniqueness
@@ -3568,7 +3568,7 @@ function EmailConfigSection() {
         const offersText = selectedOffers.map(offer => {
             const id = offer.id || offer.offer_id || offer._id;
             const title = offer.title || offer.name || `Offer #${id}`;
-            const link = `http://localhost:5000/go/${id}`;
+            const link = `https://game-zone-islx.onrender.com/go/${id}`;
             return `Title: ${title}\nLink: ${link}`;
         }).join('\n\n---\n\n');
 
@@ -3605,7 +3605,7 @@ function EmailConfigSection() {
         setSaving(true);
         setStatus({ message: '', type: '' });
         try {
-            const res = await fetch('http://localhost:5000/api/email-config', {
+            const res = await fetch('https://game-zone-islx.onrender.com/api/email-config', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(config)
@@ -3627,7 +3627,7 @@ function EmailConfigSection() {
         setSending(true);
         setStatus({ message: '', type: '' });
         try {
-            const res = await fetch('http://localhost:5000/api/send-email', {
+            const res = await fetch('https://game-zone-islx.onrender.com/api/send-email', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ to, cc, bcc, subject, text: body })
@@ -3684,7 +3684,7 @@ function EmailConfigSection() {
                 createdAt: new Date().toISOString()
             };
             
-            const res = await fetch('http://localhost:5000/api/scheduled-emails', {
+            const res = await fetch('https://game-zone-islx.onrender.com/api/scheduled-emails', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(scheduleData)
@@ -3796,7 +3796,7 @@ function EmailConfigSection() {
     // Delete a scheduled email
     const deleteScheduledEmail = async (id) => {
         try {
-            const res = await fetch(`http://localhost:5000/api/scheduled-emails/${id}`, {
+            const res = await fetch(`https://game-zone-islx.onrender.com/api/scheduled-emails/${id}`, {
                 method: 'DELETE'
             });
             
@@ -3817,7 +3817,7 @@ function EmailConfigSection() {
     // Toggle the enabled status of a scheduled email
     const toggleScheduledEmail = async (id, currentEnabled) => {
         try {
-            const res = await fetch(`http://localhost:5000/api/scheduled-emails/${id}`, {
+            const res = await fetch(`https://game-zone-islx.onrender.com/api/scheduled-emails/${id}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ enabled: !currentEnabled })
@@ -5157,7 +5157,7 @@ function DomainCheckerSection() {
 
   // Fetch offers on mount
   React.useEffect(() => {
-    fetch('http://localhost:5000/api/fetch-history')
+    fetch('https://game-zone-islx.onrender.com/api/fetch-history')
       .then(res => res.json())
       .then(data => {
         const allOffers = flattenOffers(data);
@@ -5192,9 +5192,9 @@ function DomainCheckerSection() {
     setLoading(true);
     setResults({});
     const checks = await Promise.all(selectedIds.map(async id => {
-      const url = `http://localhost:5000/go/${id}`;
+      const url = `https://game-zone-islx.onrender.com/go/${id}`;
       try {
-        const res = await fetch('http://localhost:5000/api/check-domain', {
+        const res = await fetch('https://game-zone-islx.onrender.com/api/check-domain', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ url })
@@ -5251,7 +5251,7 @@ function DomainCheckerSection() {
                     {offer.title || id}
                   </td>
                   <td>
-                    <a href={`http://localhost:5000/go/${id}`} target="_blank" rel="noopener noreferrer">
+                    <a href={`https://game-zone-islx.onrender.com/go/${id}`} target="_blank" rel="noopener noreferrer">
                       /go/{id}
                     </a>
                   </td>
@@ -5278,7 +5278,7 @@ function DomainCheckerSection() {
                 <tr key={id}>
                   <td>{offers.find(o => (o.id || o.offer_id || o._id) === id)?.title || id}</td>
                   <td>
-                    <a href={`http://localhost:5000/go/${id}`} target="_blank" rel="noopener noreferrer">
+                    <a href={`https://game-zone-islx.onrender.com/go/${id}`} target="_blank" rel="noopener noreferrer">
                       /go/{id}
                     </a>
                   </td>
@@ -7077,7 +7077,7 @@ function CampaignManager() {
   useEffect(() => {
     const fetchCampaigns = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/campaigns');
+        const res = await fetch('https://game-zone-islx.onrender.com/api/campaigns');
         if (!res.ok) throw new Error('Failed to fetch campaigns');
         const data = await res.json();
         setCampaigns(data);
@@ -7147,7 +7147,7 @@ function BulkSchedulingSection() {
 
   // Fetch offers and schedules on component mount
   React.useEffect(() => {
-    fetch('http://localhost:5000/api/fetch-history')
+    fetch('https://game-zone-islx.onrender.com/api/fetch-history')
       .then(res => res.json())
       .then(data => {
         const allOffers = flattenOffers(data);
@@ -7165,7 +7165,7 @@ function BulkSchedulingSection() {
       })
       .catch(err => showMessage('Failed to fetch offers.', 'error'));
 
-    fetch('http://localhost:5000/api/schedules')
+    fetch('https://game-zone-islx.onrender.com/api/schedules')
       .then(res => res.json())
       .then(setSchedules)
       .catch(err => showMessage('Failed to fetch schedules.', 'error'));
@@ -7203,7 +7203,7 @@ function BulkSchedulingSection() {
           setLoading(false);
           return;
         }
-        await fetch('http://localhost:5000/api/schedules', {
+        await fetch('https://game-zone-islx.onrender.com/api/schedules', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -7217,7 +7217,7 @@ function BulkSchedulingSection() {
         });
       }
       // Refresh schedules
-      fetch('http://localhost:5000/api/schedules')
+      fetch('https://game-zone-islx.onrender.com/api/schedules')
         .then(res => res.json())
         .then(setSchedules);
       showMessage('Schedules applied successfully!', 'success');
@@ -7899,7 +7899,7 @@ function BulkSchedulingSection() {
                   </td>
                   <td>
                     {/* Changed: Link in Offers Table to masked URL */}
-                    <a href={`http://localhost:5000/go/${id}`} target="_blank" rel="noopener noreferrer" className="offer-link">
+                    <a href={`https://game-zone-islx.onrender.com/go/${id}`} target="_blank" rel="noopener noreferrer" className="offer-link">
                       {`localhost:5000/go/${id}`} {/* Display the masked URL */}
                     </a>
                   </td>
@@ -7979,7 +7979,7 @@ function BulkSchedulingSection() {
                             />
                           ) : (
                             // Changed: Link in Modal Table to masked URL
-                            <a href={`http://localhost:5000/go/${s.offerId}`} target="_blank" rel="noopener noreferrer" className="modal-table-link">
+                            <a href={`https://game-zone-islx.onrender.com/go/${s.offerId}`} target="_blank" rel="noopener noreferrer" className="modal-table-link">
                               {`localhost:5000/go/${s.offerId}`} {/* Display the masked URL */}
                             </a>
                           )}
@@ -8037,12 +8037,12 @@ function BulkSchedulingSection() {
                                   }
                                   showMessage(''); // Clear previous error
                                   try {
-                                    await fetch(`http://localhost:5000/api/schedules/${s.id}`, {
+                                    await fetch(`https://game-zone-islx.onrender.com/api/schedules/${s.id}`, {
                                       method: 'PATCH',
                                       headers: { 'Content-Type': 'application/json' },
                                       body: JSON.stringify(editFields)
                                     });
-                                    fetch('http://localhost:5000/api/schedules')
+                                    fetch('https://game-zone-islx.onrender.com/api/schedules')
                                       .then(res => res.json())
                                       .then(setSchedules);
                                     setEditScheduleId(null);
@@ -8075,8 +8075,8 @@ function BulkSchedulingSection() {
                               <button
                                 onClick={async () => {
                                   try {
-                                    await fetch(`http://localhost:5000/api/schedules/${s.id}`, { method: 'DELETE' });
-                                    fetch('http://localhost:5000/api/schedules')
+                                    await fetch(`https://game-zone-islx.onrender.com/api/schedules/${s.id}`, { method: 'DELETE' });
+                                    fetch('https://game-zone-islx.onrender.com/api/schedules')
                                       .then(res => res.json())
                                       .then(setSchedules);
                                     showMessage('Schedule deleted successfully!', 'success');

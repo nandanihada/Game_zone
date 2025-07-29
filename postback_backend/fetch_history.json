@@ -1737,7 +1737,7 @@
     "timestamp": "2025-07-17T06:49:46.703Z"
   },
   {
-    "url": "http://localhost:5000/api/public/games",
+    "url": "https://game-zone-islx.onrender.com/api/public/games",
     "method": "GET",
     "headers": {
       "x-api-key": "7gmdv3rvqi131uue"
@@ -5241,7 +5241,7 @@
     "timestamp": "2025-07-17T07:00:07.300Z"
   },
   {
-    "url": "http://localhost:5000/api/public/games",
+    "url": "https://game-zone-islx.onrender.com/api/public/games",
     "method": "GET",
     "headers": {
       "x-api-key": "7gmdv3rvqi131uue"
@@ -7008,7 +7008,7 @@
     "timestamp": "2025-07-17T07:05:07.022Z"
   },
   {
-    "url": "http://localhost:5000/api/public/games",
+    "url": "https://game-zone-islx.onrender.com/api/public/games",
     "method": "GET",
     "headers": {
       "x-api-key": "7gmdv3rvqi131uue"
@@ -12249,7 +12249,7 @@
     "timestamp": "2025-07-17T07:20:15.118Z"
   },
   {
-    "url": "http://localhost:5000/api/public/games",
+    "url": "https://game-zone-islx.onrender.com/api/public/games",
     "method": "GET",
     "headers": {
       "x-api-key": "7gmdv3rvqi131uue"
@@ -19227,7 +19227,7 @@
     "timestamp": "2025-07-17T07:35:10.886Z"
   },
   {
-    "url": "http://localhost:5000/api/public/games",
+    "url": "https://game-zone-islx.onrender.com/api/public/games",
     "method": "GET",
     "headers": {
       "x-api-key": "7gmdv3rvqi131uue"
@@ -19257,7 +19257,7 @@
     "timestamp": "2025-07-17T07:38:53.002Z"
   },
   {
-    "url": "http://localhost:5000/api/public/games",
+    "url": "https://game-zone-islx.onrender.com/api/public/games",
     "method": "GET",
     "headers": {
       "x-api-key": "7gmdv3rvqi131uue"
@@ -19287,7 +19287,7 @@
     "timestamp": "2025-07-17T07:41:07.446Z"
   },
   {
-    "url": "http://localhost:5000/api/public/games",
+    "url": "https://game-zone-islx.onrender.com/api/public/games",
     "method": "GET",
     "headers": {
       "x-api-key": "7gmdv3rvqi131uue"
@@ -19317,7 +19317,7 @@
     "timestamp": "2025-07-17T07:49:09.510Z"
   },
   {
-    "url": "http://localhost:5000/api/public/games",
+    "url": "https://game-zone-islx.onrender.com/api/public/games",
     "method": "GET",
     "headers": {
       "x-api-key": "7gmdv3rvqi131uue"
@@ -45402,7 +45402,7 @@
     "timestamp": "2025-07-17T09:49:18.201Z"
   },
   {
-    "url": "http://localhost:5000/api/public/games",
+    "url": "https://game-zone-islx.onrender.com/api/public/games",
     "method": "GET",
     "headers": {
       "x-api-key": "7gmdv3rvqi131uue"
@@ -47169,7 +47169,7 @@
     "timestamp": "2025-07-17T10:07:43.176Z"
   },
   {
-    "url": "http://localhost:5000/api/public/games",
+    "url": "https://game-zone-islx.onrender.com/api/public/games",
     "method": "GET",
     "headers": {
       "x-api-key": "5xga1k2l9tgu52rt"
@@ -47199,7 +47199,7 @@
     "timestamp": "2025-07-17T10:08:29.227Z"
   },
   {
-    "url": "http://localhost:5000/api/public/games",
+    "url": "https://game-zone-islx.onrender.com/api/public/games",
     "method": "GET",
     "headers": {
       "x-api-key": "5xga1k2l9tgu52rt"
@@ -47229,7 +47229,7 @@
     "timestamp": "2025-07-17T10:13:40.680Z"
   },
   {
-    "url": "http://localhost:5000/api/public/games",
+    "url": "https://game-zone-islx.onrender.com/api/public/games",
     "method": "GET",
     "headers": {
       "x-api-key": "5xga1k2l9tgu52rt"
@@ -47259,7 +47259,7 @@
     "timestamp": "2025-07-17T10:14:02.282Z"
   },
   {
-    "url": "http://localhost:5000/api/public/games",
+    "url": "https://game-zone-islx.onrender.com/api/public/games",
     "method": "GET",
     "headers": {
       "x-api-key": "5xga1k2l9tgu52rt"
@@ -47289,7 +47289,7 @@
     "timestamp": "2025-07-17T10:14:53.604Z"
   },
   {
-    "url": "http://localhost:5000/api/public/games",
+    "url": "https://game-zone-islx.onrender.com/api/public/games",
     "method": "GET",
     "headers": {
       "x-api-key": "5xga1k2l9tgu52rt"

@@ -7,7 +7,7 @@ const OurOffer = () => {
 
   useEffect(() => {
     // Fetch games/offers from backend
-    axios.get("http://localhost:5000/api/games")
+    axios.get("https://game-zone-islx.onrender.com/api/games")
       .then(res => setOffers(res.data))
       .catch(() => setOffers([]))
       .finally(() => setLoading(false));

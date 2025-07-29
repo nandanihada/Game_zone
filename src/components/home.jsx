@@ -72,7 +72,7 @@ export default function Home() {
   useEffect(() => {
     const fetchGames = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/games');
+        const res = await fetch('https://game-zone-islx.onrender.com/api/games');
         const data = await res.json();
         setGames(data);
       } catch (err) {}
@@ -81,7 +81,7 @@ export default function Home() {
   }, []);
 
   const handleDeleteGame = async (id) => {
-    await fetch(`http://localhost:5000/api/games/${id}`, { method: 'DELETE' });
+    await fetch(`https://game-zone-islx.onrender.com/api/games/${id}`, { method: 'DELETE' });
     setGames(games => games.filter(g => g.id !== id));
   };
 
@@ -132,7 +132,7 @@ export default function Home() {
     const extra = {}; // e.g., screen size, language, etc.
 
     // Send to backend
-    await fetch('http://localhost:5000/api/play-response', {
+    await fetch('https://game-zone-islx.onrender.com/api/play-response', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -149,7 +149,7 @@ export default function Home() {
     });
 
     // Redirect to masked link
-    window.open(`http://localhost:5000/go/${game.id}`, '_blank', 'noopener,noreferrer');
+    window.open(`https://game-zone-islx.onrender.com/go/${game.id}`, '_blank', 'noopener,noreferrer');
   };
 
   return (
@@ -189,7 +189,7 @@ export default function Home() {
                     <h3>{game.title}</h3>
                     <p>{game.genre}</p>
                     <p>Rating: {game.rating} ⭐</p>
-                    <a href={`http://localhost:5000/go/${game.id}`} target="_blank" rel="noopener noreferrer">
+                    <a href={`https://game-zone-islx.onrender.com/go/${game.id}`} target="_blank" rel="noopener noreferrer">
                     <button className="play-button" onClick={() => handlePlay(game)}>Play</button>
                     </a>
                     <button className="delete-button" style={{ marginTop: 8, background: '#f44336', color: '#fff', border: 'none', borderRadius: 4, padding: '4px 12px', cursor: 'pointer' }} onClick={() => handleDeleteGame(game.id)}>Delete</button>
