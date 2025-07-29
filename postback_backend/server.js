@@ -8,6 +8,9 @@ const nodemailer = require('nodemailer');
 const fetch = require('node-fetch'); // If not already installed: npm install node-fetch
 const { v4: uuidv4 } = require('uuid'); // npm install uuid
 
+// Import the proxy router
+const proxyRouter = require('./proxy');
+
 const app = express();
 const PORT = 5000;
 const DATA_FILE = path.join(__dirname, 'postbacks.json');
@@ -17,6 +20,24 @@ const PLAY_RESPONSES_FILE = path.join(__dirname, 'play_responses.json');
 const FETCH_HISTORY_FILE = path.join(__dirname, 'fetch_history.json');
 const EMAIL_CONFIG_FILE = path.join(__dirname, 'email_config.json');
 const SCHEDULES_FILE = path.join(__dirname, 'offer_schedules.json');
+const SCHEDULED_EMAILS_FILE = path.join(__dirname, 'scheduled_emails.json');
+const CAMPAIGNS_FILE = path.join(__dirname, 'campaigns.json');
+
+// Helper: Load campaigns
+async function loadCampaigns() {
+  try {
+    const exists = await fs.pathExists(CAMPAIGNS_FILE);
+    if (!exists) return [];
+    return await fs.readJson(CAMPAIGNS_FILE);
+  } catch {
+    return [];
+  }
+}
+
+// Helper: Save campaigns
+async function saveCampaigns(campaigns) {
+  await fs.writeJson(CAMPAIGNS_FILE, campaigns, { spaces: 2 });
+}
 
 // Helper: Load play responses
 const loadPlayResponses = async () => {
@@ -144,6 +165,22 @@ async function saveSchedules(schedules) {
   await fs.writeJson(SCHEDULES_FILE, schedules, { spaces: 2 });
 }
 
+// Helper: Load scheduled emails
+async function loadScheduledEmails() {
+  try {
+    const exists = await fs.pathExists(SCHEDULED_EMAILS_FILE);
+    if (!exists) return [];
+    return await fs.readJson(SCHEDULED_EMAILS_FILE);
+  } catch {
+    return [];
+  }
+}
+
+// Helper: Save scheduled emails
+async function saveScheduledEmails(emails) {
+  await fs.writeJson(SCHEDULED_EMAILS_FILE, emails, { spaces: 2 });
+}
+
 // Rate limiter: 10 requests per IP per day for public API
 const publicApiLimiter = rateLimit({
   windowMs: 24 * 60 * 60 * 1000, // 24 hours
@@ -155,21 +192,49 @@ const publicApiLimiter = rateLimit({
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 });
 
-app.use(cors());
-app.use(express.json());
 
-// Endpoint to receive postbacks (POST)
-app.post('/api/receive-postback', async (req, res) => {
-  const data = {
+const cheerio = require('cheerio');
+const bodyParser = require('body-parser');
+// Middleware
+app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Add proxy routes
+app.use('/api', proxyRouter);
+
+// Endpoint to receive postbacks (both GET and POST)
+app.all('/api/receive-postback', async (req, res) => {
+  const requestData = {
+    method: req.method,
     receivedAt: new Date().toISOString(),
-    body: req.body,
+    query: req.query,  // Always include query parameters
     headers: req.headers,
     ip: req.ip,
   };
+
+  // For POST/PUT/PATCH with body
+  if (['POST', 'PUT', 'PATCH'].includes(req.method) && Object.keys(req.body).length > 0) {
+    requestData.body = req.body;
+  }
+  // For GET/DELETE or when no body is present
+  else if (Object.keys(req.query).length > 0) {
+    requestData.body = req.query;
+  }
+  
   const postbacks = await loadPostbacks();
-  postbacks.push(data);
+  postbacks.push(requestData);
   await savePostbacks(postbacks);
-  res.status(200).json({ message: 'Postback received', data });
+  
+  // Return a simple response
+  res.status(200).json({ 
+    success: true, 
+    message: 'Postback received', 
+    method: req.method,
+    data: requestData 
+  });
 });
 
 // Endpoint to get all received postbacks
@@ -249,8 +314,52 @@ app.patch('/api/apikeys/:key', async (req, res) => {
   res.json(keys[idx]);
 });
 
-// List all API keys (no user filtering)
-app.get('/api/apikeys', async (req, res) => {
+// API endpoint to get all campaigns
+app.get('/api/campaigns', async (req, res) => {
+  try {
+    let campaigns = await loadCampaigns();
+    if (campaigns.length === 0) {
+      // Generate dummy data if no campaigns exist
+      campaigns = [
+        {
+          id: 'campaign1',
+          campaignName: 'Summer Sale 2024',
+          subjectLine: 'Huge Discounts on All Items!',
+          interactions: [
+            { type: 'received', email: 'user1@example.com', firstName: 'John', lastName: 'Doe', timestamp: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString() },
+            { type: 'opened', email: 'user1@example.com', firstName: 'John', lastName: 'Doe', timestamp: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString() },
+            { type: 'clicked', email: 'user1@example.com', firstName: 'John', lastName: 'Doe', timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString() },
+            { type: 'received', email: 'user2@example.com', firstName: 'Jane', lastName: 'Smith', timestamp: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString() },
+            { type: 'opened', email: 'user2@example.com', firstName: 'Jane', lastName: 'Smith', timestamp: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString() },
+            { type: 'received', email: 'user3@example.com', firstName: 'Peter', lastName: 'Jones', timestamp: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString() },
+            { type: 'bounced', email: 'user4@example.com', firstName: 'Alice', lastName: 'Brown', timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString() },
+            { type: 'replied', email: 'user1@example.com', firstName: 'John', lastName: 'Doe', timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString() }
+          ]
+        },
+        {
+          id: 'campaign2',
+          campaignName: 'Winter Collection Launch',
+          subjectLine: 'Discover Our New Arrivals!',
+          interactions: [
+            { type: 'received', email: 'user5@example.com', firstName: 'Chris', lastName: 'Green', timestamp: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString() },
+            { type: 'opened', email: 'user5@example.com', firstName: 'Chris', lastName: 'Green', timestamp: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000).toISOString() },
+            { type: 'received', email: 'user6@example.com', firstName: 'Sarah', lastName: 'White', timestamp: new Date(Date.now() - 11 * 24 * 60 * 60 * 1000).toISOString() },
+            { type: 'opened', email: 'user6@example.com', firstName: 'Sarah', lastName: 'White', timestamp: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString() },
+            { type: 'clicked', email: 'user6@example.com', firstName: 'Sarah', lastName: 'White', timestamp: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000).toISOString() }
+          ]
+        }
+      ];
+      await saveCampaigns(campaigns);
+    }
+    res.json(campaigns);
+  } catch (error) {
+    console.error('Error loading campaigns:', error);
+    res.status(500).json({ message: 'Error loading campaigns' });
+  }
+});
+
+// API endpoint to get all API keys
+app.get('/api/api-keys', async (req, res) => {
   const keys = await loadApiKeys();
   res.json(keys);
 });

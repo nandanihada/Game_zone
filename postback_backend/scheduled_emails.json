@@ -1,0 +1,17 @@
+[
+  {
+    "id": "befa4f32-d5c4-48fc-a5ba-7391b157a591",
+    "to": "user1@example.com",
+    "cc": "",
+    "bcc": "",
+    "subject": "new offers",
+    "body": "Hello,\n\nHere are the offers you requested:\n\nTitle: DREDGE\nLink: http://localhost:5000/go/1752576809975\n\nBest regards.",
+    "scheduleType": "daily",
+    "scheduleTime": "15:20",
+    "scheduleDays": [],
+    "scheduleDate": null,
+    "enabled": true,
+    "createdAt": "2025-07-23T08:49:06.050Z",
+    "lastSentAt": null
+  }
+]

@@ -1,14 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { initializeApp } from 'firebase/app';
-import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from 'firebase/auth';
-import { getFirestore, doc, setDoc, collection, onSnapshot, getDoc, getDocs } from 'firebase/firestore';
+
 
 // Import the CSS file
 import './chart.css'; // Assuming chart.css is in the same directory
 
 function App() {
     const [activeTab, setActiveTab] = useState('campaign-analytics');
-    const [userId, setUserId] = useState('Loading...');
+
     const [openedEmails, setOpenedEmails] = useState([]);
     const [clickedEmails, setClickedEmails] = useState([]);
     const [receivedEmails, setReceivedEmails] = useState([]); // This will also represent "total mails sent"
@@ -36,17 +34,6 @@ function App() {
     // State for chart hover details
     const [hoveredPoint, setHoveredPoint] = useState(null); // { date, opened, clicked, replied, x, y }
 
-    // Refs for Firebase instances
-    const dbRef = useRef(null);
-    const authRef = useRef(null);
-
-    // Define global variables for Firebase config and app ID
-    // These are provided by the Canvas environment
-    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-    const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-    const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-
-
     // Function to show messages in the message box
     const showMessage = (text, type = 'info') => {
         setMessage({ text, type });
@@ -55,149 +42,30 @@ function App() {
         }, 3000); // Hide after 3 seconds
     };
 
-    // Initialize Firebase and set up authentication
-    useEffect(() => {
-        const initializeFirebase = async () => {
-            try {
-                if (Object.keys(firebaseConfig).length === 0) {
-                    console.error("Firebase config is missing. Cannot initialize Firebase.");
-                    showMessage("Firebase configuration error. Please check the environment.", "error");
-                    return;
-                }
-                const app = initializeApp(firebaseConfig);
-                dbRef.current = getFirestore(app);
-                authRef.current = getAuth(app);
-
-                onAuthStateChanged(authRef.current, async (user) => {
-                    if (user) {
-                        setUserId(user.uid);
-                        console.log("User authenticated:", user.uid);
-                    } else {
-                        console.log("No user signed in. Attempting anonymous sign-in or custom token sign-in.");
-                        try {
-                            if (initialAuthToken) {
-                                await signInWithCustomToken(authRef.current, initialAuthToken);
-                                console.log("Signed in with custom token.");
-                            } else {
-                                await signInAnonymously(authRef.current);
-                                console.log("Signed in anonymously.");
-                            }
-                        } catch (error) {
-                            console.error("Error during authentication:", error);
-                            showMessage(`Authentication failed: ${error.message}`, "error");
-                        }
-                    }
-                });
-            } catch (error) {
-                console.error("Error initializing Firebase app:", error);
-                showMessage(`Firebase initialization failed: ${error.message}`, "error");
-            }
-        };
-
-        initializeFirebase();
-    }, []); // Run only once on component mount
-
-    // Function to generate dummy campaign data
-    const generateDummyCampaigns = async () => {
-        if (!dbRef.current) return;
-
-        const publicCampaignsCollectionRef = collection(dbRef.current, `artifacts/${appId}/public/data/campaigns`);
-        const campaignNames = [
-            "Spring Newsletter 2024", "Product Launch Q1", "Holiday Sale Blast", "Customer Loyalty Program",
-            "Webinar Series Promotion", "New Feature Announcement", "Feedback Survey Campaign",
-            "Abandoned Cart Reminder", "Welcome Series Emails", "Re-engagement Campaign",
-            "Black Friday Deals", "Cyber Monday Offers", "New Year Resolutions", "Summer Collection Launch",
-            "Back to School Promo", "Autumn Deals", "Winter Wonderland Sale", "Spring Cleaning Tips",
-            "Flash Sale Alert", "Exclusive Member Discount", "Early Bird Access", "Birthday Special",
-            "Anniversary Celebration", "Referral Program Invite", "App Download Prompt"
-        ];
-        const subjectLines = [
-            "Your Spring Update!", "Introducing Our New Product!", "Don't Miss Our Holiday Sale!",
-            "Exclusive Offer Just For You", "Join Our Upcoming Webinar", "Exciting New Features Inside!",
-            "We Value Your Feedback", "Did You Forget Something?", "Welcome to Our Community!",
-            "We Miss You! Come Back!", "Unbeatable Black Friday Deals", "Cyber Monday Steals!",
-            "Start Your New Year Right", "Dive into Our Summer Collection", "Back to School Essentials",
-            "Cozy Autumn Savings", "Winter Wonderland Discounts", "Spring Cleaning Made Easy",
-            "Limited Time Flash Sale", "Your Special Member Discount", "Get Early Access Now!",
-            "Happy Birthday from Us!", "Celebrate Your Anniversary With Us", "Referral Program Invite",
-            "Download Our App Today!"
-        ];
-
-
-        const existingCampaignsSnapshot = await getDocs(publicCampaignsCollectionRef);
-        if (!existingCampaignsSnapshot.empty) {
-            console.log("Campaigns already exist. Skipping dummy data generation.");
-            return;
-        }
-
-        for (let i = 0; i < campaignNames.length; i++) {
-            const campaignId = `campaign-${i + 1}`;
-            const campaignName = campaignNames[i];
-            const subjectLine = subjectLines[i];
-
-            const dummyInteractions = [];
-            const numInteractions = Math.floor(Math.random() * 50) + 20; // 20 to 70 interactions per campaign
-
-            for (let j = 0; j < numInteractions; j++) {
-                const email = `user${i * numInteractions + j + 1}@example.com`;
-                const firstName = `First${i * numInteractions + j + 1}`;
-                const lastName = `Last${i * numInteractions + j + 1}`;
-                const daysAgo = Math.floor(Math.random() * 60); // Interactions over the last 60 days
-                const hoursAgo = Math.floor(Math.random() * 24);
-                const timestamp = new Date(Date.now() - (daysAgo * 86400000) - (hoursAgo * 3600000)).toISOString();
-
-                // Ensure 'received' always happens
-                dummyInteractions.push({ email, firstName, lastName, type: 'received', timestamp });
-
-                // Randomly add other interaction types
-                if (Math.random() < 0.7) { // 70% chance of opened
-                    dummyInteractions.push({ email, firstName, lastName, type: 'opened', timestamp: new Date(new Date(timestamp).getTime() + Math.random() * 3600000).toISOString() });
-                    if (Math.random() < 0.4) { // 40% chance of clicked if opened
-                        dummyInteractions.push({ email, firstName, lastName, type: 'clicked', timestamp: new Date(new Date(timestamp).getTime() + Math.random() * 7200000).toISOString() });
-                    }
-                    if (Math.random() < 0.1) { // 10% chance of replied if opened
-                        dummyInteractions.push({ email, firstName, lastName, type: 'replied', timestamp: new Date(new Date(timestamp).getTime() + Math.random() * 10800000).toISOString() });
-                    }
-                } else if (Math.random() < 0.05) { // 5% chance of bounced if not opened
-                    dummyInteractions.push({ email, firstName, lastName, type: 'bounced', timestamp: new Date(new Date(timestamp).getTime() + Math.random() * 3600000).toISOString() });
-                }
-            }
-
-            await setDoc(doc(publicCampaignsCollectionRef, campaignId), {
-                campaignName: campaignName,
-                subjectLine: subjectLine, // Add subject line
-                totalRecipients: dummyInteractions.filter(int => int.type === 'received').length,
-                interactions: dummyInteractions
-            });
-        }
-        console.log("Dummy campaigns generated.");
-        showMessage("Dummy campaigns generated successfully!", "success");
-    };
-
     // Fetch list of campaigns
     useEffect(() => {
-        if (!dbRef.current || userId === 'Loading...') {
-            return;
-        }
+        const fetchCampaigns = async () => {
+            try {
+                const response = await fetch('http://localhost:5000/api/campaigns');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const campaignsData = await response.json();
 
-        const publicCampaignsCollectionRef = collection(dbRef.current, `artifacts/${appId}/public/data/campaigns`);
+                const fetchedCampaigns = [];
+                let allInteractions = []; // To aggregate interactions for all campaigns
+                let bestSubjectLine = { subject: 'N/A', openRate: 0 };
 
-        const unsubscribe = onSnapshot(publicCampaignsCollectionRef, (snapshot) => {
-            const fetchedCampaigns = [];
-            let allInteractions = []; // To aggregate interactions for all campaigns
-            let bestSubjectLine = { subject: 'N/A', openRate: 0 };
+                campaignsData.forEach(data => {
+                    fetchedCampaigns.push({ id: data.id, name: data.campaignName, subjectLine: data.subjectLine || 'N/A' });
+                    if (data.interactions && Array.isArray(data.interactions)) {
+                        allInteractions = allInteractions.concat(data.interactions);
 
-            snapshot.forEach(doc => {
-                const data = doc.data();
-                fetchedCampaigns.push({ id: doc.id, name: data.campaignName, subjectLine: data.subjectLine || 'N/A' });
-                if (data.interactions && Array.isArray(data.interactions)) {
-                    allInteractions = allInteractions.concat(data.interactions);
-
-                    // Basic best subject line calculation (can be improved)
-                    const campaignReceived = data.interactions.filter(int => int.type === 'received').length;
-                    const campaignOpened = data.interactions.filter(int => int.type === 'opened').length;
-                    if (campaignReceived > 0) {
-                        const rate = (campaignOpened / campaignReceived) * 100;
+                        // Basic best subject line calculation (can be improved)
+                        const campaignReceived = data.interactions.filter(int => int.type === 'received').length;
+                        const campaignOpened = data.interactions.filter(int => int.type === 'opened').length;
+                        if (campaignReceived > 0) {
+                            const rate = (campaignOpened / campaignReceived) * 100;
                         if (rate > bestSubjectLine.openRate) {
                             bestSubjectLine = { subject: data.subjectLine, openRate: rate };
                         }
@@ -246,11 +114,7 @@ function App() {
             showMessage(`Error fetching campaigns list: ${error.message}`, "error");
         });
 
-        // Attempt to generate dummy campaigns if none exist
-        generateDummyCampaigns();
-
-        return () => unsubscribe();
-    }, [dbRef.current, userId, selectedCampaignId]);
+    }, []);
 
     // Filter campaigns based on search query
     useEffect(() => {
@@ -264,27 +128,15 @@ function App() {
 
     // Setup Firestore listener for the selected campaign's data and calculate KPIs/Chart Data
     useEffect(() => {
-        if (!dbRef.current) {
-            // Reset states if db is not ready
-            setOpenedEmails([]);
-            setClickedEmails([]);
-            setReceivedEmails([]);
-            setRepliedEmails([]);
-            setBouncedEmails([]);
-            setDisplayedDetails([]);
-            setDisplayedDetailsTitle('');
-            setCurrentCampaignKpis({});
-            setEngagementChartData([]);
-            setRawInteractions([]); // Reset raw interactions
-            return;
-        }
-
-        let unsubscribe;
         if (selectedCampaignId) {
-            const campaignDocRef = doc(dbRef.current, `artifacts/${appId}/public/data/campaigns`, selectedCampaignId);
-            unsubscribe = onSnapshot(campaignDocRef, (docSnapshot) => {
-                if (docSnapshot.exists()) {
-                    const campaign = docSnapshot.data();
+            const fetchCampaignData = async () => {
+                try {
+                    const response = await fetch(`http://localhost:5000/api/campaigns/${selectedCampaignId}`);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const campaign = await response.json();
+                    
                     let opened = [];
                     let clicked = [];
                     let received = [];
@@ -301,7 +153,7 @@ function App() {
                                 timestamp: interaction.timestamp ? new Date(interaction.timestamp).toLocaleString() : 'N/A',
                                 type: interaction.type // Include type for daily details
                             };
-                            currentCampaignRawInteractions.push(interaction); // Add raw interaction for chart processing
+                            currentCampaignRawInteractions.push(interaction);
 
                             if (interaction.type === 'opened') opened.push(emailData);
                             if (interaction.type === 'clicked') clicked.push(emailData);
@@ -315,7 +167,7 @@ function App() {
                     setReceivedEmails(received);
                     setRepliedEmails(replied);
                     setBouncedEmails(bounced);
-                    setRawInteractions(currentCampaignRawInteractions); // Store raw interactions for selected campaign
+                    setRawInteractions(currentCampaignRawInteractions);
 
                     // Calculate KPIs for the selected campaign
                     const totalReceived = received.length;
@@ -338,6 +190,25 @@ function App() {
                         const date = new Date(interaction.timestamp).toLocaleDateString('en-CA'); // YYYY-MM-DD
                         if (!acc[date]) {
                             acc[date] = { date, opened: 0, clicked: 0, replied: 0 };
+                        }
+                        if (interaction.type === 'opened') acc[date].opened++;
+                        if (interaction.type === 'clicked') acc[date].clicked++;
+                        if (interaction.type === 'replied') acc[date].replied++;
+                        return acc;
+                    }, {});
+
+                    const sortedDates = Object.keys(dailyData).sort((a, b) => new Date(a) - new Date(b));
+                    const chartData = sortedDates.map(date => dailyData[date]);
+                    setEngagementChartData(chartData);
+
+                } catch (error) {
+                    console.error("Error fetching campaign data:", error);
+                    showMessage(`Error fetching campaign data: ${error.message}`, "error");
+                }
+            };
+            fetchCampaignData();
+        }
+    }, [selectedCampaignId, rawInteractions]);
                         }
                         if (interaction.type === 'opened') acc[date].opened++;
                         if (interaction.type === 'clicked') acc[date].clicked++;
