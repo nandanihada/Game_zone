@@ -712,5 +712,5 @@ app.post('/api/check-domain', async (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Postback receiver server running on http://localhost:${PORT}`);
+  console.log(`Postback receiver server running on https://game-zone-islx.onrender.com:${PORT}`);
 });

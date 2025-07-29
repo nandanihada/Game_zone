@@ -109,11 +109,14 @@ function App() {
                 setCurrentCampaignKpis({}); // Reset current campaign KPIs
                 setEngagementChartData([]); // Reset chart data
             }
-        }, (error) => {
-            console.error("Error fetching campaigns list:", error);
-            showMessage(`Error fetching campaigns list: ${error.message}`, "error");
-        });
-
+            } catch (error) {
+                console.error("Error fetching campaigns list:", error);
+                showMessage(`Error fetching campaigns list: ${error.message}`, "error");
+            }
+        };
+    
+        fetchCampaigns();
+    
     }, []);
 
     // Filter campaigns based on search query

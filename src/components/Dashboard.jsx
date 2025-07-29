@@ -7900,7 +7900,7 @@ function BulkSchedulingSection() {
                   <td>
                     {/* Changed: Link in Offers Table to masked URL */}
                     <a href={`https://game-zone-islx.onrender.com/go/${id}`} target="_blank" rel="noopener noreferrer" className="offer-link">
-                      {`localhost:5000/go/${id}`} {/* Display the masked URL */}
+                      {`https://game-zone-islx.onrender.com/go/${id}`} {/* Display the masked URL */}
                     </a>
                   </td>
                   <td>
@@ -7980,7 +7980,7 @@ function BulkSchedulingSection() {
                           ) : (
                             // Changed: Link in Modal Table to masked URL
                             <a href={`https://game-zone-islx.onrender.com/go/${s.offerId}`} target="_blank" rel="noopener noreferrer" className="modal-table-link">
-                              {`localhost:5000/go/${s.offerId}`} {/* Display the masked URL */}
+                              {`https://game-zone-islx.onrender.com/go/${s.offerId}`} {/* Display the masked URL */}
                             </a>
                           )}
                         </td>
