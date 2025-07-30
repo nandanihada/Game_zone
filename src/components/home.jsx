@@ -1,145 +1,152 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import './home.css';
+import { Home, LayoutDashboard, User, LifeBuoy, Users, Gamepad, Lock, Handshake, Info, ClipboardList, Gift } from 'lucide-react';
+import DashboardPage from './Dashboard.jsx';
+import ProfilePage from './profile.jsx';
+import SupportPage from './SupportPage.jsx';
+import ReferEarnPage from './refer.jsx';
 
-// Import Lucide React icons
-import { Home, LayoutDashboard, User, LifeBuoy, Users } from 'lucide-react';
+// Reusable renderStars function
+const renderStars = (rating) => {
+  if (rating === null) return null;
+  const fullStars = Math.floor(rating);
+  const hasHalfStar = rating % 1 !== 0;
+  const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+  const stars = [];
 
-// Import individual page components
-import DashboardPage from './Dashboard.jsx'; // Assuming Dashboard.jsx exists
-import ProfilePage from './profile.jsx';     // Assuming profile.jsx exists
-import SupportPage from './SupportPage.jsx'; // Assuming SupportPage.jsx exists
-import ReferEarnPage from './refer.jsx';     // Assuming refer.jsx exists
-
+  for (let i = 0; i < fullStars; i++) {
+    stars.push(<span key={`full-${i}`} className="star-icon full-star">★</span>);
+  }
+  if (hasHalfStar) {
+    stars.push(<span key="half" className="star-icon half-star">★</span>);
+  }
+  for (let i = 0; i < emptyStars; i++) {
+    stars.push(<span key={`empty-${i}`} className="star-icon empty-star">★</span>);
+  }
+  return <div className="task-card-stars">{stars}</div>;
+};
 
 // Gradient Definitions
-const gradient1 = 'linear-gradient(to bottom right, #00C0FF, #8A2BE2, #4CAF50, #C71585)'; // Blue, Purple, Green, Dark Pink
-const gradient2 = 'linear-gradient(to bottom right, #00BFFF, #32CD32, #FFD700)'; // Blue, Green, Yellow
-const gradient3 = 'linear-gradient(to bottom right, #9932CC, #FF69B4, #1E90FF)'; // Purple, Pink, Blue
-const gradient4 = 'linear-gradient(to bottom right, #00FF7F, #4682B4, #9370DB)'; // Green, Blue, Purple
-const gradient5 = 'linear-gradient(to bottom right, #FF8C00, #4169E1, #20B2AA)'; // Orange, Blue, Green
-const gradient6 = 'linear-gradient(to bottom right, #4B0082, #1E90FF)'; // Dark Purple, Blue
+const gradient1 = 'linear-gradient(to bottom right, #00C0FF, #8A2BE2, #4CAF50, #C71585)';
+const gradient2 = 'linear-gradient(to bottom right, #00BFFF, #32CD32, #FFD700)';
 
-// Specific gradient for Your-Surveys card
-const yourSurveysGradient = 'linear-gradient(to bottom, rgba(0, 255, 0, 0.4), rgba(0, 200, 255, 0.4))';
+// Data for Offer Partners
+const offerPartners = [
+  { id: 'timewall', name: 'TimeWall', image: 'https://placehold.co/60x60/4CAF50/FFFFFF?text=TW', rating: 4.8, bonusPercentage: 20, backgroundImage: '/imgs.jpg' },
+  { id: 'torox', name: 'Torox', image: 'https://placehold.co/60x60/00BFFF/FFFFFF?text=TRX', rating: 4.5, bonusPercentage: 20, backgroundImage: '/img2.jpg' },
+  { id: 'adgatemedia', name: 'AdGateMedia', image: 'https://placehold.co/60x60/8A2BE2/FFFFFF?text=AGM', rating: 4.2, bonusPercentage: 50, backgroundImage: '/img3.jpg' },
+  { id: 'mmwall', name: 'MM Wall', image: 'https://placehold.co/60x60/FFD700/FFFFFF?text=MMW', rating: 4.0, bonusPercentage: 50, backgroundImage: '/imgs.jpg' },
+  { id: 'mychips', name: 'MyChips', image: 'https://placehold.co/60x60/FF69B4/FFFFFF?text=MC', rating: 4.1, bonusPercentage: 50, backgroundImage: '/img2.jpg' },
+  { id: 'adscendmedia', name: 'AdscendMedia', image: 'https://placehold.co/60x60/1E90FF/FFFFFF?text=ASM', rating: 4.3, bonusPercentage: 50, backgroundImage: '/img3.jpg' },
+  { id: 'revu', name: 'RevU+', image: 'https://placehold.co/60x60/00FF7F/FFFFFF?text=RU', rating: 4.6, bonusPercentage: 50, backgroundImage: '/imgs.jpg' },
+  { id: 'lootably', name: 'Lootably', image: 'https://placehold.co/60x60/4682B4/FFFFFF?text=LB', rating: 4.7, bonusPercentage: 50, backgroundImage: '/img2.jpg' },
+  { id: 'ayetstudios', name: 'Ayet Studios', image: 'https://placehold.co/60x60/9370DB/FFFFFF?text=AS', rating: 4.4, bonusPercentage: 50, backgroundImage: '/img3.jpg' },
+  { id: 'bitlabs-offer', name: 'Bitlabs', image: 'https://placehold.co/60x60/FF8C00/FFFFFF?text=BL', rating: 4.0, bonusPercentage: 50, backgroundImage: '/imgs.jpg' },
+];
 
-
-// Data for the game categories, now including 'url' for external navigation and 'cardSize' and 'gradient'
+// Data for the game categories
 const gameCategories = [
   {
-    title: 'Featured Games',
-    isGrid: true,
+    title: 'Gaming Offers',
+    isGrid: false,
     cardSize: 'large',
     gradient: gradient1,
     games: [
-      { id: 1, type: 'GAME', title: 'Tower of God', genre: 'Role Playing', rating: '4.9', image: '/image/car.jpeg', value: '$20.00', condition: 'Reach level 50', url: 'https://www.towerofgod.com/', fullDescription: 'A popular mobile RPG based on the webtoon. Dive into the world of the Tower and challenge its floors. Earn rewards by reaching specific levels and completing story acts.', completionSteps: ['Download & Install', 'Complete Tutorial', 'Reach Level 50'] },
-      { id: 2, type: 'GAME', title: 'BrownDust2', genre: 'Role Playing', rating: '4.4', image: '/image/bro.jpeg', value: '$15.00', condition: 'Complete Act 3', url: 'https://www.browndust2.com/', fullDescription: 'A tactical turn-based RPG with stunning anime-style graphics. Collect unique characters and build your ultimate team. This task requires completing the main story up to Act 3.', completionSteps: ['Download & Install', 'Complete Act 1', 'Complete Act 2', 'Complete Act 3'] },
-      { id: 3, type: 'GAME', title: 'wuthering waaves', genre: 'Role Playing', rating: '4.6', image: '/image/wav.jpeg', value: '$25.00', condition: 'Defeat Calamity', url: 'https://wutheringwaves.kurogames.com/', fullDescription: 'An open-world action RPG with a vast world to explore and challenging bosses. Master unique combat styles and uncover the mysteries of this post-apocalyptic world. Defeat the Calamity boss to earn this reward.', completionSteps: ['Download & Install', 'Reach designated area', 'Defeat Calamity Boss'] },
-      { id: 4, type: 'GAME', title: 'Genshin Impact', genre: 'Action RPG', rating: '4.7', image: '/image/li.jpeg', value: '$30.00', condition: 'Unlock Inazuma', url: 'https://genshin.hoyoverse.com/', fullDescription: 'Explore the vast open world of Teyvat, solve puzzles, and engage in elemental combat. This task requires you to progress through the main story until you unlock the Inazuma region.', completionSteps: ['Download & Install', 'Complete Archon Quests', 'Unlock Inazuma Region'] },
-      { id: 5, type: 'GAME', title: 'Honkai Star Rail', genre: 'Turn-based RPG', rating: '4.8', image: '/image/tu.jpeg', value: '$22.00', condition: 'Clear Forgotten Hall', url: 'https://hsr.hoyoverse.com/', fullDescription: 'Embark on an interstellar journey aboard the Astral Express in this turn-based RPG. Strategize your team and clear the challenging Forgotten Hall content to earn your reward.', completionSteps: ['Download & Install', 'Reach Equilibrium Level 2', 'Clear Forgotten Hall Stage 1'] },
-      { id: 11, type: 'GAME', title: 'PUBG Mobile', genre: 'Battle Royale', rating: '4.2', image: '/image/ba.jpeg', value: '$10.00', condition: 'Win 5 matches', url: 'https://pubgmobile.com/', fullDescription: 'Jump into intense battle royale action. Survive against 99 other players to be the last one standing. Win 5 classic matches to complete this task.', completionSteps: ['Download & Install', 'Complete 5 Classic Matches', 'Achieve 5 Wins'] },
-      { id: 12, type: 'GAME', title: 'Free Fire MAX', genre: 'Battle Royale', rating: '4.3', image: '/image/fr.jpeg', value: '$8.00', condition: 'Get 10 kills', url: 'https://ff.garena.com/', fullDescription: 'A fast-paced battle royale experience optimized for mobile. Land, loot, and eliminate opponents. Get a total of 10 kills across multiple matches to earn your reward.', completionSteps: ['Download & Install', 'Play Matches', 'Achieve 10 Kills'] },
+      { id: 1, type: 'GAME', title: 'Summer Break', genre: 'Role Playing', rating: '4.9', image: '/app.jpeg', value: '$5.62', condition: 'Reach level 50', url: 'https://www.towerofgod.com/', fullDescription: 'A popular mobile RPG based on the webtoon. Dive into the world of the Tower and challenge its floors. Earn rewards by reaching specific levels and completing story acts.', completionSteps: ['Download & Install', 'Complete Tutorial', 'Reach Level 50'] },
+      { id: 2, type: 'GAME', title: 'Ever Legion', genre: 'Role Playing', rating: '4.4', image: '/ba.jpeg', value: '$3.30', condition: 'Complete Act 3', url: 'https://www.browndust2.com/', fullDescription: 'A tactical turn-based RPG with stunning anime-style graphics. Collect unique characters and build your ultimate team. This task requires completing the main story up to Act 3.', completionSteps: ['Download & Install', 'Complete Act 1', 'Complete Act 2', 'Complete Act 3'] },
+      { id: 3, type: 'GAME', title: 'Colorwood Sort', genre: 'Role Playing', rating: '4.6', image: '/bes.jpeg', value: '$6.02', condition: 'Defeat Calamity', url: 'https://wutheringwaves.kurogames.com/', fullDescription: 'An open-world action RPG with a vast world to explore and challenging bosses. Master unique combat styles and uncover the mysteries of this post-apocalyptic world. Defeat the Calamity boss to earn this reward.', completionSteps: ['Download & Install', 'Reach designated area', 'Defeat Calamity Boss'] },
+      { id: 4, type: 'GAME', title: 'Smash Party', genre: 'Action RPG', rating: '4.7', image: '/call.jpeg', value: '$11.59', condition: 'Unlock Inazuma', url: 'https://genshin.hoyoverse.com/', fullDescription: 'Explore the vast open world of Teyvat, solve puzzles, and engage in elemental combat. This task requires you to progress through the main story until you unlock the Inazuma region.', completionSteps: ['Download & Install', 'Complete Archon Quests', 'Unlock Inazuma Region'] },
+      { id: 5, type: 'GAME', title: 'Sea Block 1010', genre: 'Turn-based RPG', rating: '4.8', image: '/civi.jpeg', value: '$3.02', condition: 'Clear Forgotten Hall', url: 'https://hsr.hoyoverse.com/', fullDescription: 'Embark on an interstellar journey aboard the Astral Express in this turn-based RPG. Strategize your team and clear the challenging Forgotten Hall content to earn your reward.', completionSteps: ['Download & Install', 'Reach Equilibrium Level 2', 'Clear Forgotten Hall Stage 1'] },
+      { id: 11, type: 'GAME', title: 'Multi Dice', genre: 'Battle Royale', rating: '4.2', image: '/dead.jpeg', value: '$26.00', condition: 'Win 5 matches', url: 'https://pubgmobile.com/', fullDescription: 'Jump into intense battle royale action. Survive against 99 other players to be the last one standing. Win 5 classic matches to complete this task.', completionSteps: ['Download & Install', 'Complete 5 Classic Matches', 'Achieve 5 Wins'] },
+      { id: 12, type: 'GAME', title: 'Vegas Keno by...', genre: 'Battle Royale', rating: '4.3', image: '/dia.jpeg', value: '$48.11', condition: 'Get 10 kills', url: 'https://ff.garena.com/', fullDescription: 'A fast-paced battle royale experience optimized for mobile. Land, loot, and eliminate opponents. Get a total of 10 kills across multiple matches to earn your reward.', completionSteps: ['Download & Install', 'Play Matches', 'Achieve 10 Kills'] },
     ]
   },
   {
-    title: 'Play your favorites on the big screen',
-    isGrid: true,
+    title: 'Other Offers',
+    isGrid: false,
     cardSize: 'small',
-    gradient: gradient1,
+    gradient: gradient2,
     games: [
-      { id: 6, type: 'GAME', title: 'Gems of War', genre: 'Puzzle - RPG', rating: '4.0', image: '/war.jpeg', value: '$12.00', condition: 'Collect 100 gems', url: 'https://www.gemsofwar.com/', fullDescription: 'A unique puzzle RPG where you match gems to cast spells and defeat enemies. Collect 100 gems in total to complete this task.', completionSteps: ['Download & Install', 'Play Game', 'Collect 100 Gems'] },
-      { id: 7, type: 'APP', title: 'Airline Manager', genre: 'Simulation', rating: '4.1', image: '/air.jpeg', value: '$18.00', condition: 'Own 5 airlines', url: 'https://www.airlines-manager.com/', fullDescription: 'Build and manage your own airline empire. Purchase planes, create routes, and expand your network. Own 5 active airlines to complete this task.', completionSteps: ['Download & Install', 'Create Airline', 'Purchase 5 Airlines'] },
-      { id: 8, type: 'GAME', title: 'WGT Golf', genre: 'Sports', rating: '3.6', image: '/wd.jpeg', value: '$7.00', condition: 'Score -5', url: 'https://www.wgt.com/', fullDescription: 'Experience realistic golf on famous courses. Improve your swing and sink those putts. Achieve a score of -5 or better in a single round to earn your reward.', completionSteps: ['Download & Install', 'Play a Round', 'Achieve Score of -5 or better'] },
-      { id: 9, type: 'GAME', title: 'Call of Duty', genre: 'Action - Shooter', rating: '4.5', image: '/call.jpeg', value: '$20.00', condition: 'Reach Prestige 1', url: 'https://www.callofduty.com/', fullDescription: 'Engage in fast-paced multiplayer combat or thrilling campaign missions. Level up your rank and reach Prestige 1 to complete this task.', completionSteps: ['Download & Install', 'Play Multiplayer/Campaign', 'Reach Prestige 1'] },
-      { id: 10, type: 'GAME', title: 'Asphalt 9', genre: 'Racing - Arcade', rating: '4.6', image: '/bes.jpeg', value: '$14.00', condition: 'Win 10 races', url: 'https://asphaltlegends.com/', fullDescription: 'Experience high-octane arcade racing with stunning graphics. Collect and upgrade dream cars. Win 10 races in any game mode to earn your reward.', completionSteps: ['Download & Install', 'Participate in Races', 'Win 10 Races'] },
-      { id: 13, type: 'GAME', title: 'Minecraft', genre: 'Sandbox', rating: '4.6', image: '/mini.jpeg', value: '$28.00', condition: 'Build a castle', url: 'https://www.minecraft.net/', fullDescription: 'Unleash your creativity in a blocky, procedurally generated world. Build anything you can imagine. Construct a substantial castle to complete this task.', completionSteps: ['Download & Install', 'Gather Resources', 'Build a Castle'] },
-      { id: 14, type: 'APP', title: 'Roblox', genre: 'Adventure', rating: '4.4', image: '/rob.jpeg', value: '$10.00', condition: 'Play 5 games', url: 'https://www.roblox.com/', fullDescription: 'Discover millions of immersive 3D experiences created by a global community. Play 5 different games within the Roblox platform to earn your reward.', completionSteps: ['Download & Install', 'Launch App', 'Play 5 Different Games'] },
+        { id: 101, type: 'APP', title: 'Alibaba.com', genre: 'Shopping', rating: '4.0', image: '/epi.jpeg', value: '$0.21', condition: 'Register & Browse', url: '#', fullDescription: 'Sign up for Alibaba.com and browse through 5 product categories.', completionSteps: ['Register', 'Browse 5 categories'] },
+        { id: 102, type: 'APP', title: 'Catalyse Resea..', genre: 'Research', rating: '4.1', image: '/fact.jpeg', value: '$0.24', condition: 'Complete 1 survey', url: '#', fullDescription: 'Complete your first survey on Catalyse Research platform.', completionSteps: ['Sign Up', 'Complete 1 survey'] },
+        { id: 103, type: 'APP', title: 'Mintalise', genre: 'Health', rating: '3.8', image: '/g2.jpeg', value: '$0.04', condition: 'Install & Open', url: '#', fullDescription: 'Install the Mintalise app and open it for the first time.', completionSteps: ['Install App', 'Open App'] },
+        { id: 104, type: 'APP', title: 'Vegas Keno by...', genre: 'Casino', rating: '4.2', image: '/g3.jpeg', value: '$48.11', condition: 'Reach Level 10', url: '#', fullDescription: 'Play Vegas Keno and reach level 10 to earn your reward.', completionSteps: ['Install App', 'Play Game', 'Reach Level 10'] },
     ]
   },
-  {
-    title: 'New Releases',
-    isGrid: true,
-    cardSize: 'large',
-    gradient: gradient1,
-    games: [
-      { id: 15, type: 'GAME', title: 'Apex Legends', genre: 'Battle Royale', rating: '4.0', image: '/app.jpeg', value: '$16.00', condition: 'Get 3 wins', url: 'https://www.ea.com/games/apex-legends', fullDescription: 'A squad-based battle royale game with unique legends and abilities. Coordinate with your team to be the last squad standing. Secure 3 wins to complete this task.', completionSteps: ['Download & Install', 'Play Battle Royale', 'Achieve 3 Wins'] },
-      { id: 16, type: 'GAME', title: 'Diablo Immortal', genre: 'Action RPG', rating: '3.9', image: '/dia.jpeg', value: '$22.00', condition: 'Clear Dungeon 5', url: 'https://diabloimmortal.blizzard.com/', fullDescription: 'An action RPG set in the Diablo universe. Explore dark dungeons, collect loot, and battle hordes of demons. Clear any Dungeon 5 times to earn your reward.', completionSteps: ['Download & Install', 'Reach Level 30', 'Clear any Dungeon 5 times'] },
-      { id: 17, type: 'GAME', title: 'Valorant Mobile', genre: 'Tactical Shooter', rating: '4.1', image: '/val.jpeg', value: '$13.00', condition: 'Win 7 rounds', url: 'https://playvalorant.com/', fullDescription: 'A 5v5 character-based tactical shooter. Master unique agent abilities and precise gunplay. Win 7 rounds across multiple matches to complete this task.', completionSteps: ['Download & Install', 'Play Matches', 'Win 7 Rounds'] },
-      { id: 18, type: 'GAME', title: 'Wild Rift', genre: 'MOBA', rating: '4.5', image: '/lea.jpeg', value: '$19.00', condition: 'Achieve Gold Rank', url: 'https://wildrift.leagueoflegends.com/', fullDescription: 'The mobile version of League of Legends. Team up with friends, choose your champion, and destroy the enemy Nexus. Achieve Gold Rank in ranked play to earn this reward.', completionSteps: ['Download & Install', 'Play Ranked Games', 'Achieve Gold Rank'] },
-    ]
-  },
-  {
-    title: 'Action Packed Adventures',
-    isGrid: true,
-    cardSize: 'medium',
-    gradient: gradient1,
-    games: [
-      { id: 19, type: 'GAME', title: 'GTA: San Andreas', genre: 'Action-Adventure', rating: '4.7', image: '/gta.jpeg', value: '$25.00', condition: 'Complete 5 missions', url: '#', fullDescription: 'Return to Grove Street and explore the vast open world of San Andreas. Complete 5 main story missions to earn your reward.', completionSteps: ['Download & Install', 'Start New Game', 'Complete 5 Story Missions'] },
-      { id: 20, type: 'GAME', title: 'Max Payne Mobile', genre: 'Action-Shooter', rating: '4.3', image: '/max.jpeg', value: '$11.00', condition: 'Clear Chapter 3', url: '#', fullDescription: 'Experience the classic neo-noir action shooter on mobile. Dive into bullet time and uncover a dark conspiracy. Clear Chapter 3 of the main story to complete this task.', completionSteps: ['Download & Install', 'Start New Game', 'Clear Chapter 3'] },
-      { id: 21, type: 'GAME', title: 'Dead Trigger 2', genre: 'FPS', rating: '4.2', image: '/dead.jpeg', value: '$9.00', condition: 'Survive 10 waves', url: '#', fullDescription: 'A first-person zombie shooter with intense action. Survive waves of undead and complete objectives. Survive 10 waves in any survival mission to earn your reward.', completionSteps: ['Download & Install', 'Play Survival Mission', 'Survive 10 Waves'] },
-    ]
-  },
-  // New sections with different gradient combinations and sizes
-  {
-    title: 'Strategy & Simulation',
-    isGrid: true,
-    cardSize: 'xl',
-    gradient: gradient2, // Blue, Green, Yellow
-    games: [
-      { id: 22, type: 'GAME', title: 'Age of Empires', genre: 'RTS', rating: '4.0', image: '/age.jpeg', value: '$18.00', condition: 'Win 3 skirmishes', url: '#', fullDescription: 'Build your empire and conquer your enemies in this classic real-time strategy game. Win 3 skirmish matches against AI to complete this task.', completionSteps: ['Download & Install', 'Complete Tutorial', 'Win 3 Skirmish Matches'] },
-      { id: 23, type: 'GAME', title: 'Civilization VI', genre: 'Strategy', rating: '4.5', image: '/civi.jpeg', value: '$35.00', condition: 'Achieve Science Victory', url: '#', fullDescription: 'Lead your civilization from the Stone Age to the Information Age. Achieve a Science Victory in a standard game to earn this reward.', completionSteps: ['Download & Install', 'Start New Game', 'Achieve Science Victory'] },
-      { id: 24, type: 'GAME', title: 'Factorio', genre: 'Simulation', rating: '4.8', image: '/fact.jpeg', value: '$40.00', condition: 'Launch a rocket', url: '#', fullDescription: 'Build and maintain factories, automate production, and defend against alien creatures. Launch a rocket to complete the game and earn your reward.', completionSteps: ['Download & Install', 'Build Factory', 'Launch Rocket'] },
-      { id: 25, type: 'GAME', title: 'Cities: Skylines', genre: 'Simulation', rating: '4.3', image: '/epi.jpeg', value: '$28.00', condition: 'Reach 50k population', url: '#', fullDescription: 'Design and manage your own city. Build infrastructure, manage services, and grow your population to 50,000 citizens.', completionSteps: ['Download & Install', 'Build City', 'Reach 50,000 Population'] },
-    ]
-  },
-  {
-    title: 'Casual & Puzzle Fun',
-    isGrid: true,
-    cardSize: 'small',
-    gradient: gradient3, // Purple, Pink, Blue
-    games: [
-      { id: 26, type: 'GAME', title: 'Candy Crush Saga', genre: 'Puzzle', rating: '4.6', image: '/g2.jpeg', value: '$5.00', condition: 'Clear Level 50', url: '#', fullDescription: 'Match candies and solve puzzles across hundreds of levels. Clear level 50 to earn your reward.', completionSteps: ['Download & Install', 'Play Game', 'Clear Level 50'] },
-      { id: 27, type: 'GAME', title: 'Tetris Blitz', genre: 'Puzzle', rating: '4.2', image: '/g3.jpeg', value: '$4.00', condition: 'Score 100k', url: '#', fullDescription: 'Experience the classic block-stacking puzzle game with a modern twist. Achieve a score of 100,000 points in one game.', completionSteps: ['Download & Install', 'Play Game', 'Score 100,000 Points'] },
-      { id: 28, type: 'GAME', title: 'Among Us', genre: 'Social Deduction', rating: '4.1', image: '/g4.jpeg', value: '$7.00', condition: 'Win 5 games', url: '#', fullDescription: 'Work together to complete tasks, but beware of the Impostor among you. Win 5 games as either Crewmate or Impostor.', completionSteps: ['Download & Install', 'Play Games', 'Win 5 Games'] },
-      { id: 29, type: 'GAME', title: 'Subway Surfers', genre: 'Endless Runner', rating: '4.4', image: '/g5.jpeg', value: '$6.00', condition: 'Collect 5000 coins', url: '#', fullDescription: 'Dash as fast as you can, dodge trains, and collect coins in this endless runner game. Collect 5000 coins in total.', completionSteps: ['Download & Install', 'Play Game', 'Collect 5000 Coins'] },
-    ]
-  },
-  {
-    title: 'Immersive Worlds',
-    isGrid: true,
-    cardSize: 'medium',
-    gradient: gradient4, // Green, Blue, Purple
-    games: [
-      { id: 30, type: 'GAME', title: 'The Elder Scrolls: Blades', genre: 'RPG', rating: '3.8', image: '/g6.jpeg', value: '$25.00', condition: 'Clear 10 Abyss levels', url: '#', fullDescription: 'Become the ultimate warrior, explore dungeons, and rebuild your town in this Elder Scrolls adventure. Clear 10 levels in the Abyss mode.', completionSteps: ['Download & Install', 'Complete Tutorial', 'Clear 10 Abyss Levels'] },
-      { id: 31, type: 'GAME', title: 'Cyberpunk 2077 Mobile', genre: 'Action RPG', rating: '4.0', image: '/g7.jpeg', value: '$30.00', condition: 'Complete Act 1', url: '#', fullDescription: 'Explore the vast, neon-drenched Night City in this open-world action RPG. Complete Act 1 of the main story.', completionSteps: ['Download & Install', 'Create Character', 'Complete Act 1'] },
-      { id: 32, type: 'GAME', title: 'Red Dead Redemption Mobile', genre: 'Action-Adventure', rating: '4.5', image: '/g8.jpeg', value: '$35.00', condition: 'Complete 5 stranger missions', url: '#', fullDescription: 'Experience the epic Western adventure on your mobile device. Complete 5 stranger missions across the open world.', completionSteps: ['Download & Install', 'Start New Game', 'Complete 5 Stranger Missions'] },
-      { id: 33, type: 'GAME', title: 'Genshin Impact', genre: 'Action RPG', rating: '4.7', image: '/g9.jpeg', value: '$30.00', condition: 'Unlock Inazuma', url: 'https://genshin.hoyoverse.com/', fullDescription: 'Explore the vast open world of Teyvat, solve puzzles, and engage in elemental combat. This task requires you to progress through the main story until you unlock the Inazuma region.', completionSteps: ['Download & Install', 'Complete Archon Quests', 'Unlock Inazuma Region'] },
-    ]
-  },
-  {
-    title: 'Dark & Mysterious', // New section title
-    isGrid: true,
-    cardSize: 'large',
-    gradient: gradient6, // Dark Purple, Blue
-    games: [
-      { id: 34, type: 'GAME', title: 'Limbo', genre: 'Puzzle-Platformer', rating: '4.6', image: '/g11.jpeg', value: '$10.00', condition: 'Complete the game', url: '#', fullDescription: 'A dark and atmospheric puzzle-platformer. Navigate a dangerous world to find your sister. Complete the entire game to earn your reward.', completionSteps: ['Download & Install', 'Play through levels', 'Complete the game'] },
-      { id: 35, type: 'GAME', title: 'Inside', genre: 'Puzzle-Platformer', rating: '4.7', image: '/g12.jpeg', value: '$12.00', condition: 'Find all secrets', url: '#', fullDescription: 'From the creators of Limbo, a haunting and visually stunning puzzle-platformer. Discover all hidden secrets to earn this reward.', completionSteps: ['Download & Install', 'Play through levels', 'Find all secrets'] },
-      { id: 36, type: 'GAME', title: 'Little Nightmares', genre: 'Horror-Platformer', rating: '4.5', image: '/g13.jpeg', value: '$15.00', condition: 'Escape The Maw', url: '#', fullDescription: 'A creepy and atmospheric puzzle-platformer where you play as Six, a small girl trapped in a mysterious vessel. Escape The Maw to complete the task.', completionSteps: ['Download & Install', 'Play through chapters', 'Escape The Maw'] },
-      { id: 37, type: 'GAME', title: 'Amnesia: The Dark Descent', genre: 'Horror', rating: '4.2', image: '/g14.jpeg', value: '$20.00', condition: 'Reach the Inner Sanctum', url: '#', fullDescription: 'A first-person survival horror game focused on exploration and puzzle-solving. Navigate a terrifying castle and reach the Inner Sanctum.', completionSteps: ['Download & Install', 'Explore Castle', 'Reach Inner Sanctum'] },
-    ]
-  }
 ];
 
-// Data for Survey Partners
-const surveyPartners = [
-  { id: 'cpax', name: 'CPX Research', image: 'https://placehold.co/60x60/228B22/FFFFFF?text=CPX', rating: 4.5, type: 'partner' },
-  { id: 'bitlabs', name: 'BitLabs', image: 'https://placehold.co/60x60/1E90FF/FFFFFF?text=Bit', rating: 4.0, type: 'partner' },
-  { id: 'your-surveys', name: 'Your-Surveys', image: 'https://placehold.co/60x60/8A2BE2/FFFFFF?text=Your', rating: 4.2, type: 'survey-card', specialText: 'View surveys', gradient: yourSurveysGradient },
-  { id: 'inbrain', name: 'Inbrain.AI', image: 'https://placehold.co/60x60/DC143C/FFFFFF?text=Inb', rating: 3.8, type: 'partner' },
-  { id: 'tapresearch', name: 'TapResearch', image: 'https://placehold.co/60x60/FF8C00/FFFFFF?text=Tap', rating: 4.1, type: 'partner' },
-  { id: 'pollfish', name: 'Pollfish', image: 'https://placehold.co/60x60/FF4500/FFFFFF?text=Pol', rating: 3.9, type: 'partner' },
-  { id: 'prime-surveys', name: 'Prime Surveys', image: 'https://placehold.co/60x60/4682B4/FFFFFF?text=Pri', rating: 4.3, type: 'partner' },
+// Adjust initialTasks for Featured Surveys
+const initialTasks = [
+  {
+    id: 't_premium',
+    title: 'Premium Survey',
+    shortTitle: 'Premium...',
+    description: 'Exclusive high-reward survey.',
+    fullDescription: 'This is a premium survey offering a higher reward for your valuable insights. It may require more detailed responses. Complete it to unlock other surveys.',
+    completionSteps: ['Click "Start Survey"', 'Complete all sections', 'Submit'],
+    estimatedTime: 15,
+    reward: 10,
+    displayValue: '$0.10',
+    difficulty: 'Medium',
+    type: 'surveys',
+    tags: ['Premium', 'High Reward'],
+    isCompleted: false,
+    progress: 0,
+    image: '/g4.jpeg',
+    displayCondition: '2 mins',
+    cardSize: 'mini-survey',
+    gradient: 'linear-gradient(to bottom right, #FFD700, #FFA500)',
+    isPremium: true,
+    isLocked: false,
+    starRating: 4.5,
+  },
+  {
+    id: 't_available_regular',
+    title: 'Complete Daily Survey',
+    shortTitle: 'High-paying survey',
+    description: 'Share your opinions on various topics and earn coins.',
+    fullDescription: 'Participate in our daily survey. It covers a range of topics from consumer habits to social trends. Your feedback helps companies improve their products and services. Ensure you answer truthfully to qualify for the reward.',
+    completionSteps: ['Click "Start Survey"', 'Answer all questions', 'Submit your responses'],
+    estimatedTime: 10,
+    reward: 30,
+    displayValue: '$0.30',
+    difficulty: 'Easy',
+    type: 'surveys',
+    tags: ['New', 'High Reward'],
+    isCompleted: false,
+    progress: 0,
+    image: '/g5.jpeg',
+    displayCondition: '2 mins',
+    cardSize: 'mini-survey',
+    gradient: 'linear-gradient(to bottom right, #00FF7F, #00BFFF)',
+    isPremium: false,
+    isLocked: false,
+    starRating: 4.0,
+  },
+  ...Array.from({ length: 20 }).map((_, i) => ({
+    id: `t_locked_${i + 1}`,
+    title: `Locked Survey ${i + 1}`,
+    shortTitle: 'High-paying survey',
+    description: 'Complete an available survey to unlock.',
+    fullDescription: 'This survey is currently locked. Complete any available survey to gain access to this and other locked surveys.',
+    completionSteps: [],
+    estimatedTime: 0,
+    reward: 0,
+    displayValue: `$${(Math.random() * (10 - 1) + 1).toFixed(2)}`,
+    difficulty: 'Locked',
+    type: 'surveys',
+    tags: ['Locked'],
+    isCompleted: false,
+    progress: 0,
+    image: `/g6.jpeg`,
+    displayCondition: `${Math.floor(Math.random() * (15 - 2) + 2)} mins`,
+    cardSize: 'mini-survey',
+    gradient: 'linear-gradient(to bottom right, #2e4d4d, #00ffcc)',
+    isPremium: false,
+    isLocked: true,
+    starRating: null,
+  })),
 ];
-
 
 // Task categories for the filter dropdown
 const categories = [
@@ -148,226 +155,20 @@ const categories = [
   { id: 'offers', name: 'Offers' },
   { id: 'games', name: 'Games' },
   { id: 'watch-videos', name: 'Watch Videos' },
-  // Removed 'Refer & Earn' category
 ];
 
-// Initial tasks with images and displayCondition
-const initialTasks = [
-  {
-    id: 't1',
-    title: 'Complete Daily Survey',
-    description: 'Share your opinions on various topics and earn coins.',
-    fullDescription: 'Participate in our daily survey. It covers a range of topics from consumer habits to social trends. Your feedback helps companies improve their products and services. Ensure you answer truthfully to qualify for the reward.',
-    completionSteps: ['Click "Start Survey"', 'Answer all questions', 'Submit your responses'],
-    estimatedTime: 10, // minutes
-    reward: 150, // coins
-    difficulty: 'Easy',
-    type: 'surveys',
-    tags: ['New', 'High Reward'],
-    isCompleted: false,
-    progress: 0,
-    image: 'https://placehold.co/60x60/FF5733/FFFFFF?text=S', // Updated to medium icon
-    displayCondition: 'Complete the survey', // New property for compact display
-    cardSize: 'medium',
-    gradient: gradient1, // Default gradient for tasks
-  },
-  {
-    id: 't2',
-    title: 'Play "Coin Rush" Game',
-    description: 'Reach level 5 in our new arcade game.',
-    fullDescription: 'Download and play "Coin Rush" on your mobile device. Reach level 5 to earn the full reward. Make sure to link your account to track progress. Fun and challenging!',
-    completionSteps: ['Download Game', 'Install & Launch', 'Link Account', 'Reach Level 5'],
-    estimatedTime: 25,
-    reward: 300,
-    difficulty: 'Medium',
-    type: 'games',
-    tags: ['Limited Time'],
-    isCompleted: false,
-    progress: 0,
-    image: 'https://placehold.co/70x70/33FF57/FFFFFF?text=CR', // Updated to large icon
-    displayCondition: 'Reach level 5',
-    cardSize: 'xl',
-    gradient: gradient1, // Default gradient for tasks
-  },
-  {
-    id: 't3',
-    title: 'Watch 3 Product Review Videos',
-    description: 'View short videos and answer a quick question.',
-    fullDescription: 'Watch three short product review videos (approx. 2-3 minutes each). After each video, a simple multiple-choice question will appear to confirm your engagement. Complete all three to earn your coins.',
-    completionSteps: ['Watch Video 1', 'Answer Question 1', 'Watch Video 2', 'Answer Question 2', 'Watch Video 3', 'Answer Question 3'],
-    estimatedTime: 15,
-    reward: 100,
-    difficulty: 'Easy',
-    type: 'watch-videos',
-    tags: [],
-    isCompleted: false,
-    progress: 0,
-    image: 'https://placehold.co/60x60/3357FF/FFFFFF?text=V', // Updated to medium icon
-    displayCondition: 'Watch 3 videos',
-    cardSize: 'medium',
-    gradient: gradient1, // Default gradient for tasks
-  },
-  {
-    id: 't4',
-    title: 'Sign Up for Newsletter Offer',
-    description: 'Subscribe to a partner newsletter for exclusive deals.',
-    fullDescription: 'Sign up for our partner\'s daily newsletter. You must confirm your subscription via email to qualify. You can unsubscribe at any time after receiving your reward.',
-    completionSteps: ['Click "Sign Up"', 'Enter Email', 'Confirm Subscription via Email'],
-    estimatedTime: 5,
-    reward: 80,
-    difficulty: 'Easy',
-    type: 'offers',
-    tags: [],
-    isCompleted: true,
-    progress: 100,
-    image: 'https://placehold.co/50x50/FF33A1/FFFFFF?text=O', // Updated to small icon
-    displayCondition: 'Confirm subscription',
-    cardSize: 'small',
-    gradient: gradient1, // Default gradient for tasks
-  },
-  {
-    id: 't6',
-    title: 'Complete Advanced Market Research',
-    description: 'In-depth survey on consumer electronics.',
-    fullDescription: 'A detailed market research survey focusing on consumer electronics. This survey requires more time and thought but offers a higher reward. Your responses will be used to shape future product development.',
-    completionSteps: ['Click "Start Survey"', 'Complete all sections', 'Submit'],
-    estimatedTime: 30,
-    reward: 400,
-    difficulty: 'Medium',
-    type: 'surveys',
-    tags: ['High Reward'],
-    isCompleted: false,
-    progress: 0,
-    image: 'https://placehold.co/60x60/33FFF5/FFFFFF?text=MR', // Updated to medium icon
-    displayCondition: 'Complete all sections',
-    cardSize: 'medium',
-    gradient: gradient1, // Default gradient for tasks
-  },
-  {
-    id: 't7',
-    title: 'Install & Use "Fitness Tracker" App',
-    description: 'Use the app for 3 days.',
-    fullDescription: 'Download the "Fitness Tracker" app and log your activities for 3 consecutive days. Ensure the app is installed via our link to track your progress. A great way to earn while staying healthy!',
-    completionSteps: ['Download App', 'Install', 'Log Activity Day 1', 'Log Activity Day 2', 'Log Activity Day 3'],
-    estimatedTime: 72 * 60, // 3 days
-    reward: 500,
-    difficulty: 'Medium',
-    type: 'offers',
-    tags: ['New'],
-    isCompleted: false,
-    progress: 0,
-    image: 'https://placehold.co/50x50/FF8C33/FFFFFF?text=FA', // Updated to small icon
-    displayCondition: 'Use app for 3 days',
-    cardSize: 'small',
-    gradient: gradient1, // Default gradient for tasks
-  },
-  {
-    id: 't8',
-    title: 'Watch "Gaming Highlights" Playlist',
-    description: 'Watch a playlist of 5 gaming highlight videos.',
-    fullDescription: 'Enjoy a curated playlist of 5 exciting gaming highlight videos. Each video is short and engaging. Complete the entire playlist to receive your reward.',
-    completionSteps: ['Start Playlist', 'Watch Video 1', 'Watch Video 2', 'Watch Video 3', 'Watch Video 4', 'Watch Video 5'],
-    estimatedTime: 20,
-    reward: 120,
-    difficulty: 'Easy',
-    type: 'watch-videos',
-    tags: [],
-    isCompleted: false,
-    progress: 0,
-    image: 'https://placehold.co/60x60/33FF8C/FFFFFF?text=GH', // Updated to medium icon
-    displayCondition: 'Watch 5 videos',
-    cardSize: 'medium',
-    gradient: gradient1, // Default gradient for tasks
-  },
-  {
-    id: 't9',
-    title: 'Play PUBG MOBILE',
-    description: 'Achieve a Top 10 finish in 3 classic matches.',
-    fullDescription: 'Download PUBG MOBILE and complete 3 classic matches with a Top 10 finish to earn your reward. Link your game account to track progress.',
-    completionSteps: ['Download PUBG MOBILE', 'Install & Launch', 'Link Account', 'Achieve Top 10 in 3 Classic Matches'],
-    estimatedTime: 45,
-    reward: 350,
-    difficulty: 'Medium',
-    type: 'games',
-    tags: ['New', 'Popular'],
-    isCompleted: false,
-    progress: 0,
-    image: 'https://placehold.co/70x70/FF3333/FFFFFF?text=PM', // Updated to large icon
-    displayCondition: 'Top 10 in 3 matches',
-    cardSize: 'small',
-    gradient: gradient1, // Default gradient for tasks
-  },
-  {
-    id: 't10',
-    title: 'Reach City Hall Level 8 in Rise of Kingdoms',
-    description: 'Build your city and reach City Hall Level 8.',
-    fullDescription: 'Download Rise of Kingdoms and strategically develop your city to reach City Hall Level 8. This task requires consistent play and resource management.',
-    completionSteps: ['Download Rise of Kingdoms', 'Install & Launch', 'Link Account', 'Reach City Hall Level 8'],
-    estimatedTime: 180,
-    reward: 700,
-    difficulty: 'Hard',
-    type: 'games',
-    tags: ['High Reward'],
-    isCompleted: false,
-    progress: 0,
-    image: 'https://placehold.co/70x70/33A1FF/FFFFFF?text=RoK', // Updated to large icon
-    displayCondition: 'Reach City Hall Level 8',
-    cardSize: 'medium',
-    gradient: gradient1, // Default gradient for tasks
-  },
-  {
-    id: 't11',
-    title: 'Win 5 Matches in 8 Ball Pool',
-    description: 'Show off your skills and win 5 matches.',
-    fullDescription: 'Download 8 Ball Pool and win 5 standard matches. Your wins will be automatically tracked once your account is linked.',
-    completionSteps: ['Download 8 Ball Pool', 'Install & Launch', 'Link Account', 'Win 5 Matches'],
-    estimatedTime: 30,
-    reward: 200,
-    difficulty: 'Easy',
-    type: 'games',
-    tags: [],
-    isCompleted: false,
-    progress: 0,
-    image: 'https://placehold.co/60x60/FFD700/000000?text=8BP', // Updated to medium icon
-    displayCondition: 'Win 5 matches',
-    cardSize: 'medium',
-    gradient: gradient1, // Default gradient for tasks
-  },
-  {
-    id: 't12',
-    title: 'Collect 1000 Coins in Subway Surfers',
-    description: 'Run, dodge, and collect coins in Subway Surfers.',
-    fullDescription: 'Play Subway Surfers and collect a total of 1000 coins across multiple runs. Link your game account to ensure coin collection is tracked.',
-    completionSteps: ['Download Subway Surfers', 'Install & Launch', 'Link Account', 'Collect 1000 Coins'],
-    estimatedTime: 20,
-    reward: 180,
-    difficulty: 'Easy',
-    type: 'games',
-    tags: [],
-    isCompleted: false,
-    progress: 0,
-    image: 'https://placehold.co/50x50/8A2BE2/FFFFFF?text=SS', // Updated to small icon
-    displayCondition: 'Collect 1000 coins',
-    cardSize: 'small',
-    gradient: gradient1, // Default gradient for tasks
-  },
-];
-
-// New LotteryDetailModal Component
+// New LotteryModal Component
 function LotteryDetailModal({ onClose }) {
   const [activeTab, setActiveTab] = useState('prizes');
-  const [howItWorksExpanded, setHowItWorksExpanded] = useState(false);
   const [timeLeft, setTimeLeft] = useState('');
 
-  // Define the target end date for the lottery (e.g., 5 days from now)
-  // For demonstration, let's set it to 5 days, 12 hours, 45 minutes, and 53 seconds from when the component loads
   const calculateEndTime = () => {
     const now = new Date();
     const endDate = new Date(now.getTime() + (5 * 24 * 60 * 60 * 1000) + (12 * 60 * 60 * 1000) + (45 * 60 * 1000) + (53 * 1000));
     return endDate;
   };
 
-  const [lotteryEndDate] = useState(calculateEndTime()); // Store the calculated end date
+  const [lotteryEndDate] = useState(calculateEndTime());
 
   useEffect(() => {
     const timerInterval = setInterval(() => {
@@ -382,17 +183,15 @@ function LotteryDetailModal({ onClose }) {
 
       const days = Math.floor(distance / (1000 * 60 * 60 * 24));
       const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((distance % (1000 * 60)) / (1000 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
       setTimeLeft(`${days}d ${hours}h ${minutes}m ${seconds}s`);
     }, 1000);
 
-    // Cleanup interval on component unmount
     return () => clearInterval(timerInterval);
-  }, [lotteryEndDate]); // Re-run effect if lotteryEndDate changes (though it's stable here)
+  }, [lotteryEndDate]);
 
-  // Static/Mock data for the weekly lottery details
   const lotteryDetails = {
     lotteryNumber: 12,
     totalPrize: '$35,000',
@@ -478,7 +277,7 @@ function LotteryDetailModal({ onClose }) {
         <button className="lottery-modal-close-button" onClick={onClose}>&times;</button>
 
         <div className="lottery-header">
-          <h2>Lottery #{lotteryDetails.lotteryNumber} - {timeLeft}</h2> {/* Use timeLeft here */}
+          <h2>Lottery #{lotteryDetails.lotteryNumber} - {timeLeft}</h2>
         </div>
 
         <div className="lottery-main-display">
@@ -486,7 +285,6 @@ function LotteryDetailModal({ onClose }) {
             <span className="lottery-total-prize">{lotteryDetails.totalPrize}</span>
             <span className="lottery-winners-count">{lotteryDetails.numWinners} WINNERS</span>
           </div>
-          {/* Ticket icons - using inline SVG for simplicity */}
           <div className="lottery-tickets-overlay">
             <svg className="ticket-icon-large" xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="#FFD700" stroke="#B8860B" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
               <path d="M2 9a3 3 0 0 1 0 6v-6Z" /><path d="M22 9a3 3 0 0 0 0 6v-6Z" /><path d="M13 5H6a2 2 0 0 0-2 2v3a2 2 0 0 1 0 4v3a2 2 0 0 0 2 2h7a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2Z" /><path d="M14 5h4a2 2 0 0 1 2 2v3a2 2 0 0 0 0 4v3a2 2 0 0 1-2 2h-4" />
@@ -498,10 +296,6 @@ function LotteryDetailModal({ onClose }) {
         </div>
         <p className="lottery-ticket-info">{lotteryDetails.tickets} tickets</p>
 
-        {/* How It Works Section */}
-
-
-        {/* Tabs for Prizes and Previous Winners */}
         <div className="lottery-tabs">
           <button
             className={`lottery-tab-button ${activeTab === 'prizes' ? 'active' : ''}`}
@@ -555,9 +349,8 @@ function LotteryDetailModal({ onClose }) {
   );
 }
 
-
 // Modal Component
-function ItemDetailModal({ item, onClose, onViewLottery }) { // Added onViewLottery prop
+function ItemDetailModal({ item, onClose, onViewLottery }) {
   if (!item) return null;
 
   // Mock data for rewards to match screenshot
@@ -573,15 +366,13 @@ function ItemDetailModal({ item, onClose, onViewLottery }) { // Added onViewLott
     { type: 'task', label: 'Vourpuetand inntedreds', value: '150 Coins', tickets: '', image: 'https://placehold.co/30x30/8A2BE2/FFFFFF?text=P9' },
   ];
 
-
   const handleActionClick = () => {
     if (item.url) {
       window.open(item.url, '_blank');
     } else {
-      // For tasks without a direct URL, simulate completion or show a message
       console.log(`Starting task: ${item.title}`);
     }
-    onClose(); // Close modal after action
+    onClose();
   };
 
   return (
@@ -622,7 +413,6 @@ function ItemDetailModal({ item, onClose, onViewLottery }) { // Added onViewLott
             </ul>
           </div>
 
-          {/* Keeping description and steps sections, but they will be below rewards and scrollable */}
           <div className="modal-description-section">
             <h3>Description</h3>
             <p>{item.fullDescription || item.description || 'No detailed description available.'}</p>
@@ -646,7 +436,6 @@ function ItemDetailModal({ item, onClose, onViewLottery }) { // Added onViewLott
   );
 }
 
-
 // Function to get SVG icon based on category ID
 const getCategoryIcon = (categoryId) => {
   switch (categoryId) {
@@ -661,16 +450,7 @@ const getCategoryIcon = (categoryId) => {
         </svg>
       );
     case 'surveys':
-      return (
-        <svg xmlns="http://www.w3.org/24/24" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-clipboard-list">
-          <rect width="8" height="4" x="8" y="2" rx="1" ry="1" />
-          <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
-          <path d="M12 11h4" />
-          <path d="M12 16h4" />
-          <path d="M8 11h.01" />
-          <path d="M8 16h.01" />
-        </svg>
-      );
+      return <ClipboardList size={24} />;
     case 'offers':
       return (
         <svg xmlns="http://www.w3.org/24/24" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-gift">
@@ -683,17 +463,7 @@ const getCategoryIcon = (categoryId) => {
         </svg>
       );
     case 'games':
-      return (
-        <svg xmlns="http://www.w3.org/24/24" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-gamepad-2">
-          <path d="M6 12H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
-          <path d="M18 12h2a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2" />
-          <path d="M12 18V6" />
-          <path d="M12 18h6a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2H12" />
-          <path d="M12 18H6a2 2 0 0 1-2-2v-2a2 2 0 0 1 2-2h6" />
-          <path d="M12 6h.01" />
-          <path d="M12 12h.01" />
-        </svg>
-      );
+      return <Gamepad size={24} />;
     case 'watch-videos':
       return (
         <svg xmlns="http://www.w3.org/24/24" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-play-square">
@@ -706,7 +476,6 @@ const getCategoryIcon = (categoryId) => {
   }
 };
 
-
 // Reusable Task Card Component
 function TaskCard({ task, onClick }) {
   const [isHovered, setIsHovered] = useState(false);
@@ -715,20 +484,20 @@ function TaskCard({ task, onClick }) {
     switch (type) {
       case 'games':
       case 'game':
-        return '/icon17.png'; // Game icon
+        return '/icon17.png';
       case 'app':
-      case 'offers': // Assuming offers and surveys might also use app icon if they are app-based
+      case 'offers':
       case 'surveys':
-        return '/icon18.png'; // App icon
+        return '/icon18.png';
       case 'watch-videos':
-        return '/icon18.png'; // Assuming videos are part of an app experience
+        return '/icon18.png';
       default:
-        return 'https://placehold.co/24x24/808080/FFFFFF?text=I'; // Default placeholder
+        return 'https://placehold.co/24x24/808080/FFFFFF?text=I';
     }
   };
 
   const handleShowClick = (e) => {
-    e.stopPropagation(); // Prevent the card's hover/leave from being immediately re-triggered
+    e.stopPropagation();
     onClick(task);
   };
 
@@ -749,33 +518,62 @@ function TaskCard({ task, onClick }) {
 
   return (
     <div
-      className={`task-card task-card-${task.cardSize || 'medium'} ${isHovered ? 'hovered-blur' : ''}`}
+      className={`task-card task-card-${task.cardSize || 'medium'} ${isHovered ? 'hovered-blur' : ''} ${task.isLocked ? 'locked' : ''} ${task.isPremium ? 'premium' : ''}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      style={{ '--card-border-gradient': task.gradient }} // Apply gradient via CSS variable
+      style={{ '--card-border-gradient': task.gradient }}
     >
-      <div className="card-top-section">
-        <img src={task.image} alt={task.title} className="task-icon" onError={(e) => e.target.src = 'https://placehold.co/40x40/808080/FFFFFF?text=I'} />
-      </div>
-      {/* Replaced text tag with image icon */}
-      <div className="task-tag">
-        <img src={getIconSrc(task.type)} alt={task.type} className="task-type-icon" onError={(e) => e.target.src = 'https://placehold.co/16x16/808080/FFFFFF?text=X'} />
-      </div>
-      <div className="task-card-details-main">
-        <h3 className="task-card-title">{task.title}</h3>
-        {/* Convert reward coins to a dollar value for display, e.g., 100 coins = $1.00 */}
-        <p className="task-card-value">${(task.reward / 10).toFixed(2)}</p>
-        <p className="task-card-condition">{task.displayCondition}</p>
+      <div className="card-top-section relative">
+        <img
+          src={task.image}
+          alt={task.title}
+          className="task-icon"
+          onError={(e) => e.target.src = 'https://placehold.co/40x40/808080/FFFFFF?text=I'}
+        />
+        {task.type === 'GAME' && !task.isPremium && (
+          <div className="game-icon-badge">
+            <Gamepad size={14} />
+            <span>GAME</span>
+          </div>
+        )}
       </div>
 
-      {isHovered && (
+      <div className="task-card-details-main">
+        {task.isPremium ? (
+          <>
+            <h3 className="task-card-title">{task.shortTitle || task.title}</h3>
+            <p className="task-card-condition">{task.displayCondition}</p>
+            <div className="task-card-value-and-stars">
+                <p className="task-card-value">{task.displayValue}</p>
+                {renderStars(task.starRating)}
+            </div>
+          </>
+        ) : (
+          <>
+            <h3 className="task-card-title">{task.shortTitle || task.title}</h3>
+            <div className="task-card-value-and-stars">
+                <p className="task-card-value">{task.displayValue}</p>
+                {renderStars(task.starRating)}
+            </div>
+            {!task.isLocked && <p className="task-card-condition">{task.displayCondition}</p>}
+          </>
+        )}
+      </div>
+
+      {isHovered && !task.isLocked && (
         <button className="show-button" onClick={handleShowClick}>
           <svg className="play-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="0" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="10" fill="#00ff00ff"/> {/* Green circle background */}
-            <polygon points="10 8 16 12 10 16 10 8" fill="#FFFFFF"/> {/* White play triangle */}
+            <circle cx="12" cy="12" r="10" fill="#00ff00ff"/>
+            <polygon points="10 8 16 12 10 16 10 8" fill="#FFFFFF"/>
           </svg>
           <span>{getButtonText(task.type)}</span>
         </button>
+      )}
+
+      {task.isLocked && (
+        <div className="task-locked-overlay">
+          <Lock size={30} />
+        </div>
       )}
     </div>
   );
@@ -788,11 +586,11 @@ function GameCardComponent({ game, cardSize, gradient, handleShowButtonClick }) 
   const getIconSrc = (type) => {
     switch (type) {
       case 'GAME':
-        return '/icon17.png'; // Game icon
+        return '/icon17.png';
       case 'APP':
-        return '/icon18.png'; // App icon
+        return '/icon18.png';
       default:
-        return 'https://placehold.co/24x24/808080/FFFFFF?text=I'; // Default placeholder
+        return 'https://placehold.co/24x24/808080/FFFFFF?text=I';
     }
   };
 
@@ -817,15 +615,22 @@ function GameCardComponent({ game, cardSize, gradient, handleShowButtonClick }) 
       className={`game-card game-card-${cardSize || 'medium'} ${isHovered ? 'hovered-blur' : ''}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      style={{ '--card-border-gradient': gradient }} // Apply gradient via CSS variable
+      style={{ '--card-border-gradient': gradient }}
     >
-      <div className="card-top-section">
+      <div className="card-top-section relative">
         <img src={game.image} alt={game.title} className="game-icon" onError={(e) => e.target.src = 'https://placehold.co/40x40/808080/FFFFFF?text=G'} />
+        
       </div>
-      {/* Replaced text tag with image icon */}
-      <div className="game-tag">
+      {game.type === 'GAME' && (
+          <div className="game-icon-badge"> {/* Moved here */}
+            <Gamepad size={14} />
+            <span>GAME</span>
+          </div>
+        )}
+      {/* Removed game-tag as it's not needed with the new badge */}
+      {/* <div className="game-tag">
         <img src={getIconSrc(game.type)} alt={game.type} className="game-type-icon" onError={(e) => e.target.src = 'https://placehold.co/16x16/808080/FFFFFF?text=X'} />
-      </div>
+      </div> */}
       <div className="game-details-main">
         <h3 className="game-title-overlay">{game.title}</h3>
         <p className="game-value-overlay">{game.value}</p>
@@ -834,8 +639,8 @@ function GameCardComponent({ game, cardSize, gradient, handleShowButtonClick }) 
       {isHovered && (
         <button className="show-button" onClick={(e) => handleShowButtonClick(game, e)}>
           <svg className="play-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="0" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="10" fill="transparent" /> {/* Green circle background */}
-            <polygon points="10 8 16 12 10 16 10 8" fill="#FFFFFF"/> {/* White play triangle */}
+            <circle cx="12" cy="12" r="10" fill="transparent" />
+            <polygon points="10 8 16 12 10 16 10 8" fill="#FFFFFF"/>
           </svg>
           <span>{getButtonText(game.type)}</span>
         </button>
@@ -843,7 +648,6 @@ function GameCardComponent({ game, cardSize, gradient, handleShowButtonClick }) 
     </div>
   );
 }
-
 
 // New Reusable Sidebar Category Card Component
 function SidebarCategoryCard({ category, isActive, onClick }) {
@@ -853,7 +657,7 @@ function SidebarCategoryCard({ category, isActive, onClick }) {
       onClick={() => onClick(category.id)}
     >
       <div className="card-top-section">
-        {getCategoryIcon(category.id)} {/* Render SVG icon */}
+        {getCategoryIcon(category.id)}
       </div>
       <div className="category-details-main">
         <h3 className="category-title">{category.name}</h3>
@@ -862,25 +666,29 @@ function SidebarCategoryCard({ category, isActive, onClick }) {
   );
 }
 
-// New Survey Partner Card Component
-function SurveyPartnerCard({ partner }) {
-  // Function to render star ratings
+// Partner Card Component
+function PartnerCard({ partner }) {
   const renderStars = (rating) => {
     const fullStars = Math.floor(rating);
-    const emptyStars = 5 - fullStars; // Assuming a max of 5 stars
+    const emptyStars = 5 - fullStars;
     const stars = [];
     for (let i = 0; i < fullStars; i++) {
-      stars.push(<span key={`full-${i}`} className="star-icon full-star">★</span>);
+      stars.push(<span key={`full-${partner.id}-${i}`} className="star-icon full-star">★</span>);
     }
     for (let i = 0; i < emptyStars; i++) {
-      stars.push(<span key={`empty-${i}`} className="star-icon empty-star">★</span>);
+      stars.push(<span key={`empty-${partner.id}-${i}`} className="star-icon empty-star">★</span>);
     }
     return <div className="partner-stars">{stars}</div>;
   };
 
   return (
-    <div className={`survey-partner-card ${partner.type === 'survey-card' ? 'survey-card-special' : ''}`}
-         style={partner.gradient ? { background: partner.gradient } : {}}>
+    <div
+      className={`partner-card ${partner.type === 'survey-card' ? 'survey-card-special' : ''}`}
+      style={{ backgroundImage: partner.backgroundImage ? `url(${partner.backgroundImage})` : (partner.gradient ? partner.gradient : 'none') }}
+    >
+      {partner.bonusPercentage && (
+        <div className="partner-bonus-badge">+{partner.bonusPercentage}%</div>
+      )}
       <div className="partner-logo-container">
         <img src={partner.image} alt={partner.name} className="partner-logo" onError={(e) => e.target.src = 'https://placehold.co/60x60/808080/FFFFFF?text=P'} />
       </div>
@@ -896,22 +704,19 @@ function SurveyPartnerCard({ partner }) {
   );
 }
 
-
 // Main Tasks Listing Page with Filters and Sort
 function TasksListingPage({ onBack, initialCategory = 'all' }) {
-  const [rewardRange, setRewardRange] = useState([0, 1000]); // Max reward in initialTasks is 1000
-  const [estimatedTime, setEstimatedTime] = useState([0, 180]); // Max time is 180 mins (3 hours)
-  const [selectedTaskType, setSelectedTaskType] = useState(initialCategory); // Changed to single selection
+  const [rewardRange, setRewardRange] = useState([0, 1000]);
+  const [estimatedTime, setEstimatedTime] = useState([0, 180]);
+  const [selectedTaskType, setSelectedTaskType] = useState(initialCategory);
   const [selectedDifficulty, setSelectedDifficulty] = useState('All');
   const [sortBy, setSortBy] = useState('Newest First');
-  const [selectedItem, setSelectedItem] = useState(null); // State for modal item
-  const [showLotteryModal, setShowLotteryModal] = useState(false); // State for lottery modal
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [showLotteryModal, setShowLotteryModal] = useState(false);
 
-  // Filtered and sorted tasks
   const filteredAndSortedTasks = useCallback(() => {
     let filtered = [];
 
-    // Combine initialTasks and gameCategories for filtering
     const allAvailableItems = [
       ...initialTasks,
       ...gameCategories.flatMap(cat => cat.games.map(game => ({
@@ -920,9 +725,9 @@ function TasksListingPage({ onBack, initialCategory = 'all' }) {
         description: game.genre,
         fullDescription: game.fullDescription,
         completionSteps: game.completionSteps,
-        estimatedTime: 0, // Placeholder
+        estimatedTime: 0,
         reward: parseFloat(game.value.replace('$', '')) * 10,
-        difficulty: 'Medium', // Placeholder
+        difficulty: 'Medium',
         type: game.type.toLowerCase(),
         tags: [],
         isCompleted: false,
@@ -932,51 +737,40 @@ function TasksListingPage({ onBack, initialCategory = 'all' }) {
         url: game.url,
         genre: game.genre,
         rating: game.rating,
-        cardSize: game.cardSize, // Inherit cardSize from gameCategories
-        gradient: game.gradient, // Inherit gradient from gameCategories
+        cardSize: game.cardSize,
+        gradient: game.gradient,
       })))
     ];
 
-    // Filter by Task Type (single selection)
     if (selectedTaskType === 'all') {
       filtered = allAvailableItems;
     } else if (selectedTaskType === 'surveys') {
-      // "Surveys" category shows actual survey tasks
       filtered = allAvailableItems.filter(item => item.type === 'surveys');
     } else if (selectedTaskType === 'offers') {
-      // "Offers" category shows actual offer tasks
       filtered = allAvailableItems.filter(item => item.type === 'offers');
     } else if (selectedTaskType === 'games') {
-      // "Games" category shows actual game tasks AND games from gameCategories
       filtered = allAvailableItems.filter(item => item.type === 'games' || item.type === 'game' || item.type === 'app');
     } else if (selectedTaskType === 'watch-videos') {
-      // "Watch Videos" category shows actual video tasks
       filtered = allAvailableItems.filter(item => item.type === 'watch-videos');
     }
 
-
-    // Filter by Reward Range
     filtered = filtered.filter(task => task.reward >= rewardRange[0] && task.reward <= rewardRange[1]);
-
-    // Filter by Estimated Time
     filtered = filtered.filter(task => task.estimatedTime >= estimatedTime[0] && task.estimatedTime <= estimatedTime[1]);
 
-    // Filter by Difficulty
     if (selectedDifficulty !== 'All') {
       filtered = filtered.filter(task => task.difficulty === selectedDifficulty);
     }
 
-    // Sort
     filtered.sort((a, b) => {
       switch (sortBy) {
         case 'Newest First':
-          return b.id.localeCompare(a.id); // Assuming higher ID means newer for mock data
+          return b.id.localeCompare(a.id);
         case 'Highest Reward':
           return b.reward - a.reward;
         case 'Shortest Time':
           return a.estimatedTime - b.estimatedTime;
         case 'Most Popular':
-          return b.reward - a.reward; // Using reward as proxy for popularity
+          return b.reward - a.reward;
         default:
           return 0;
       }
@@ -986,7 +780,6 @@ function TasksListingPage({ onBack, initialCategory = 'all' }) {
   }, [rewardRange, estimatedTime, selectedTaskType, selectedDifficulty, sortBy]);
 
   useEffect(() => {
-    // When initialCategory changes, update selectedTaskType
     setSelectedTaskType(initialCategory);
   }, [initialCategory]);
 
@@ -1002,21 +795,15 @@ function TasksListingPage({ onBack, initialCategory = 'all' }) {
     setEstimatedTime([parseInt(e.target.value), estimatedTime[1]]);
   };
 
-  const maxReward = Math.max(...initialTasks.map(task => task.reward));
-  const maxTime = Math.max(...initialTasks.map(task => task.estimatedTime));
-
-  // Determine the title for the header based on selected filters
   const getHeaderTitle = () => {
     const selectedCategory = categories.find(cat => cat.id === selectedTaskType);
     return selectedCategory ? selectedCategory.name : 'All Available Tasks';
   };
 
-  // Group tasks by type for display when 'All Tasks' is selected
   const groupedTasks = useCallback(() => {
-    const tasksToDisplay = filteredAndSortedTasks(); // Use the already filtered and sorted list
+    const tasksToDisplay = filteredAndSortedTasks();
 
     if (selectedTaskType !== 'all') {
-      // If a specific category is selected, just return the filtered tasks directly
       return { [selectedTaskType]: tasksToDisplay };
     }
 
@@ -1030,13 +817,11 @@ function TasksListingPage({ onBack, initialCategory = 'all' }) {
     return groups;
   }, [selectedTaskType, filteredAndSortedTasks]);
 
-
   return (
     <div className="tasks-listing-page">
       <aside className="tasks-sidebar">
         <h3>Categories & Filters</h3>
 
-        {/* Categories (single selection buttons) */}
         <div className="filter-group">
           <h4 className="filter-group-title">Categories</h4>
           <div className="category-buttons">
@@ -1051,49 +836,45 @@ function TasksListingPage({ onBack, initialCategory = 'all' }) {
           </div>
         </div>
 
-        {/* Filters Section */}
         <div className="filter-group">
           <h4 className="filter-group-title">Filters</h4>
 
-          {/* Reward Range Filter */}
           <div className="filter-group">
             <h5 className="filter-group-title">Reward Range (Coins)</h5>
             <div className="range-slider-container">
               <input
                 type="range"
                 min="0"
-                max={maxReward}
+                max="1000"
                 value={rewardRange[0]}
                 onChange={handleRewardRangeChange}
                 className="range-slider"
               />
               <div className="range-values">
                 <span>{rewardRange[0]}</span>
-                <span>{maxReward}</span>
+                <span>1000</span>
               </div>
             </div>
           </div>
 
-          {/* Estimated Time Filter */}
           <div className="filter-group">
             <h5 className="filter-group-title">Estimated Time (min)</h5>
             <div className="range-slider-container">
               <input
                 type="range"
                 min="0"
-                max={maxTime}
+                max="180"
                 value={estimatedTime[0]}
                 onChange={handleEstimatedTimeChange}
                 className="range-slider"
               />
               <div className="range-values">
                 <span>{estimatedTime[0]}</span>
-                <span>{maxTime}</span>
+                <span>180</span>
               </div>
             </div>
           </div>
 
-          {/* Difficulty Filter */}
           <div className="filter-group">
             <h5 className="filter-group-title">Difficulty</h5>
             <select
@@ -1134,17 +915,17 @@ function TasksListingPage({ onBack, initialCategory = 'all' }) {
           </p>
         )}
         {selectedTaskType === 'surveys' && (
-          <p style={{ textAlign: 'center', fontSize: '1rem', color: '#bbb', marginBottom: '20px' }}>
+          <p style={{ textAlign: 'center', fontSize: '1.rem', color: '#bbb', marginBottom: '20px' }}>
             Displaying tasks for the "Surveys" category.
           </p>
         )}
         {selectedTaskType === 'offers' && (
-          <p style={{ textAlign: 'center', fontSize: '1rem', color: '#bbb', marginBottom: '20px' }}>
+          <p style={{ textAlign: 'center', fontSize: '1.rem', color: '#bbb', marginBottom: '20px' }}>
             Displaying tasks for the "Offers" category.
           </p>
         )}
         {selectedTaskType === 'games' && (
-          <p style={{ textAlign: 'center', fontSize: '1rem', color: '#bbb', marginBottom: '20px' }}>
+          <p style={{ textAlign: 'center', fontSize: '1.rem', color: '#bbb', marginBottom: '20px' }}>
             Displaying tasks for the "Games" category.
           </p>
         )}
@@ -1153,7 +934,6 @@ function TasksListingPage({ onBack, initialCategory = 'all' }) {
             Displaying tasks for the "Watch Videos" category.
           </p>
         )}
-
 
         {Object.keys(groupedTasks()).map(typeId => (
           <div key={typeId} className="task-category-section">
@@ -1201,37 +981,35 @@ const CommonHeader = ({ currentPage, setCurrentPage }) => {
           <Users size={20} /> Refer & Earn
         </span>
       </nav>
-      {/* Search bar and dropdown are specific to HomePageContent, so they are NOT in CommonHeader */}
     </header>
   );
 };
 
-function HomePageContent({ setCurrentPage, currentPage }) { // Added currentPage prop
-  const [showFilterDropdown, setShowFilterDropdown] = useState(false);
-  const dropdownRef = useRef(null);
-  const [selectedItem, setSelectedItem] = useState(null); // State for modal item
-  const [showLotteryModal, setShowLotteryModal] = useState(false); // State for lottery modal
+function HomePageContent({ setCurrentPage, currentPage }) {
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [showLotteryModal, setShowLotteryModal] = useState(false);
+  // New state to track expanded sections
+  const [expandedSections, setExpandedSections] = useState({});
 
-  // Modified handleCardClick to be triggered by the "Show" button
-  const handleShowButtonClick = (game, e) => {
-    e.stopPropagation(); // Prevent the card's hover/leave from being immediately re-triggered
-    setSelectedItem(game);
+  const handleShowButtonClick = (item, e) => {
+    e.stopPropagation();
+    setSelectedItem(item);
   };
 
   const scrollLeft = (title) => {
-    const el = document.getElementById(`carousel-${title}`);
+    const el = document.getElementById(`carousel-${title.replace(/\s/g, '-')}`);
     if (el) el.scrollBy({ left: -300, behavior: 'smooth' });
   };
 
   const scrollRight = (title) => {
-    const el = document.getElementById(`carousel-${title}`);
+    const el = document.getElementById(`carousel-${title.replace(/\s/g, '-')}`);
     if (el) el.scrollBy({ left: 300, behavior: 'smooth' });
   };
 
   useEffect(() => {
     const wrappers = document.querySelectorAll('.carousel-wrapper');
     wrappers.forEach(wrapper => {
-      const carousel = wrapper.querySelector('.game-carousel');
+      const carousel = wrapper.querySelector('.game-carousel, .offer-partners-grid, .featured-surveys-carousel');
       let timeout;
 
       const show = () => {
@@ -1239,7 +1017,7 @@ function HomePageContent({ setCurrentPage, currentPage }) { // Added currentPage
         clearTimeout(timeout);
         timeout = setTimeout(() => {
           wrapper.classList.remove('show-scroll');
-        }, 5000);
+        }, 4000); // Hide after 4 seconds
       };
 
       if (carousel) {
@@ -1252,95 +1030,79 @@ function HomePageContent({ setCurrentPage, currentPage }) { // Added currentPage
         wrapper.classList.remove('show-scroll');
       });
     });
-  }, []);
+  }, [expandedSections]); // Re-run effect if expandedSections changes
 
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setShowFilterDropdown(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [dropdownRef]);
+  const homePageSections = gameCategories;
 
-  const handleFilterCategoryClick = (categoryId) => {
-    setCurrentPage({ name: 'tasks', category: categoryId }); // Pass category as part of state
-    setShowFilterDropdown(false);
-  };
-
+  const premiumSurvey = initialTasks.find(task => task.id === 't_premium');
+  const regularSurvey = initialTasks.find(task => task.id === 't_available_regular');
+  const lockedSurveys = initialTasks.filter(task => task.isLocked);
 
   return (
-    <div className="home-container">
-      {/* Removed the header from here, it's now in CommonHeader */}
-      <div className="home-search-and-filter-area"> {/* New wrapper for search/filter */}
-        <div className="home-search">
-          <input type="text" placeholder="Search for games and apps" />
-          <button>Search</button>
-        </div>
-        <div className={`dropdown-container ${showFilterDropdown ? 'open' : ''}`} ref={dropdownRef}>
-          <button onClick={() => setShowFilterDropdown(!showFilterDropdown)}>Filter by Category</button>
-          {showFilterDropdown && (
-            <div className="dropdown-menu">
-              {categories.map(category => (
-                <button
-                  key={category.id}
-                  onClick={() => handleFilterCategoryClick(category.id)}
-                >
-                  {category.name}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-
+     <div className="home-container">
       <main className="home-main-content">
-        {gameCategories.map((category, index) => {
-          const sectionId = `section-${index + 1}`;
-
+        {homePageSections.map((category) => {
+          const sectionId = `section-${category.title.replace(/\s/g, '-')}`;
+          const isExpanded = expandedSections[category.title];
           return (
             <section key={category.title} className="game-section" id={sectionId}>
-              <h2>{category.title}</h2>
-              {category.isGrid ? (
-                // Render as a grid if isGrid is true
-                <div className="game-grid-layout">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                <h2 className="section-title-with-icon">
+                    {category.title === 'Gaming Offers' && <Gamepad size={24} />}
+                    {category.title === 'Other Offers' && <Gift size={24} />}
+                    {category.title}
+                </h2>
+                <button
+                  className="view-all-button"
+                  onClick={() => setExpandedSections(prev => ({ ...prev, [category.title]: !prev[category.title] }))}
+                >
+                  {isExpanded ? 'Show Less' : 'View All'}
+                </button>
+              </div>
+              {isExpanded ? (
+                <div className={`game-cards-grid ${category.cardSize === 'small' ? 'game-cards-grid-small' : ''}`}>
                   {category.games.map(game => (
-                    <GameCardComponent
+                    <div
                       key={game.id}
-                      game={game}
-                      cardSize={category.cardSize}
-                      gradient={category.gradient}
-                      handleShowButtonClick={handleShowButtonClick}
-                    />
+                      className="gradient-card-wrapper"
+                      style={{
+                        background: game.gradient,
+                        padding: '2px',
+                        borderRadius: '20px',
+                        display: 'inline-block'
+                      }}
+                    >
+                      <GameCardComponent
+                        game={game}
+                        cardSize={category.cardSize}
+                        gradient={game.gradient || category.gradient}
+                        handleShowButtonClick={handleShowButtonClick}
+                      />
+                    </div>
                   ))}
                 </div>
               ) : (
-                // Render as a carousel if isGrid is false
                 <div className="carousel-wrapper">
                   <button className="scroll-btn left" onClick={() => scrollLeft(category.title)}>&lt;</button>
-                  <div className="game-carousel" id={`carousel-${category.title}`}>
+                  <div className="game-carousel" id={`carousel-${category.title.replace(/\s/g, '-')}`}>
                     {category.games.map(game => (
                       <div
-  key={game.id}
-  className="gradient-card-wrapper"
-  style={{
-    background: game.gradient,
-    padding: '2px',
-    borderRadius: '20px',
-    display: 'inline-block'
-  }}
->
-  <GameCardComponent
-    game={game}
-    cardSize={category.cardSize}
-    gradient={category.gradient}
-    handleShowButtonClick={handleShowButtonClick}
-  />
-</div>
-
+                        key={game.id}
+                        className="gradient-card-wrapper"
+                        style={{
+                          background: game.gradient,
+                          padding: '2px',
+                          borderRadius: '20px',
+                          display: 'inline-block'
+                        }}
+                      >
+                        <GameCardComponent
+                          game={game}
+                          cardSize={category.cardSize}
+                          gradient={game.gradient || category.gradient}
+                          handleShowButtonClick={handleShowButtonClick}
+                        />
+                      </div>
                     ))}
                   </div>
                   <button className="scroll-btn right" onClick={() => scrollRight(category.title)}>&gt;</button>
@@ -1350,31 +1112,236 @@ function HomePageContent({ setCurrentPage, currentPage }) { // Added currentPage
           );
         })}
 
-        {/* New Survey Partners Section */}
-        <section className="survey-partners-section">
-          <h2 className="survey-partners-title">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-clipboard-list">
-              <rect width="8" height="4" x="8" y="2" rx="1" ry="1" />
-              <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
-              <path d="M12 11h4" />
-              <path d="M12 16h4" />
-              <path d="M8 11h.01" />
-              <path d="M8 16h.01" />
-            </svg>
-            Survey Partners
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-info">
-              <circle cx="12" cy="12" r="10" />
-              <path d="M12 16v-4" />
-              <path d="M12 8h.01" />
-            </svg>
-          </h2>
-          <div className="survey-partners-grid">
-            {surveyPartners.map(partner => (
-              <SurveyPartnerCard key={partner.id} partner={partner} />
-            ))}
+        {/* Featured Surveys Section */}
+        <section className="featured-surveys-section game-section">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+            <h2 className="featured-surveys-title-with-icon">
+                <ClipboardList size={24} /> Featured Surveys
+            </h2>
+            <button
+              className="view-all-button"
+              onClick={() => setExpandedSections(prev => ({ ...prev, 'Featured Surveys': !prev['Featured Surveys'] }))}
+            >
+              {expandedSections['Featured Surveys'] ? 'Show Less' : 'View All'}
+            </button>
           </div>
+
+          {expandedSections['Featured Surveys'] ? (
+            <div className="task-cards-grid"> {/* Reusing task-cards-grid for surveys */}
+                {premiumSurvey && (
+                  <div className="gradient-card-wrapper"
+                    style={{
+                      background: premiumSurvey.gradient,
+                      padding: '2px',
+                      borderRadius: '20px',
+                      display: 'inline-block'
+                    }}
+                  >
+                    <div className="survey-card">
+                      <div className="survey-card-top">
+                        <img
+                          src={premiumSurvey.image}
+                          alt={premiumSurvey.title}
+                          className="survey-icon"
+                          onError={(e) => e.target.src = 'https://placehold.co/40x40/808080/FFFFFF?text=I'}
+                        />
+                      </div>
+                      <div className="survey-card-bottom">
+                        <h3 className="survey-title">{premiumSurvey.shortTitle || premiumSurvey.title}</h3>
+                        <p className="survey-condition">{premiumSurvey.displayCondition}</p>
+                        <div className="survey-value-and-stars">
+                            <p className="survey-value">{premiumSurvey.displayValue}</p>
+                            {renderStars(premiumSurvey.starRating)}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                {regularSurvey && (
+                  <div className="gradient-card-wrapper"
+                    style={{
+                      background: regularSurvey.gradient,
+                      padding: '2px',
+                      borderRadius: '20px',
+                      display: 'inline-block'
+                    }}
+                  >
+                    <div className="survey-card">
+                      <div className="survey-card-top">
+                        <img
+                          src={regularSurvey.image}
+                          alt={regularSurvey.title}
+                          className="survey-icon"
+                          onError={(e) => e.target.src = 'https://placehold.co/40x40/808080/FFFFFF?text=I'}
+                        />
+                      </div>
+                      <div className="survey-card-bottom">
+                        <h3 className="survey-title">{regularSurvey.shortTitle || regularSurvey.title}</h3>
+                        <div className="survey-value-and-stars">
+                            <p className="survey-value">{regularSurvey.displayValue}</p>
+                            {renderStars(regularSurvey.starRating)}
+                        </div>
+                        <p className="survey-condition">{regularSurvey.displayCondition}</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                {lockedSurveys.map(task => (
+                  <div className="gradient-card-wrapper"
+                    key={task.id}
+                    style={{
+                      background: task.gradient,
+                      padding: '2px',
+                      borderRadius: '20px',
+                      display: 'inline-block'
+                    }}
+                  >
+                    <div className="survey-card locked">
+                      <div className="survey-card-top">
+                        <img
+                          src={task.image}
+                          alt={task.title}
+                          className="survey-icon"
+                          onError={(e) => e.target.src = 'https://placehold.co/40x40/808080/FFFFFF?text=I'}
+                        />
+                      </div>
+                      <div className="survey-card-bottom">
+                        <h3 className="survey-title">{task.shortTitle || task.title}</h3>
+                        <div className="survey-value-and-stars">
+                            <p className="survey-value">{task.displayValue}</p>
+                        </div>
+                        <p className="survey-condition">{task.displayCondition}</p>
+                      </div>
+                      <div className="survey-lock-overlay">
+                        <Lock size={20} />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+            </div>
+          ) : (
+            <div className="carousel-wrapper" style={{ position: 'relative' }}>
+              <button className="scroll-btn left" onClick={() => scrollLeft('Featured Surveys')}>&lt;</button>
+              <div className="featured-surveys-carousel" id="carousel-Featured-Surveys">
+                {premiumSurvey && (
+                  <div className="gradient-card-wrapper"
+                    style={{
+                      background: premiumSurvey.gradient,
+                      padding: '2px',
+                      borderRadius: '20px',
+                      display: 'inline-block'
+                    }}
+                  >
+                    <div className="survey-card">
+                      <div className="survey-card-top">
+                        <img
+                          src={premiumSurvey.image}
+                          alt={premiumSurvey.title}
+                          className="survey-icon"
+                          onError={(e) => e.target.src = 'https://placehold.co/40x40/808080/FFFFFF?text=I'}
+                        />
+                      </div>
+                      <div className="survey-card-bottom">
+                        <h3 className="survey-title">{premiumSurvey.shortTitle || premiumSurvey.title}</h3>
+                        <p className="survey-condition">{premiumSurvey.displayCondition}</p>
+                        <div className="survey-value-and-stars">
+                            <p className="survey-value">{premiumSurvey.displayValue}</p>
+                            {renderStars(premiumSurvey.starRating)}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                {regularSurvey && (
+                  <div className="gradient-card-wrapper"
+                    style={{
+                      background: regularSurvey.gradient,
+                      padding: '2px',
+                      borderRadius: '20px',
+                      display: 'inline-block'
+                    }}
+                  >
+                    <div className="survey-card">
+                      <div className="survey-card-top">
+                        <img
+                          src={regularSurvey.image}
+                          alt={regularSurvey.title}
+                          className="survey-icon"
+                          onError={(e) => e.target.src = 'https://placehold.co/40x40/808080/FFFFFF?text=I'}
+                        />
+                      </div>
+                      <div className="survey-card-bottom">
+                        <h3 className="survey-title">{regularSurvey.shortTitle || regularSurvey.title}</h3>
+                        <div className="survey-value-and-stars">
+                            <p className="survey-value">{regularSurvey.displayValue}</p>
+                            {renderStars(regularSurvey.starRating)}
+                        </div>
+                        <p className="survey-condition">{regularSurvey.displayCondition}</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                {lockedSurveys.map(task => (
+                  <div className="gradient-card-wrapper"
+                    key={task.id}
+                    style={{
+                      background: task.gradient,
+                      padding: '2px',
+                      borderRadius: '20px',
+                      display: 'inline-block'
+                    }}
+                  >
+                    <div className="survey-card locked">
+                      <div className="survey-card-top">
+                        <img
+                          src={task.image}
+                          alt={task.title}
+                          className="survey-icon"
+                          onError={(e) => e.target.src = 'https://placehold.co/40x40/808080/FFFFFF?text=I'}
+                        />
+                      </div>
+                      <div className="survey-card-bottom">
+                        <h3 className="survey-title">{task.shortTitle || task.title}</h3>
+                        <div className="survey-value-and-stars">
+                            <p className="survey-value">{task.displayValue}</p>
+                        </div>
+                        <p className="survey-condition">{task.displayCondition}</p>
+                      </div>
+                      <div className="survey-lock-overlay">
+                        <Lock size={20} />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <button className="scroll-btn right" onClick={() => scrollRight('Featured Surveys')}>&gt;</button>
+
+              <div className="locked-surveys-message-central">
+                  <Lock size={30} />
+                  <p>20 Surveys are locked</p>
+                  <span>Complete your 1 available survey, to unlock all surveys</span>
+              </div>
+            </div>
+          )}
         </section>
 
+        {/* Offer Partners Section */}
+        <section className="offer-partners-section game-section">
+          <h2 className="offer-partners-title">
+            <Handshake size={24} />
+            Offer Partners
+            <Info size={16} />
+          </h2>
+          <div className="carousel-wrapper">
+            <button className="scroll-btn left" onClick={() => scrollLeft('Offer Partners')}>&lt;</button>
+            <div className="offer-partners-grid" id="carousel-Offer-Partners">
+              {offerPartners.map(partner => (
+                <PartnerCard key={partner.id} partner={partner} />
+              ))}
+            </div>
+            <button className="scroll-btn right" onClick={() => scrollRight('Offer Partners')}>&gt;</button>
+          </div>
+        </section>
       </main>
 
       {selectedItem && <ItemDetailModal item={selectedItem} onClose={() => setSelectedItem(null)} onViewLottery={() => setShowLotteryModal(true)} />}
@@ -1386,20 +1353,18 @@ function HomePageContent({ setCurrentPage, currentPage }) { // Added currentPage
 // This is the main App component that will be rendered.
 export default function App() {
   const [currentPage, setCurrentPage] = useState('home');
-  // No longer need taskFilterCategory state here as it's passed directly to TasksListingPage
 
   const handleBackToHome = () => {
     setCurrentPage('home');
   };
 
-  // Render different components based on currentPage state
   let content;
   if (typeof currentPage === 'object' && currentPage.name === 'tasks') {
     content = <TasksListingPage onBack={handleBackToHome} initialCategory={currentPage.category} />;
   } else {
     switch (currentPage) {
       case 'home':
-        content = <HomePageContent setCurrentPage={setCurrentPage} currentPage={currentPage} />; // Pass currentPage
+        content = <HomePageContent setCurrentPage={setCurrentPage} currentPage={currentPage} />;
         break;
       case 'dashboard':
         content = <DashboardPage onBack={handleBackToHome} />;
@@ -1410,19 +1375,18 @@ export default function App() {
       case 'support':
         content = <SupportPage onBack={handleBackToHome} />;
         break;
-      case 'refer': // Added case for Refer & Earn page
+      case 'refer':
         content = <ReferEarnPage onBack={handleBackToHome} />;
         break;
       default:
-        content = <HomePageContent setCurrentPage={setCurrentPage} currentPage={currentPage} />; // Pass currentPage
+        content = <HomePageContent setCurrentPage={setCurrentPage} currentPage={currentPage} />;
     }
   }
 
   return (
     <>
-      {/* Common Header is now here, outside the conditional content rendering */}
       <CommonHeader currentPage={currentPage} setCurrentPage={setCurrentPage} />
-      <div className="main-content-area"> {/* Optional: Add a wrapper for main content below header */}
+      <div className="main-content-area">
         {content}
       </div>
     </>

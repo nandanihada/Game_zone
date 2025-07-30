@@ -1,40 +1,2375 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@400;700&display=swap');
 
+/* ---------- Base Styles ---------- */
 body {
-  font-family: 'Inter', sans-serif;
+  margin: 0;
+  font-family: 'Inter', sans-serif; /* Prefer Inter as per instructions */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #1a1a2e; /* Deep Indigo for the whole page */
+  color: #e0e0e0;
 }
 
-.profile-card {
-  position: relative;
-  padding: 2px;
-  /* Gradient border with transparency effects - top lighter, bottom stronger, sides medium */
-  background: linear-gradient(180deg,
-    rgba(6, 182, 212, 0.3) 0%,     /* Top - low lighting (cyan with transparency) */
-    rgba(59, 130, 246, 0.6) 25%,   /* Upper sides - medium */
-    rgba(139, 92, 246, 0.6) 75%,   /* Lower sides - medium */
-    rgba(124, 58, 237, 0.9) 100%   /* Bottom - high lighting (purple strong) */
-  );
-  border-radius: 28px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+.home-container {
+  min-height: 100vh;
+  background-color: #1a1a2e; /* Keep main background consistent */
+  color: #e0e0e0;
+  font-family: 'Roboto', sans-serif; /* Keeping Roboto for content as per original */
+  padding: 20px;
+  box-sizing: border-box; /* Include padding in element's total width and height */
 }
 
-.profile-content {
-  background: linear-gradient(to bottom, #1e293b, #0f172a);
-  border-radius: 26px;
+.home-header {
+  display: flex;
+  flex-wrap: wrap; /* Allow items to wrap on smaller screens */
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #333;
+  margin-bottom: 30px;
+  gap: 15px; /* Gap between header elements */
+}
+
+.home-logo {
+  font-size: 36px; /* Slightly larger logo */
+  font-weight: bold;
+  color:#0ff28f; /* Changed to F6490D */
+  text-shadow: 0 0 15px rgba(13, 246, 168, 0.6); /* Updated shadow color */
+  flex-shrink: 0; /* Prevent shrinking */
+}
+
+.home-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 25px; /* Gap between nav items */
+  flex-grow: 1; /* Allow nav to take available space */
+  justify-content: center; /* Center nav items */
+}
+
+.home-nav span {
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: color 0.3s ease, transform 0.2s ease;
+  padding: 5px 0;
   position: relative;
+  color: #ffffff; /* ✅ Changed to white */
+  text-shadow: 0 0 6px rgba(255, 255, 255, 0.4); /* ✅ Soft white glow */
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+
+.home-nav span::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 2px;
+  background-color: #F6490D; /* Changed to #F6490D */
+  transition: width 0.3s ease;
+}
+
+.home-nav span:hover::after,
+.home-nav span.active::after {
+  width: 100%;
+}
+
+.home-nav span:hover {
+  color: #F6490D; /* Changed to #F6490D */
+  transform: translateY(-2px);
+}
+.home-nav span.active {
+  color: #F6490D; /* Changed to #F6490D */
+}
+
+.home-search {
+  display: flex;
+  align-items: center;
+  position: relative;
+  gap: 10px; /* Gap between search input and buttons */
+  flex-wrap: wrap; /* Allow search elements to wrap */
+  justify-content: flex-end; /* Align to right */
+}
+
+.home-search input {
+  padding: 10px 20px; /* Increased padding */
+  border-radius: 25px; /* More rounded */
+  border: 1px solid #555;
+  background-color: #2a2a3e;
+  color: #e0e0e0;
+  width: 280px; /* Slightly wider input */
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.home-search input:focus {
+  border-color: #0ff28f; /* Changed to #F6490D */
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 0 8px rgba(246, 73, 13, 0.4); /* Updated shadow color */
+  outline: none;
+}
+
+.home-search button {
+  padding: 10px 20px; /* Increased padding */
+  border-radius: 25px; /* More rounded */
+  border: none;
+  background-color: #0ff28f; /* Changed to #F6490D */
+  color: #1a1a2e;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.home-search button:hover {
+  background-color: #d9400c; /* Slightly darker #F6490D for hover */
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+}
+
+/* Dropdown specific styles */
+.dropdown-container {
+  position: relative;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 10px); /* Position below the button with more gap */
+  left: 0;
+  background-color: #2a2a3e;
+  border: 1px solid #444; /* Slightly lighter border */
+  border-radius: 8px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5); /* More pronounced shadow */
+  min-width: 180px; /* Wider dropdown */
+  z-index: 100;
+  padding: 8px 0;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  pointer-events: none; /* Prevent interaction when hidden */
+}
+
+.dropdown-container.open .dropdown-menu {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: all;
+}
+
+.dropdown-menu button {
+  display: block;
+  width: 100%;
+  padding: 12px 20px; /* More padding for dropdown items */
+  background: none;
+  border: none;
+  color: #e0e0e0;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  font-size: 1rem;
+}
+
+.dropdown-menu button:hover {
+  background-color: #3a3a4e;
+  color: #F6490D; /* Changed to #F6490D */
+}
+
+
+/* ---------- Hero Section Styles ---------- */
+.hero-section {
+  position: relative;
+  width: 100%;
+  height: 400px; /* Fixed height for consistency */
+  border-radius: 20px;
+  overflow: hidden;
+  margin-bottom: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #fff;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  background: linear-gradient(135deg, #4B0082, #1E90FF, #00C0FF); /* Dark Purple, Blue, Lighter Blue */
+  background-size: 200% 200%;
+  animation: rotateGradient 15s linear infinite; /* Slower animation for hero */
+  cursor: pointer; /* Make hero section clickable */
+}
+
+.hero-content {
+  z-index: 1;
+  padding: 20px;
+  max-width: 800px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hero-title {
+  font-size: 3.5rem;
+  font-weight: 700;
+  margin-bottom: 15px;
+  text-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+  line-height: 1.2;
+}
+
+.hero-description {
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+  color: #e0e0e0;
+  max-width: 600px;
+}
+
+.hero-button {
+  padding: 15px 35px;
+  border-radius: 30px;
+  border: none;
+  background-color: #F6490D; /* Changed to #F6490D */
+  color: #1a1a2e;
+  font-size: 1.3rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+}
+
+.hero-button:hover {
+  background-color: #d9400c; /* Slightly darker #F6490D for hover */
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+}
+
+
+/* ---------- Main Content ---------- */
+.home-main-content {
+  padding: 0 10px;
+}
+
+.game-section {
+  margin-bottom: 40px; /* Reduced space between game sections */
+}
+
+.game-section h2 {
+  font-size: 2.2rem; /* Slightly larger heading */
+  color: #fff; /* Changed to white */
+  margin-bottom: 20px;
+  border-left: none; /* Removed left border */
+  padding-left: 0; /* Removed padding */
+  text-shadow: 0 0 3px rgba(251, 251, 250, 0.6); /* Updated shadow color */
+  text-align: center; /* Centered as in reference */
+  text-transform: uppercase; /* Uppercase as in reference */
+  font-weight: bold; /* Bold as in reference */
+}
+
+/* ---------- Scrollable Carousel ---------- */
+.game-carousel {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth; /* Changed to smooth scroll */
+  gap: 20px;
+  padding: 0 20px 15px 20px; /* More padding */
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.game-carousel::-webkit-scrollbar {
+  display: none;
+}
+
+/* ---------- Base Card Styles (Common to all sizes) ---------- */
+.game-card, .task-card {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+  background-color: #1a1a2e; /* Matches the dark background of the screenshot */
+  border-radius: 18px;
+  /* Updated box-shadow for a more prominent outer glow */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  box-sizing: border-box;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  /* Added solid inner border */
+  border: 2px solid #2a2a3e; /* Darker color for the inner border */
+  cursor: pointer;
+  text-align: left;
+  overflow: hidden;
   z-index: 1;
 }
 
-.icon-white {
-  background: rgba(255, 255, 255, 0.1);
+/* Animation for gradient border */
+@keyframes rotateGradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
-/* Hide scrollbars */
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+
+@keyframes hueShift {
+  0% { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(360deg); }
+}
+@keyframes rotateGradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
+
+.game-card::before,
+.task-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: inherit;
+  padding: 2px; /* Increased padding for a thicker outer glow */
+  /* Changed to a fixed two-color gradient for the outer border */
+  background: linear-gradient(to right, #00ddff, #c906ff); /* Two shades of green for a static gradient */
+  /* Removed animation to keep the color fixed */
+  /* animation: rotateGradient 6s ease infinite; */
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  z-index: -1;
 }
+
+
+
+.game-card::after, .task-card::after {
+  content: none; /* Removed this pseudo-element as the inner border is now handled by the main card's border */
+}
+
+.game-card:hover, .task-card:hover {
+  transform: none;           /* 👈 no grow or lift */
+  box-shadow: none;          /* 👈 no glowing outline */
+}
+
+
+
+/* Card Size Definitions */
+/* Small Card (Default) */
+.game-card-small, .task-card-small {
+  width: 120px;
+  height: 140px;
+  padding: 8px;
+}
+.game-card-small .card-top-section, .task-card-small .card-top-section {
+  width: 60px;
+  height: 60px;
+  margin-bottom: 6px;
+  border-radius: 8px;
+}
+.game-card-small .game-tag, .task-card-small .task-tag {
+  top: 14px;
+  right: 6px;
+  padding: 2px 5px;
+  border-radius: 10px;
+  font-size: 0.55rem;
+}
+.game-card-small .game-title-overlay, .task-card-small .task-card-title {
+  font-size: 0.8rem;
+  margin-bottom: 3px;
+  line-height: 1.1;
+}
+.game-card-small .game-value-overlay, .task-card-small .task-card-value {
+  font-size: 0.9rem;
+  margin-bottom: 0px;
+}
+.game-card-small .game-condition-overlay, .task-card-small .task-card-condition {
+  font-size: 0.65rem;
+  line-height: 1;
+}
+
+/* Medium Card */
+.game-card-medium, .task-card-medium {
+  width: 150px;
+  height: 170px;
+  padding: 10px;
+}
+.game-card-medium .card-top-section, .task-card-medium .card-top-section {
+  width: 70px;
+  height: 70px;
+  margin-bottom: 8px;
+  border-radius: 10px;
+}
+.game-card-medium .game-tag, .task-card-medium .task-tag {
+  top: 8px;
+  right: 8px;
+  padding: 2px 6px;
+  border-radius: 15px;
+  font-size: 0.7rem;
+}
+.game-card-medium .game-title-overlay, .task-card-medium .task-card-title {
+  font-size: 0.9rem;
+  margin-bottom: 5px;
+  line-height: 1.3;
+}
+.game-card-medium .game-value-overlay, .task-card-medium .task-card-value {
+  font-size: 1rem;
+  margin-bottom: 2px;
+}
+.game-card-medium .game-condition-overlay, .task-card-medium .task-card-condition {
+  font-size: 0.8rem;
+  line-height: 1.2;
+}
+
+/* Large Card */
+.game-card-large, .task-card-large {
+  width: 180px;
+  height: 190px;
+  padding: 12px;
+}
+.game-card-large .card-top-section, .task-card-large .card-top-section {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 10px;
+  border-radius: 12px;
+}
+.game-card-large .game-tag, .task-card-large .task-tag {
+  top: 10px;
+  right: 10px;
+  /* padding: 3px 8px; */
+  border-radius: 18px;
+  font-size: 0.8rem;
+}
+.game-card-large .game-title-overlay, .task-card-large .task-card-title {
+  font-size: 1rem;
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+.game-card-large .game-value-overlay, .task-card-large .task-card-value {
+  font-size: 1.1rem;
+  margin-bottom: 3px;
+}
+.game-card-large .game-condition-overlay, .task-card-large .task-card-condition {
+  font-size: 0.9rem;
+  line-height: 1.3;
+}
+
+
+/* Top section of the card (image and tag) */
+.card-top-section {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #007BFF; /* Changed from green to blue */
+  flex-shrink: 0;
+}
+
+.game-icon, .task-icon, .category-icon {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Modified .game-tag and .task-tag to hold an image */
+.game-tag, .task-tag {
+  position: absolute;
+  top: 10px; /* Adjust as needed */
+  right: 10px; /* Adjust as needed */
+  width: 24px; /* Size of the icon */
+  height: 24px; /* Size of the icon */
+  z-index: 10;
+  display: flex; /* To center the image if needed */
+  align-items: center;
+  justify-content: center;
+  background-color: transparent; /* Remove background color */
+  padding: 0; /* Remove padding */
+  border-radius: 0; /* Remove border radius */
+  box-shadow: none; /* Remove box shadow */
+}
+
+.game-tag .game-type-icon,
+.task-tag .task-type-icon {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* Ensure the icon fits */
+}
+
+
+/* Main details section (title, value, condition) */
+.game-details-main, .task-card-details-main {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-grow: 1;
+  width: 100%;
+  text-align: left;
+}
+
+.game-title-overlay, .task-card-title {
+  font-weight: 700; /* Bold like reference */
+  font-size: 1rem; /* Ensures visible size */
+  color: #ffffff; /* Pure white */
+  font-family: 'Inter', sans-serif; /* Stylish, modern font */
+  white-space: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+
+.game-value-overlay, .task-card-value {
+  color: #00ffae; /* Neon green */
+  font-weight: 700; /* Bolder */
+  font-size: 1.1rem; /* More visible */
+  font-family: 'Inter', sans-serif;
+  text-shadow: 0 0 6px rgba(0, 255, 174, 0.6); /* Glow effect */
+}
+
+.game-condition-overlay, .task-card-condition {
+  color: #00ffae; /* Same neon green */
+  font-size: 0.95rem;
+  font-family: 'Inter', sans-serif;
+  text-shadow: 0 0 6px rgba(0, 255, 174, 0.6);
+  white-space: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+
+
+/* ---------- Grid Layout for Featured Games ---------- */
+.game-grid-layout {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 180px);
+  gap: 20px;
+  justify-content: center;
+  align-items: start;
+  padding: 0 10px;
+}
+
+/* ---------- Scroll Buttons ---------- */
+.carousel-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.carousel-wrapper:hover .scroll-btn,
+.carousel-wrapper.show-scroll .scroll-btn {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.scroll-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  background-color: rgba(250, 204, 21, 0.9);
+  border: none;
+  color: #1a1a2e;
+  font-size: 1.3rem;
+  font-weight: bold;
+  cursor: pointer;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.3s ease, background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.scroll-btn:hover {
+  background-color: #eab308;
+  transform: translateY(-50%) scale(1.1);
+}
+
+.scroll-btn.left {
+  left: -10px;
+}
+
+.scroll-btn.right {
+  right: -10px;
+}
+
+/* ---------- Placeholder Page Styles ---------- */
+.page-container {
+  min-height: 100vh;
+  background-color: #1a1a2e;
+  color: #e0e0e0;
+  font-family: 'Roboto', sans-serif;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.page-header {
+  font-size: 3.2rem;
+  font-weight: bold;
+  color: #fff;
+  margin-bottom: 40px;
+  text-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+}
+
+.page-container p {
+  font-size: 1.3rem;
+  color: #bbb;
+  margin-bottom: 30px;
+  max-width: 800px;
+  line-height: 1.6;
+}
+
+.page-container ul {
+  list-style: none;
+  padding: 0;
+  width: 100%;
+  max-width: 600px;
+  margin-top: 20px;
+}
+
+.page-container ul li {
+  margin-bottom: 15px;
+  text-align: left;
+  border: 1px solid #333;
+  padding: 15px;
+  border-radius: 10px;
+  background-color: #2a2a3e;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.page-container ul li:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+}
+
+.page-container ul li h3 {
+  color: #F6490D;
+  margin-top: 0;
+  margin-bottom: 8px;
+  font-size: 1.2rem;
+}
+
+.page-container ul li p {
+  font-size: 0.95rem;
+  color: #ccc;
+  margin-bottom: 5px;
+}
+
+
+.back-button {
+  background-color: #F6490D;
+  color: #1a1a2e;
+  border: none;
+  padding: 14px 30px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1.2rem;
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.4);
+}
+
+.back-button:hover {
+  background-color: #d9400c;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+}
+
+/* Tasks Listing Page Layout */
+.tasks-listing-page {
+  display: flex;
+  min-height: 100vh;
+  background-color: #1a1a2e;
+  color: #e0e0e0;
+  font-family: 'Roboto', sans-serif;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.tasks-sidebar {
+  width: 280px;
+  flex-shrink: 0;
+  padding: 20px;
+  background-color: #22223b;
+  border-radius: 15px;
+  margin-right: 25px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+}
+
+.tasks-sidebar h3 {
+  font-size: 1.6rem;
+  color: #fff;
+  margin-bottom: 25px;
+  padding-bottom: 10px;
+  text-align: center;
+}
+
+.filter-group {
+  margin-bottom: 30px;
+}
+
+/* Enhanced Filter Group Title Styling */
+.filter-group-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #fff;
+  background-color: transparent;
+  padding: 0;
+  border-radius: 0;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: none;
+  border-left: none;
+}
+
+.filter-group-title svg {
+  width: 20px;
+  height: 20px;
+  color: #fff;
+}
+
+/* Category Buttons (now cards) */
+.category-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 10px;
+}
+
+/* Sidebar Category Card - Modern & Classy */
+.sidebar-category-card {
+  flex: 0 0 auto;
+  background-color: #2a2a3e;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 8px;
+  box-sizing: border-box;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  /* Added solid inner border */
+  border: 1px solid #333355; /* Darker color for the inner border */
+  cursor: pointer;
+  width: 100%;
+  height: 100px;
+  text-align: center;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.sidebar-category-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  /* Changed to a fixed two-color gradient for the outer border */
+  background: linear-gradient(to right, #00ffae, #00e6b8); /* Two shades of green for a static gradient */
+  /* Removed animation to keep the color fixed */
+  /* animation: rotateGradient 3s linear infinite, hueShift 10s linear infinite; */
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  z-index: -1;
+  opacity: 0.7;
+  transition: opacity 0.3s ease, background 0.3s ease;
+}
+
+.sidebar-category-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+  background-color: #3a3a4e;
+}
+
+.sidebar-category-card.active {
+  background: linear-gradient(145deg, #6A0DAD, #4169E1);
+  color: #fff;
+  font-weight: bold;
+  box-shadow: 0 4px 15px rgba(106, 13, 173, 0.5);
+  transform: translateY(-2px);
+  border: none;
+}
+
+.sidebar-category-card.active::before {
+  background: linear-gradient(to bottom right, #6A0DAD, #4169E1, #00BFFF);
+  opacity: 1;
+  animation: rotateGradient 3s linear infinite, hueShift 10s linear infinite;
+}
+
+.sidebar-category-card .card-top-section {
+  width: 45px;
+  height: 45px;
+  margin-bottom: 8px;
+  border: none;
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0;
+}
+
+.sidebar-category-card .category-icon {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  color: #fff;
+  transition: color 0.2s ease;
+  box-shadow: none;
+}
+
+.sidebar-category-card.active .category-icon {
+  color: #fff;
+}
+
+.sidebar-category-card .category-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #e0e0e0;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  transition: color 0.2s ease;
+}
+
+.sidebar-category-card.active .category-title {
+  color: #fff;
+}
+
+
+/* Range Slider Styles */
+.range-slider-container {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.range-slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 8px;
+  background: #555;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+  border-radius: 5px;
+}
+
+.range-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: #F6490D;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 5px rgba(246, 73, 13, 0.7);
+}
+
+.range-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: #F6490D;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 5px rgba(246, 73, 13, 0.7);
+}
+
+.range-values {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 5px;
+  font-size: 0.9rem;
+  color: #bbb;
+}
+
+/* Dropdown Select Styles */
+.filter-select {
+  width: 100%;
+  padding: 10px 15px;
+  border-radius: 8px;
+  border: 1px solid #555;
+  background-color: #333355;
+  color: #e0e0e0;
+  font-size: 1rem;
+  appearance: none;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23F6490D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucude-chevron-down"><path d="m6 9 6 6 6-6Z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+}
+
+.filter-select:focus {
+  border-color: #F6490D;
+  outline: none;
+}
+
+/* Sort By Dropdown in Main Content */
+.sort-by-container {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 10px;
+}
+
+.sort-by-container label {
+  font-size: 1rem;
+  color: #e0e0e0;
+}
+
+/* New: Task Category Section Styling */
+.task-category-section {
+  margin-bottom: 20px;
+}
+
+/* Enhanced Task Category Section Heading */
+.task-category-section h4 {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #fff;
+  background-color: transparent;
+  padding: 0;
+  border-radius: 0;
+  margin-bottom: 15px;
+  border-left: none;
+  text-shadow: 0 0 8px rgba(246, 73, 13, 0.3);
+  box-shadow: none;
+}
+
+/* Task Cards Grid */
+.task-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 180px);
+  gap: 15px;
+  justify-content: center;
+  align-items: start;
+  padding: 0;
+}
+
+
+/* Responsive for tasks listing page */
+@media (max-width: 1024px) {
+  .tasks-listing-page {
+    flex-direction: column;
+    padding: 15px;
+  }
+  .tasks-sidebar {
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 25px;
+    padding: 15px;
+  }
+  .tasks-main-content {
+    padding: 0;
+  }
+  .task-cards-grid {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    padding: 0;
+  }
+  /* Responsive for small cards */
+  .game-card-small, .task-card-small {
+    width: 180px;
+    height: 200px;
+  }
+  .game-card-small .card-top-section, .task-card-small .card-top-section {
+    width: 80px;
+    height: 80px;
+  }
+  /* Responsive for medium cards */
+  .game-card-medium, .task-card-medium {
+    width: 180px;
+    height: 200px;
+  }
+  .game-card-medium .card-top-section, .task-card-medium .card-top-section {
+    width: 80px;
+    height: 80px;
+  }
+  /* Responsive for large cards */
+  .game-card-large, .task-card-large {
+    width: 180px;
+    height: 200px;
+  }
+  .game-card-large .card-top-section, .task-card-large .card-top-section {
+    width: 80px;
+    height: 80px;
+  }
+  .hero-section {
+    height: 300px;
+  }
+  .hero-title {
+    font-size: 2.8rem;
+  }
+  .hero-description {
+    font-size: 1.rem;
+  }
+  .hero-button {
+    font-size: 1.1rem;
+    padding: 12px 25px;
+  }
+}
+
+@media (max-width: 768px) {
+  .tasks-sidebar {
+    border-radius: 10px;
+  }
+  .tasks-sidebar h3 {
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+  }
+  .filter-group-title {
+    font-size: 1.1rem;
+  }
+  .task-cards-grid {
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  }
+  /* Responsive for small cards */
+  .game-card-small, .task-card-small {
+    width: 150px;
+    height: 170px;
+  }
+  .game-card-small .card-top-section, .task-card-small .card-top-section {
+    width: 70px;
+    height: 70px;
+  }
+  .game-card-small .game-title-overlay, .task-card-small .task-card-title {
+    font-size: 0.9rem;
+  }
+  .game-card-small .game-value-overlay, .task-card-small .task-card-value {
+    font-size: 1.0rem;
+  }
+  .game-card-small .game-condition-overlay, .task-card-small .task-card-condition {
+    font-size: 0.8rem;
+  }
+  /* Responsive for medium cards */
+  .game-card-medium, .task-card-medium {
+    width: 150px;
+    height: 170px;
+  }
+  .game-card-medium .card-top-section, .task-card-medium .card-top-section {
+    width: 70px;
+    height: 70px;
+  }
+  .game-card-medium .game-title-overlay, .task-card-medium .task-card-title {
+    font-size: 0.9rem;
+  }
+  .game-card-medium .game-value-overlay, .task-card-medium .task-card-value {
+    font-size: 1.0rem;
+  }
+  .game-card-medium .game-condition-overlay, .task-card-medium .task-card-condition {
+    font-size: 0.8rem;
+  }
+  /* Responsive for large cards */
+  .game-card-large, .task-card-large {
+    width: 150px;
+    height: 170px;
+  }
+  .game-card-large .card-top-section, .task-card-large .card-top-section {
+    width: 70px;
+    height: 70px;
+  }
+  .game-card-large .game-title-overlay, .task-card-large .task-card-title {
+    font-size: 0.9rem;
+  }
+  .game-card-large .game-value-overlay, .task-card-large .task-card-value {
+    font-size: 1.0rem;
+  }
+  .game-card-large .game-condition-overlay, .task-card-large .task-card-condition {
+    font-size: 0.8rem;
+  }
+
+  .sidebar-category-card {
+    height: 80px;
+  }
+  .sidebar-category-card .category-icon {
+    width: 30px;
+    height: 30px;
+  }
+  .sidebar-category-card .category-title {
+    font-size: 0.75rem;
+  }
+  .hero-section {
+    height: 250px;
+  }
+  .hero-title {
+    font-size: 2.2rem;
+  }
+  .hero-description {
+    font-size: 0.9rem;
+  }
+  .hero-button {
+    font-size: 1.1rem;
+    padding: 12px 25px;
+  }
+}
+
+@media (max-width: 480px) {
+  .tasks-listing-page {
+    padding: 10px;
+  }
+  .tasks-sidebar {
+    padding: 10px;
+  }
+  .tasks-sidebar h3 {
+    font-size: 1.2rem;
+    padding-bottom: 8px;
+  }
+  .filter-group {
+    margin-bottom: 20px;
+  }
+  .filter-group-title {
+    font-size: 1rem;
+  }
+  .range-slider-container, .category-buttons button, .filter-select {
+    font-size: 0.9rem;
+  }
+  .task-cards-grid {
+    grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+  }
+  /* Responsive for small cards */
+  .game-card-small, .task-card-small {
+    width: 120px;
+    height: 140px;
+  }
+  .game-card-small .card-top-section, .task-card-small .card-top-section {
+    width: 60px;
+    height: 60px;
+  }
+  .game-card-small .game-title-overlay, .task-card-small .task-card-title {
+    font-size: 0.65rem;
+  }
+  .game-card-small .game-value-overlay, .task-card-small .task-card-value {
+    font-size: 0.75rem;
+  }
+  .game-card-small .game-condition-overlay, .task-card-small .task-card-condition {
+    font-size: 0.55rem;
+  }
+  /* Responsive for medium cards */
+  .game-card-medium, .task-card-medium {
+    width: 120px;
+    height: 140px;
+  }
+  .game-card-medium .card-top-section, .task-card-medium .card-top-section {
+    width: 60px;
+    height: 60px;
+  }
+  /* Responsive for large cards */
+  .game-card-large, .task-card-large {
+    width: 120px;
+    height: 140px;
+  }
+  .game-card-large .card-top-section, .task-card-large .card-top-section {
+    width: 60px;
+    height: 60px;
+  }
+
+  .sidebar-category-card {
+    height: 60px;
+  }
+  .sidebar-category-card .category-icon {
+    width: 20px;
+    height: 20px;
+  }
+  .sidebar-category-card .category-title {
+    font-size: 0.65rem;
+  }
+  .hero-section {
+    height: 200px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+  }
+  .hero-title {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+  }
+  .hero-description {
+    font-size: 0.8rem;
+    margin-bottom: 20px;
+  }
+  .hero-button {
+    font-size: 0.9rem;
+    padding: 8px 15px;
+  }
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7); /* Darker, slightly transparent background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Base z-index for the main modal overlay */
+  backdrop-filter: blur(8px); /* Apply stronger blur effect here */
+}
+
+.modal-content {
+  background-color: #1a1a2e; /* Dark background */
+  border-radius: 18px;
+  padding: 20px; /* Adjust padding for the new layout */
+  width: 90%;
+  max-width: 800px; /* Increased max-width to accommodate side-by-side layout */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 221, 255, 0.6); /* Blue glow */
+  position: relative;
+  display: grid; /* Changed to grid for two-column layout */
+  grid-template-columns: 1.2fr 1fr; /* Two columns: left for image/button, right for rewards */
+  gap: 20px; /* Gap between grid columns */
+  animation: fadeInScale 0.3s ease-out forwards;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  z-index: 1001;
+  max-height: 90vh;
+  overflow: hidden; /* Hide overflow from content */
+}
+
+/* Gradient border for modal */
+.modal-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: inherit;
+  padding: 3px;
+  background: linear-gradient(to top right,#00ddff, #c906ff); /* Blue to purple gradient */
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  z-index: -1;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.modal-close-button {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  color: #e0e0e0;
+  cursor: pointer;
+  transition: color 0.2s ease, transform 0.2s ease;
+  z-index: 10; /* Ensure close button is on top */
+}
+
+.modal-close-button:hover {
+  color: #00ddff; /* Blue on hover */
+  transform: rotate(90deg);
+}
+
+/* Left Column for Image, Title, Price, Button */
+.modal-left-column {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Align content to the left */
+  padding-right: 10px; /* Add some padding to separate from right column */
+}
+
+.modal-image {
+  width: 100%; /* Make image fill its column width */
+  height: 200px; /* Fixed height for consistency */
+  border-radius: 12px;
+  object-fit: cover;
+  margin-bottom: 20px;
+  border: 2px solid #007BFF; /* Blue border */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+}
+
+.modal-title {
+  font-size: 2.2rem; /* Larger font size */
+  font-weight: bold;
+  color: #ffffff; /* White color as in screenshot */
+  margin-bottom: 15px;
+  text-align: left; /* Align to left */
+  line-height: 1.2;
+}
+
+/* Container for Play and Earn Button and Price */
+.modal-action-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Space out button and price */
+  width: 100%;
+  margin-bottom: 20px;
+  gap: 15px; /* Gap between button and price */
+}
+
+.play-and-earn-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: #2a2a3e; /* Dark background as in screenshot */
+  color: #e0e0e0; /* White text */
+  padding: 12px 25px; /* Adjusted padding */
+  border-radius: 10px; /* Less rounded */
+  font-size: 1.1rem; /* Adjusted font size */
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+  flex-grow: 1; /* Allow button to grow */
+  max-width: 250px; /* Limit button width */
+}
+
+.play-and-earn-button:hover {
+  background-color: #3a3a4e; /* Slightly lighter on hover */
+  transform: translateY(-2px);
+  box-shadow: 0 7px 20px rgba(0, 0, 0, 0.5);
+}
+
+.play-and-earn-button svg {
+  width: 24px;
+  height: 24px;
+  fill: #e0e0e0; /* Icon color matches button text */
+  stroke: none;
+}
+
+.modal-price {
+  font-size: 2.5rem; /* Large font size */
+  font-weight: bold;
+  color: #0ff28f; /* Green color as in screenshot */
+  flex-shrink: 0; /* Prevent shrinking */
+  text-align: right;
+}
+
+/* Right Column for Rewards and other scrollable content */
+.modal-right-column {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto; /* Make this column scrollable */
+  padding-right: 10px; /* Add padding for scrollbar */
+}
+
+/* Custom scrollbar for Webkit browsers (Chrome, Safari) */
+.modal-right-column::-webkit-scrollbar {
+  width: 8px; /* Width of the scrollbar */
+}
+
+.modal-right-column::-webkit-scrollbar-track {
+  background: #1a1a2e; /* Dark blue track */
+  border-radius: 10px;
+}
+
+.modal-right-column::-webkit-scrollbar-thumb {
+  background: #333333; /* Black thumb */
+  border-radius: 10px;
+}
+
+.modal-right-column::-webkit-scrollbar-thumb:hover {
+  background: #555555; /* Darker black on hover */
+}
+
+
+/* Rewards Section in ItemDetailModal */
+.modal-rewards-section {
+  width: 100%;
+  text-align: left;
+  margin-bottom: 20px; /* Reduced margin */
+  background-color: #2a2a3e; /* Darker background for rewards section */
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+  flex-shrink: 0; /* Prevent this section from shrinking */
+}
+
+.modal-rewards-section h3 {
+  font-size: 1.4rem; /* Adjusted font size */
+  color: #ffffff; /* White color */
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-weight: bold;
+}
+
+.rewards-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.reward-item {
+  display: flex;
+  align-items: center;
+  background-color: #333355; /* Slightly lighter background for each item */
+  border-radius: 8px;
+  padding: 10px 15px; /* Adjusted padding */
+  margin-bottom: 10px;
+  font-size: 0.95rem;
+  color: #e0e0e0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.reward-item:last-child {
+  margin-bottom: 0;
+}
+
+.reward-icon {
+  width: 30px; /* Size for profile picture */
+  height: 30px;
+  border-radius: 50%; /* Circular for profile pictures */
+  object-fit: cover;
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+
+.reward-value {
+  background-color: #FFD700; /* Gold background for value */
+  color: #1a1a2e; /* Dark text */
+  padding: 4px 8px; /* Adjusted padding */
+  border-radius: 6px;
+  font-weight: bold;
+  margin-right: 15px;
+  flex-shrink: 0;
+  min-width: 60px; /* Adjusted min-width */
+  text-align: center;
+  font-size: 0.9rem; /* Adjusted font size */
+}
+
+.reward-label {
+  flex-grow: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.9rem; /* Adjusted font size */
+}
+
+.reward-tickets {
+  font-size: 0.8rem;
+  color: #bbb;
+  margin-left: 10px;
+  flex-shrink: 0;
+}
+
+.reward-view-button {
+  background-color: #F6490D; /* Orange-red for View button */
+  color: #1a1a2e;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  margin-left: auto; /* Push to the right */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.reward-view-button:hover {
+  background-color: #d9400c;
+  transform: translateY(-1px);
+}
+
+/* Description and Steps Sections */
+.modal-description-section,
+.modal-steps-section {
+  width: 100%;
+  text-align: left;
+  margin-bottom: 25px;
+  background-color: #2a2a3e;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+  flex-shrink: 0; /* Prevent these sections from shrinking */
+}
+
+.modal-description-section h3,
+.modal-steps-section h3 {
+  font-size: 1.4rem;
+  color: #fff;
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-weight: bold;
+}
+
+.modal-description-section p {
+  font-size: 0.95rem;
+  color: #ccc;
+  line-height: 1.5;
+  margin-bottom: 0;
+}
+
+.steps-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.steps-list li {
+  background-color: transparent; /* No background for list items */
+  padding: 8px 0;
+  border-radius: 0;
+  margin-bottom: 5px;
+  font-size: 0.9rem;
+  color: #bbb;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.steps-list li::before {
+  content: '✓';
+  color: #007BFF; /* Blue checkmark */
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+
+/* Responsive adjustments for modal */
+@media (max-width: 768px) {
+  .modal-content {
+    grid-template-columns: 1fr; /* Stack columns on smaller screens */
+    padding: 20px;
+    max-width: 95%;
+  }
+  .modal-left-column {
+    padding-right: 0;
+    align-items: center; /* Center content when stacked */
+  }
+  .modal-image {
+    width: 80%; /* Adjust image width */
+    height: 150px;
+    margin-bottom: 15px;
+  }
+  .modal-title {
+    font-size: 1.8rem;
+    text-align: center;
+  }
+  .modal-action-row {
+    flex-direction: column; /* Stack button and price */
+    gap: 10px;
+  }
+  .modal-price {
+    font-size: 2rem;
+    text-align: center;
+  }
+  .play-and-earn-button {
+    padding: 12px 20px;
+    font-size: 1rem;
+    max-width: 100%;
+  }
+  .modal-rewards-section,
+  .modal-description-section,
+  .modal-steps-section {
+    padding: 15px;
+  }
+  .modal-rewards-section h3,
+  .modal-description-section h3,
+  .modal-steps-section h3 {
+    font-size: 1.2rem;
+  }
+  .reward-item {
+    flex-wrap: wrap; /* Allow items to wrap */
+    justify-content: center;
+    text-align: center;
+  }
+  .reward-icon {
+    margin-bottom: 5px;
+    margin-right: 0;
+  }
+  .reward-value {
+    margin-right: 0;
+    margin-bottom: 5px;
+  }
+  .reward-label {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 5px;
+  }
+  .reward-tickets {
+    margin-left: 0;
+  }
+  .reward-view-button {
+    margin-left: auto; /* Push to the right */
+    margin-top: 5px;
+  }
+  .modal-description-section p,
+  .steps-list li {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-content {
+    padding: 15px;
+    border-radius: 15px;
+  }
+  .modal-close-button {
+    font-size: 1.5rem;
+    top: 10px;
+    right: 10px;
+  }
+  .modal-image {
+    height: 120px;
+  }
+  .modal-title {
+    font-size: 1.6rem;
+  }
+  .modal-price {
+    font-size: 1.8rem;
+  }
+  .play-and-earn-button {
+    font-size: 0.9rem;
+    padding: 10px 18px;
+  }
+  .modal-rewards-section h3,
+  .modal-description-section h3,
+  .modal-steps-section h3 {
+    font-size: 1.1rem;
+  }
+  .reward-value {
+    font-size: 0.8rem;
+  }
+  .reward-label {
+    font-size: 0.8rem;
+  }
+}
+
+/* New styles for hover effect and "Show" button */
+.game-card.hovered-blur .card-top-section,
+.task-card.hovered-blur .card-top-section,
+.game-card.hovered-blur .game-details-main,
+.task-card.hovered-blur .task-card-details-main {
+  filter: blur(3px);
+  transition: filter 0.3s ease;
+}
+
+.game-card .show-button,
+.task-card .show-button {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: transparent; /* Changed to transparent */
+  color: #ffffff; /* Text color */
+  border: none;
+  padding: 0; /* Removed padding from button itself */
+  border-radius: 0; /* Removed border-radius from button itself */
+  font-weight: bold;
+  font-size: 0.9rem;
+  cursor: pointer;
+  z-index: 5;
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  box-shadow: none; /* Removed box-shadow from button itself */
+  display: flex; /* Enable flexbox for icon and text alignment */
+  flex-direction: column; /* Stack icon and text vertically */
+  align-items: center; /* Center items horizontally */
+  justify-content: center;
+  gap: 10px; /* Space between icon and text */
+}
+
+.game-card.hovered-blur .show-button,
+.task-card.hovered-blur .show-button {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+.show-button:hover {
+  background-color: transparent; /* Keep transparent on hover */
+  transform: translate(-50%, -50%) scale(1.15);
+}
+
+/* Styles for the play icon within the show-button */
+.show-button .play-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 192, 255, 0.15);   /* Transparent light blue */
+  backdrop-filter: blur(8px);                 /* Glass blur effect */
+  border: 1px solid rgba(0, 192, 255, 0.4);    /* Light glowing border */
+  box-shadow: 0 4px 10px rgba(0, 192, 255, 0.4); /* Soft glow */
+  transition: transform 0.2s ease, background-color 0.3s ease;
+}
+
+
+.show-button:hover .play-icon {
+  transform: scale(1.1); /* Slightly enlarge icon on hover */
+}
+
+.show-button .play-icon polygon {
+  fill: #FFFFFF; /* Play triangle remains white */
+}
+
+/* Removed the old lottery-info section as it's now a full modal */
+/* .lottery-info { ... } */
+
+
+/* New Lottery Modal Styles */
+.lottery-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: transparent; /* Changed to transparent */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1002; /* Increased z-index to be above the main modal */
+  backdrop-filter: blur(8px); /* Apply blur effect here */
+}
+
+.lottery-modal-content {
+  background-color: #1a1a2e;
+  border-radius: 20px;
+  padding: 20px;
+  width: 450px; /* Decreased width */
+  height: auto; /* Changed height to auto for flexibility */
+  max-height: 90vh; /* Keep max-height for responsive behavior */
+  /* box-shadow: 0 15px 40px rgba(0, 0, 0, 0.9), 0 0 30px rgba(255, 215, 0, 0.7); Gold shadow */
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  animation: fadeInScale 0.4s ease-out forwards;
+  border: 3px solid transparent;
+  background-clip: padding-box;
+  z-index: 1003; /* Increased z-index to be above its own overlay */
+  overflow-y: auto; /* Make the entire modal content scrollable */
+}
+
+/* Custom scrollbar for Webkit browsers (Chrome, Safari) for lottery modal */
+.lottery-modal-content::-webkit-scrollbar {
+  width: 8px; /* Width of the scrollbar */
+}
+
+.lottery-modal-content::-webkit-scrollbar-track {
+  background: #1a1a2e; /* Dark blue track */
+  border-radius: 10px;
+}
+
+.lottery-modal-content::-webkit-scrollbar-thumb {
+  background: #333333; /* Black thumb */
+  border-radius: 10px;
+}
+
+.lottery-modal-content::-webkit-scrollbar-thumb:hover {
+  background: #555555; /* Darker black on hover */
+}
+
+
+.lottery-modal-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: inherit;
+  padding: 4px;
+  background: linear-gradient(135deg, #00fff8, #05f088, #d8ff00);/* Gold to Orange gradient */
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  z-index: -1;
+}
+
+.lottery-modal-close-button {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: #e0e0e0;
+  cursor: pointer;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.lottery-modal-close-button:hover {
+  color: #FFD700; /* Gold on hover */
+  transform: rotate(90deg);
+}
+
+.lottery-header {
+  width: 100%;
+  padding-bottom: 15px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #333;
+}
+
+.lottery-header h2 {
+  font-size: 1.rem;
+  color: #FFD700; /* Gold color */
+  margin: 0;
+  font-weight: bold;
+}
+
+/* Timer styles */
+.lottery-timer {
+  font-size: 1.3rem; /* Increased font size for timer */
+  color: #0ff28f; /* Greenish color from the webpage theme */
+  font-weight: bold;
+  margin-top: 5px;
+  text-shadow: 0 0 8px rgba(15, 242, 143, 0.5); /* Matching shadow */
+  background-color: #2a2a3e; /* Darker background for timer */
+  padding: 8px 15px; /* Padding for timer */
+  border-radius: 20px; /* Rounded corners for timer */
+  border: 1px solid #0ff28f; /* Greenish border for timer */
+  box-shadow: 0 2px 10px rgba(15, 242, 143, 0.3); /* Shadow for timer */
+}
+
+.lottery-main-display {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 0;
+  margin-bottom: 15px; /* Reduced margin */
+  background: linear-gradient(135deg, #2a2a3e, #3a3a4e);
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+  overflow: hidden; /* For ticket icons */
+}
+
+.lottery-prize-circle {
+  background: radial-gradient(circle at center, #FFD700 0%, #FFA500 70%, #FF4500 100%);
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #1a1a2e;
+  font-weight: bold;
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+  z-index: 1;
+  position: relative;
+}
+
+.lottery-total-prize {
+  font-size: 2.8rem;
+  line-height: 1;
+  margin-bottom: 5px;
+}
+
+.lottery-winners-count {
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.lottery-tickets-overlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 10px; /* Adjust padding to make tickets visible */
+  pointer-events: none;
+  z-index: 0;
+}
+
+.ticket-icon-large {
+  position: absolute;
+  opacity: 0.7;
+}
+.ticket-icon-large:nth-child(1) {
+  top: 10%;
+  left: 5%;
+  transform: rotate(-20deg);
+}
+.ticket-icon-large:nth-child(2) {
+  bottom: 10%;
+  right: 5%;
+  transform: rotate(20deg);
+}
+.ticket-icon-large:nth-child(3) {
+  top: 50%;
+  left: 0%;
+  transform: translateY(-50%) rotate(5deg);
+}
+.ticket-icon-large:nth-child(4) {
+  top: 50%;
+  right: 0%;
+  transform: translateY(-50%) rotate(-5deg);
+}
+
+
+.lottery-ticket-info {
+  font-size: 1rem;
+  color: #bbb;
+  margin-top: 10px;
+  margin-bottom: 20px; /* Reduced margin */
+}
+
+/* Tabs */
+.lottery-tabs {
+  display: flex;
+  width: 100%;
+  margin-bottom: 0px; /* Reduced margin to avoid extra space */
+  border-bottom: 2px solid #333;
+}
+
+.lottery-tab-button {
+  flex: 1;
+  padding: 12px 0;
+  background: none;
+  border: none;
+  color: #bbb;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: color 0.2s ease, border-bottom 0.2s ease;
+  border-bottom: 2px solid transparent;
+}
+
+.lottery-tab-button.active {
+  color: #FFD700; /* Gold for active tab */
+  border-bottom-color: #FFD700;
+}
+
+.lottery-tab-button:hover:not(.active) {
+  color: #e0e0e0;
+}
+
+/* New scrollable wrapper for tab content */
+.lottery-tab-content-wrapper {
+  max-height: 280px; /* Set a max height for the tab content to enable scrolling */
+  overflow-y: auto; /* Make this specific div scrollable */
+  width: 100%;
+  padding-right: 10px; /* To prevent scrollbar from overlapping content */
+  box-sizing: border-box;
+  padding-top: 10px; /* Add padding to the top of the content */
+}
+
+.lottery-tab-content {
+  width: 100%;
+  padding: 0px; /* Removed padding here as it's now on the wrapper */
+}
+
+/* Prizes Table */
+.prizes-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.prizes-table th,
+.prizes-table td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #333;
+}
+
+.prizes-table th {
+  background-color: #2a2a3e;
+  color: #fff;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.prizes-table td {
+  color: #e0e0e0;
+  font-size: 0.95rem;
+}
+
+.prizes-table tbody tr:nth-child(odd) {
+  background-color: #1f1f3a;
+}
+
+.prizes-table tbody tr:hover {
+  background-color: #2a2a4a;
+}
+
+/* Previous Winners List */
+.previous-winners-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+}
+
+.previous-winners-list li {
+  background-color: #2a2a3e;
+  padding: 12px 15px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  font-size: 0.95rem;
+  color: #e0e0e0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.previous-winners-list li:last-child {
+  margin-bottom: 0;
+}
+
+.previous-winners-list li strong {
+  color: #FFD700; /* Gold for rank */
+}
+
+/* Responsive adjustments for Lottery Modal */
+@media (max-width: 600px) {
+  .lottery-modal-content {
+    padding: 15px;
+    border-radius: 15px;
+    width: 95%; /* Adjust width for smaller screens */
+    height: auto; /* Allow height to adjust on smaller screens */
+    max-height: 90vh; /* Keep max-height for smaller screens */
+  }
+  .lottery-modal-close-button {
+    font-size: 1.5rem;
+    top: 10px;
+    right: 10px;
+  }
+  .lottery-header h2 {
+    font-size: 1.4rem;
+  }
+  .lottery-prize-circle {
+    width: 140px;
+    height: 140px;
+  }
+  .lottery-total-prize {
+    font-size: 2rem;
+  }
+  .lottery-winners-count {
+    font-size: 0.8rem;
+  }
+  .lottery-tab-button {
+    font-size: 1rem;
+    padding: 10px 0;
+  }
+  .prizes-table th,
+  .prizes-table td,
+  .previous-winners-list li {
+    padding: 10px;
+    font-size: 0.85rem;
+  }
+}
+.game-badge {
+  position: absolute;
+  top: 16px;              /* Move down slightly */
+  right: 10px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: bold;
+  background-color: #007BFF; /* Changed to blue */
+  color: white;
+  border-radius: 8px;
+  z-index: 2;
+}
+
+/* Added border for main-content-area */
+.main-content-area {
+  position: relative;
+  padding: 20px;
+  margin: 20px auto;
+  max-width: 1600px;
+  box-sizing: border-box;
+  border-radius: 20px;
+  background-color: #1a1a2e; /* your content background */
+  z-index: 1;
+}
+
+.main-content-area::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 20px;
+
+  padding: 4px; /* your desired border width */
+  background: linear-gradient(90deg, #1d057b, #00475e); /* your two-color border */
+  box-shadow: 0 0 12px rgba(0, 200, 255, 0.4);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  z-index: -1;
+}
+
+/* New Survey Partners Section Styles */
+.survey-partners-section {
+  margin-top: 50px;
+  margin-bottom: 40px;
+}
+
+.survey-partners-title {
+  font-size: 2.2rem;
+  color: #fff;
+  margin-bottom: 20px;
+  text-shadow: 0 0 3px rgba(251, 251, 250, 0.6);
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.survey-partners-title svg {
+  color: #0ff28f; /* Greenish icon color */
+}
+
+.survey-partners-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* Adjusted min width */
+  gap: 20px;
+  justify-content: center;
+  align-items: start;
+  padding: 0 10px;
+}
+
+/* Survey Partner Card Styles */
+.survey-partner-card {
+  background-color: #1a1a2e;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* Center content vertically */
+  padding: 20px; /* Increased padding */
+  box-sizing: border-box;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 2px solid #2a2a3e;
+  cursor: pointer;
+  text-align: center;
+  overflow: hidden;
+}
+
+.survey-partner-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: inherit;
+  padding: 2px;
+  background: linear-gradient(to right, #00ddff, #c906ff); /* Blue to Purple gradient */
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  z-index: -1;
+}
+
+.survey-partner-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.9);
+}
+
+.partner-logo-container {
+  width: 80px; /* Larger logo container */
+  height: 80px;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 15px;
+  border: 2px solid #007BFF; /* Blue border for logo */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+  display: flex; /* Center image inside container */
+  align-items: center;
+  justify-content: center;
+}
+
+.partner-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* Ensure logo fits without cropping */
+}
+
+.partner-name {
+  font-size: 1.2rem; /* Larger font for name */
+  font-weight: bold;
+  color: #ffffff; /* White color */
+  margin-bottom: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+.partner-stars {
+  display: flex;
+  gap: 3px;
+  color: #FFD700; /* Gold color for stars */
+  font-size: 1.1rem; /* Larger stars */
+}
+
+.star-icon {
+  /* No specific styles needed here, color is inherited */
+}
+
+/* Responsive adjustments for survey partners section */
+@media (max-width: 1024px) {
+  .survey-partners-grid {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+  .survey-partner-card {
+    padding: 15px;
+  }
+  .partner-logo-container {
+    width: 70px;
+    height: 70px;
+    margin-bottom: 10px;
+  }
+  .partner-name {
+    font-size: 1.1rem;
+  }
+  .partner-stars {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .survey-partners-grid {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  }
+  .survey-partners-title {
+    font-size: 1.8rem;
+  }
+  .survey-partner-card {
+    padding: 12px;
+  }
+  .partner-logo-container {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 8px;
+  }
+  .partner-name {
+    font-size: 1rem;
+  }
+  .partner-stars {
+    font-size: 0.9rem;
+  }
+@media (max-width: 480px) {
+  .survey-partners-grid {
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  }
+  .survey-partners-title {
+    font-size: 1.5rem;
+    gap: 5px;
+  }
+  .survey-partners-title svg {
+    width: 20px;
+    height: 20px;
+  }
+  .survey-partner-card {
+    padding: 10px;
+    border-radius: 15px;
+  }
+  .partner-logo-container {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 6px;
+  }
+  .partner-name {
+    font-size: 0.9rem;
+  }
+  .partner-stars {
+    font-size: 0.8rem;
+  }
+}
+/* Extra Large Card */
+.game-card-xl, .task-card-xl {
+  width: 210px;
+  height: 230px;
+  padding: 14px;
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+  background-color: #1a1a2e;
+  border-radius: 18px;
+  box-shadow: 0 12px 30px rgba(0, 255, 150, 0.4);
+  border: 2px solid #00ffcc;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  box-sizing: border-box;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.game-card-xl .card-top-section, .task-card-xl .card-top-section {
+  width: 100px;
+  height: 100px;
+  margin-bottom: 12px;
+  border-radius: 15px;
+  border: 1px solid #007BFF;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.game-card-xl .game-title-overlay, .task-card-xl .task-card-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  line-height: 1.5;
+  color: #ffffff;
+  font-family: 'Inter', sans-serif;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.game-card-xl .game-value-overlay, .task-card-xl .task-card-value {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #00ffae;
+  text-shadow: 0 0 6px rgba(0, 255, 174, 0.6);
+  margin-bottom: 4px;
+  font-family: 'Inter', sans-serif;
+}
+
+.game-card-xl .game-condition-overlay, .task-card-xl .task-card-condition {
+  font-size: 1.05rem;
+  color: #00ffae;
+  line-height: 1.4;
+  font-family: 'Inter', sans-serif;
+  text-shadow: 0 0 6px rgba(0, 255, 174, 0.6);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+}
+

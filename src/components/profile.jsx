@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Mail, Phone, MapPin, Calendar, Settings, XCircle, Camera, Upload, Send, MessageSquare, Bot, Users, Trash2, Pin, Flag, MoreVertical, Edit2, Smile, CornerUpLeft, AtSign, Search, ChevronDown, ArrowLeft } from 'lucide-react';
+import { Mail, Phone, MapPin, Calendar, Settings, XCircle, Camera, Upload, Send, MessageSquare, Bot, Users, Trash2, Pin, Flag, MoreVertical, Edit2, Smile, CornerUpLeft, AtSign, Search, ChevronDown, ArrowLeft, UserPlus } from 'lucide-react'; // Added UserPlus icon
 
 // Firebase imports
 import { initializeApp, getApps, getApp } from 'firebase/app'; // Added getApps and getApp
-import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from 'firebase/auth';
+import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, signOut } from 'firebase/auth'; // Added signOut
 import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, deleteDoc, doc, updateDoc, getDoc, setDoc } from 'firebase/firestore';
 /* global __app_id, __firebase_config, __initial_auth_token */
 
@@ -23,7 +23,19 @@ const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 // Helper function to format timestamp to "X min/hr/day ago"
 const formatTimestamp = (timestamp) => {
   if (!timestamp) return '';
-  const date = timestamp.toDate();
+  let date;
+  // Check if it's a Firestore Timestamp object
+  if (typeof timestamp.toDate === 'function') {
+    date = timestamp.toDate();
+  } else if (timestamp instanceof Date) {
+    // It's already a JavaScript Date object
+    date = timestamp;
+  } else {
+    // Fallback for unexpected timestamp types
+    console.warn("Unexpected timestamp format:", timestamp);
+    return '';
+  }
+
   const now = new Date();
   const diffSeconds = Math.floor((now - date) / 1000);
 
@@ -158,16 +170,7 @@ const AdminFeedbackModal = ({ message, onClose, onSend }) => {
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-[100] p-4 backdrop-blur-sm">
       <div className="bg-slate-800 text-white p-6 rounded-lg shadow-2xl max-w-sm w-full relative border border-purple-500">
-        <h3 className="text-lg font-bold mb-4 text-center">Send Feedback to Admin</h3>
-        {/* Updated line for message display with fallback */}
-        <p className="text-sm text-gray-300 mb-4">Regarding message: "<span className="font-semibold">{message.text?.substring(0, 50) || 'No message content available'}{message.text && message.text.length > 50 ? '...' : ''}</span>"</p>
-        <textarea
-          className="w-full p-2 rounded-lg bg-slate-700 border border-purple-600 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 resize-y mb-4 no-scrollbar"
-          rows="4"
-          placeholder="Type your feedback here..."
-          value={feedbackText}
-          onChange={(e) => setFeedbackText(e.target.value)}
-        ></textarea>
+        <p className="text-lg mb-6 text-center">{message}</p>
         <div className="flex justify-end gap-4">
           <button
             className="bg-slate-600 hover:bg-slate-700 text-white py-2 px-5 rounded-lg font-semibold transition-all duration-200"
@@ -572,7 +575,57 @@ const ProfileCard = ({ profileData, setProfileData }) => {
 
 // AIChat Component
 const AIChat = ({ userProfileAvatar, userProfileName }) => {
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState([
+    // Initial mock messages to match the screenshot
+    {
+      id: 'msg1',
+      text: "Any tips for leveling up fast in PUBG?",
+      sender: 'user',
+      senderName: 'David',
+      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
+      timestamp: new Date(Date.now() - 2 * 60 * 1000), // 2 minutes ago
+      userId: 'user1', // Unique ID for David
+      reactions: {},
+      statusBadge: '20',
+      side: 'left' // Explicitly set side for visual matching
+    },
+    {
+      id: 'msg2',
+      text: "Nice! I'm on the level 35 task too ✨",
+      sender: 'user',
+      senderName: 'Lauren',
+      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face",
+      timestamp: new Date(Date.now() - 5 * 60 * 1000), // 5 minutes ago
+      userId: 'user2', // Unique ID for Lauren
+      reactions: {},
+      statusBadge: '35',
+      side: 'right' // Explicitly set side for visual matching
+    },
+    {
+      id: 'msg3',
+      text: "Looking for help with 8 Ball Pool 💰✨",
+      sender: 'user',
+      senderName: 'Jason',
+      avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face",
+      timestamp: new Date(Date.now() - 10 * 60 * 1000), // 10 minutes ago
+      userId: 'user3', // Unique ID for Jason
+      reactions: {},
+      statusBadge: 'Complete a task', // Example of a badge
+      side: 'left' // Explicitly set side for visual matching
+    },
+    {
+      id: 'msg4',
+      text: "Anyone doing tasks for Rise of Kingdoms?",
+      sender: 'user',
+      senderName: 'Ella',
+      avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&h=150&fit=crop&crop=face",
+      timestamp: new Date(Date.now() - 15 * 60 * 1000), // 15 minutes ago
+      userId: 'user4', // Unique ID for Ella
+      reactions: {},
+      statusBadge: 'Complete a task', // Example of a badge
+      side: 'right' // Explicitly set side for visual matching
+    },
+  ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -639,6 +692,18 @@ const AIChat = ({ userProfileAvatar, userProfileName }) => {
     return () => unsubscribeAuth();
   }, []);
 
+  // Function to handle switching to a new anonymous user
+  const handleSwitchUser = async () => {
+    try {
+      await signOut(auth); // Sign out the current user
+      await signInAnonymously(auth); // Sign in anonymously to get a new UID
+      setShowModal({ message: "Switched to a new anonymous user!", onConfirm: () => setShowModal(null), showCancel: false });
+    } catch (error) {
+      console.error("Error switching user:", error);
+      setShowModal({ message: "Failed to switch user. Please try again.", onConfirm: () => setShowModal(null), showCancel: false });
+    }
+  };
+
   // Determine which Firestore collection to use based on chatMode
   const getMessagesCollectionRef = useCallback(() => {
     return chatMode === 'ai'
@@ -658,10 +723,15 @@ const AIChat = ({ userProfileAvatar, userProfileName }) => {
     const q = query(messagesCollectionRef, orderBy('timestamp'));
 
     const unsubscribeMessages = onSnapshot(q, (snapshot) => {
-      const fetchedMessages = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
+      const fetchedMessages = snapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          ...data,
+          // Determine side based on sender's userId compared to currentUserId
+          side: data.userId === currentUserId ? 'right' : 'left'
+        };
+      });
       // Sort messages by server timestamp first, then by local timestamp for pending messages
       fetchedMessages.sort((a, b) => {
         const timestampA = a.timestamp?.toMillis() || a.localTimestamp || 0;
@@ -770,6 +840,7 @@ const AIChat = ({ userProfileAvatar, userProfileName }) => {
           timestamp: serverTimestamp(),
           userId: 'ai-bot',
           reactions: {},
+          side: 'left' // AI messages are always on the left
         };
         try {
           await addDoc(collection(db, `artifacts/${appId}/public/data/chat_messages_ai`), welcomeMessage);
@@ -798,6 +869,7 @@ const AIChat = ({ userProfileAvatar, userProfileName }) => {
       localTimestamp: Date.now(), // Client-side timestamp for immediate sorting
       userId: currentUserId,
       reactions: {},
+      side: 'right', // New messages from the current user are always on the right
       ...(replyingTo && {
         repliedToMessageId: replyingTo.messageId,
         repliedToSenderName: replyingTo.senderName,
@@ -843,6 +915,7 @@ const AIChat = ({ userProfileAvatar, userProfileName }) => {
             localTimestamp: Date.now(), // Also add local timestamp for AI messages
             userId: 'ai-bot',
             reactions: {},
+            side: 'left' // AI messages are always on the left
           };
           await addDoc(currentCollectionRef, aiMessage);
           console.log("AI response message added to Firestore.");
@@ -856,6 +929,7 @@ const AIChat = ({ userProfileAvatar, userProfileName }) => {
             localTimestamp: Date.now(), // Also add local timestamp for error messages
             userId: 'ai-bot',
             reactions: {},
+            side: 'left' // Error messages from AI are also on the left
           };
           await addDoc(currentCollectionRef, errorMessage);
           console.error("Unexpected API response structure:", result);
@@ -872,6 +946,7 @@ const AIChat = ({ userProfileAvatar, userProfileName }) => {
         localTimestamp: Date.now(), // Also add local timestamp for network error messages
         userId: 'ai-bot',
         reactions: {},
+        side: 'left' // Network error messages from AI are also on the left
       };
       const currentCollectionRef = getMessagesCollectionRef();
       await addDoc(currentCollectionRef, networkErrorMessage);
@@ -1176,47 +1251,51 @@ const AIChat = ({ userProfileAvatar, userProfileName }) => {
             >
               <ArrowLeft size={24} />
             </button>
-            {showSearchInput ? (
-              <input
-                type="text"
-                placeholder="Search messages..."
-                className="flex-1 ml-2 p-1.5 rounded-full bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            ) : (
-              <div className="relative flex items-center gap-2">
-                <button
-                  className="flex items-center gap-1 text-xl font-bold text-white hover:text-gray-300 transition-colors"
-                  onClick={() => setShowLobbyDropdown(prev => !prev)}
-                  ref={lobbyDropdownRef}
-                >
-                  Global Lobby <ChevronDown size={20} className="text-gray-400" />
-                </button>
-                {showLobbyDropdown && (
-                  <div className="absolute top-full left-0 mt-2 w-40 bg-gray-800 rounded-lg shadow-xl py-1 text-sm z-20 border border-gray-700">
-                    <button className="w-full text-left px-4 py-2 hover:bg-gray-700 text-gray-200">Option 1</button>
-                    <button className="w-full text-left px-4 py-2 hover:bg-gray-700 text-gray-200">Option 2</button>
-                  </div>
-                )}
-                <button
-                  className="text-gray-300 hover:text-white transition-colors hover:scale-110 p-1 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-500"
-                  aria-label="More options"
-                >
-                  <MoreVertical size={24} />
-                </button>
-              </div>
-            )}
+            <span className="text-xl font-bold text-white">CHAT</span> {/* Changed to CHAT title */}
+            <div className="flex items-center gap-2">
+              <button
+                className="text-gray-300 hover:text-white transition-colors hover:scale-110 p-1 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-500"
+                onClick={handleSwitchUser} // New Switch User button
+                title="Switch to a new anonymous user"
+              >
+                <UserPlus size={24} />
+              </button>
+              <button
+                className="text-gray-300 hover:text-white transition-colors hover:scale-110 p-1 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-500"
+                onClick={() => setShowSearchInput(prev => !prev)} // Toggle search input
+                aria-label="Search"
+              >
+                <Search size={24} />
+              </button>
+            </div>
+          </div>
+
+          {/* Global Lobby and More Options Section (as per screenshot) */}
+          <div className="flex items-center justify-between p-3 bg-[#1A202C] border-b border-gray-700 text-gray-300">
+            <div className="relative flex items-center gap-2">
+              <button
+                className="flex items-center gap-1 text-base font-bold text-white hover:text-gray-300 transition-colors"
+                onClick={() => setShowLobbyDropdown(prev => !prev)}
+                ref={lobbyDropdownRef}
+              >
+                Global Lobby <ChevronDown size={18} className="text-gray-400" />
+              </button>
+              {showLobbyDropdown && (
+                <div className="absolute top-full left-0 mt-2 w-40 bg-gray-800 rounded-lg shadow-xl py-1 text-sm z-20 border border-gray-700">
+                  <button className="w-full text-left px-4 py-2 hover:bg-gray-700 text-gray-200">Option 1</button>
+                  <button className="w-full text-left px-4 py-2 hover:bg-gray-700 text-gray-200">Option 2</button>
+                </div>
+              )}
+            </div>
             <button
               className="text-gray-300 hover:text-white transition-colors hover:scale-110 p-1 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-500"
-              onClick={() => setShowSearchInput(prev => !prev)} // Toggle search input
-              aria-label="Search"
+              aria-label="More options"
             >
-              <Search size={24} />
+              <MoreVertical size={24} />
             </button>
           </div>
 
-          {/* Online Users Count and Chat Mode Selection */}
+          {/* Online Users Count and Chat Mode Selection - Re-added */}
           <div className="flex items-center justify-between p-3 bg-[#1A202C] border-b border-gray-700 text-gray-300">
             {/* Display online users count */}
             <span className="font-semibold text-gray-200">Online: <span className="text-emerald-400">{onlineUsers.length}</span> users</span>
@@ -1256,11 +1335,10 @@ const AIChat = ({ userProfileAvatar, userProfileName }) => {
               <div
                 key={msg.id || index}
                 id={`message-${msg.id}`} // Add ID for scrolling to message
-                className={`flex gap-3 group relative z-20 ${msg.userId === currentUserId ? 'justify-end' : 'justify-start'}`}
-                onDoubleClick={() => handleReplyToMessage(msg)} // Double click to reply
+                className={`flex gap-3 group relative z-20 ${msg.side === 'right' ? 'justify-end' : 'justify-start'}`} // Use msg.side for alignment
               >
-                {/* Avatar for receiver's messages (left side) and AI messages */}
-                {(msg.userId !== currentUserId || msg.sender === 'ai') && (
+                {/* Avatar for left-sided messages (David, Jason, AI) */}
+                {msg.side === 'left' && (
                   <img
                     src={msg.sender === 'ai' ? aiAvatar : msg.avatar}
                     alt={`${msg.senderName} Avatar`}
@@ -1275,8 +1353,16 @@ const AIChat = ({ userProfileAvatar, userProfileName }) => {
 
                 <div className="flex flex-col max-w-[75%]">
                   {/* Sender Name and Timestamp */}
-                  <div className={`flex flex-col items-start gap-0.5 mb-1 ${msg.userId === currentUserId ? 'items-end' : 'items-start'}`}>
-                    <span className="font-bold text-white text-sm">{msg.senderName}</span>
+                  <div className={`flex flex-col items-start gap-0.5 mb-1 ${msg.side === 'right' ? 'items-end' : 'items-start'}`}>
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold text-white text-sm">{msg.senderName}</span>
+                      {/* Defensive check for statusBadge type */}
+                      {msg.statusBadge && (typeof msg.statusBadge === 'string' || typeof msg.statusBadge === 'number') && (
+                        <span className="bg-gray-700 text-gray-300 text-xs px-2 py-0.5 rounded-full font-medium">
+                          {msg.statusBadge}
+                        </span>
+                      )}
+                    </div>
                     <span className="text-gray-400 text-xs">{formatTimestamp(msg.timestamp)}</span>
                   </div>
 
@@ -1315,7 +1401,7 @@ const AIChat = ({ userProfileAvatar, userProfileName }) => {
                     </div>
                   ) : (
                     <div
-                      className={`relative p-3 shadow-md text-base break-words message-bubble rounded-xl bg-[#2A275F] ${msg.userId === currentUserId
+                      className={`relative p-3 shadow-md text-base break-words message-bubble rounded-xl bg-[#2A275F] ${msg.side === 'right'
                         ? 'text-white'
                         : 'text-gray-200'
                       }`}
@@ -1374,7 +1460,7 @@ const AIChat = ({ userProfileAvatar, userProfileName }) => {
                             >
                               <MessageSquare size={16} /> Mark as Read
                             </button>
-                            {msg.userId === currentUserId && (
+                            {msg.userId === currentUserId && ( // Only allow edit if current user sent it
                               <button
                                 onClick={() => handleEditMessage(msg.id, msg.text)}
                                 className="flex items-center gap-2 w-full text-left px-4 py-2 hover:bg-gray-700"
@@ -1418,8 +1504,8 @@ const AIChat = ({ userProfileAvatar, userProfileName }) => {
                   )}
                 </div>
 
-                {/* Avatar for sender's messages (right side) */}
-                {msg.userId === currentUserId && (
+                {/* Avatar for right-sided messages (Lauren, Ella) */}
+                {msg.side === 'right' && (
                   <img
                     src={msg.avatar}
                     alt={`${msg.senderName} Avatar`}
@@ -1763,3 +1849,4 @@ body {
 }
 `;
 document.head.appendChild(style);
+
