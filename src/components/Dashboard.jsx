@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import ReactJson from 'react-json-view';
+// import ReactJson from 'react-json-view';
 import './Dashboard.css';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'; // Import Recharts components
 
@@ -1593,7 +1593,7 @@ function ApiFetcherSection() {
             <div style={{ background: '#23263a', color: '#fff', borderRadius: 10, padding: 32, minWidth: 400, maxWidth: 600, boxShadow: '0 4px 32px #0008', position: 'relative' }} onClick={e => e.stopPropagation()}>
               <button onClick={() => setDetailsIdx(null)} style={{ position: 'absolute', top: 12, right: 12, background: 'none', border: 'none', color: '#fff', fontSize: 22, cursor: 'pointer' }}>&times;</button>
               <h3 style={{ marginTop: 0, marginBottom: 16 }}>Details</h3>
-              <ReactJson src={rows[detailsIdx]} name={false} collapsed={1} enableClipboard={true} displayDataTypes={false} theme="monokai" style={{ background: 'none', fontSize: 15, borderRadius: 8, padding: 12, maxHeight: 400, overflow: 'auto' }} />
+              src={rows[detailsIdx]} name={false} collapsed={1} enableClipboard={true} displayDataTypes={false} theme="monokai" style={{ background: 'none', fontSize: 15, borderRadius: 8, padding: 12, maxHeight: 400, overflow: 'auto' }} 
             </div>
           </div>
         )}
@@ -1789,13 +1789,13 @@ function ApiFetcherSection() {
           {viewMode === 'table' && renderTable()}
           {viewMode === 'pretty' && (
             <div style={{ margin: '32px auto', maxWidth: 900, background: '#181a20', borderRadius: 14, boxShadow: '0 2px 12px #2224', padding: 28 }}>
-              <ReactJson src={normalizedData} name={false} collapsed={2} enableClipboard={true} displayDataTypes={false} theme="monokai" style={{ background: 'none', fontSize: 16, borderRadius: 8, padding: 12 }} />
+            src={normalizedData} name={false} collapsed={2} enableClipboard={true} displayDataTypes={false} theme="monokai" style={{ background: 'none', fontSize: 16, borderRadius: 8, padding: 12 }} 
             </div>
           )}
           {viewMode === 'raw' && (
             <div style={{ margin: '32px auto', maxWidth: 900, background: '#181a20', borderRadius: 14, boxShadow: '0 2px 12px #2224', padding: 28 }}>
               <strong style={{ color: '#fff', fontSize: 18 }}>Raw JSON Response:</strong>
-              <ReactJson src={data} name={false} collapsed={1} enableClipboard={true} displayDataTypes={false} theme="monokai" style={{ background: 'none', fontSize: 16, borderRadius: 8, padding: 12, marginTop: 10 }} />
+               src={data} name={false} collapsed={1} enableClipboard={true} displayDataTypes={false} theme="monokai" style={{ background: 'none', fontSize: 16, borderRadius: 8, padding: 12, marginTop: 10 }} 
             </div>
           )}
         </div>
