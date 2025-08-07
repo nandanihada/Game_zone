@@ -1,10 +1,129 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import './home.css';
-import { Home, LayoutDashboard, User, LifeBuoy, Users, Gamepad, Lock, Handshake, Info, ClipboardList, Gift } from 'lucide-react';
-import DashboardPage from './Dashboard.jsx';
+import { Home, LayoutDashboard, User, LifeBuoy, Users, Gamepad, Lock, Handshake, Info, ClipboardList, Gift, X } from 'lucide-react';
+import { auth, provider } from '../firebase';  // adjust path if needed
+import { signInWithPopup } from 'firebase/auth';
+import LeaderPage from './leader.jsx';
 import ProfilePage from './profile.jsx';
 import SupportPage from './SupportPage.jsx';
 import ReferEarnPage from './refer.jsx';
+import Footer from './Footer.jsx'; // adjust the path if needed
+
+// Login/Signup Modal Component
+function LoginSignupModal({ onClose, onLoginSuccess }) {
+  const [isLogin, setIsLogin] = useState(true); // true for login, false for signup
+
+  const handleAuthAction = (e) => {
+    e.preventDefault();
+    // In a real application, you would handle actual login/signup logic here.
+    // For this demonstration, we'll just simulate a successful login.
+    console.log(isLogin ? "Simulating Login..." : "Simulating Signup...");
+    setTimeout(() => {
+      onLoginSuccess();
+      onClose();
+    }, 500); // Simulate network delay
+  };
+const handleGoogleLogin = async () => {
+  try {
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
+    console.log("Google login success", user);
+    onLoginSuccess(); // Trigger your app's login flow
+    onClose();        // Close the modal
+  } catch (error) {
+    console.error("Google login failed", error);
+    alert("Google login failed");
+  }
+};
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-sm relative">
+        <button
+          onClick={onClose}
+          className="absolute top-3 right-3 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+          aria-label="Close"
+        >
+          <X size={24} />
+        </button>
+        <h2 className="text-2xl font-bold text-center mb-6 text-gray-900 dark:text-white">
+          {isLogin ? 'Login' : 'Sign Up'}
+        </h2>
+        <form onSubmit={handleAuthAction} className="space-y-4">
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+              placeholder="your@example.com"
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Password
+            </label>
+            <input
+              type="password"
+              id="password"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+              placeholder="********"
+              required
+            />
+          </div>
+          {!isLogin && (
+            <div>
+              <label htmlFor="confirm-password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Confirm Password
+              </label>
+              <input
+                type="password"
+                id="confirm-password"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                placeholder="********"
+                required
+              />
+            </div>
+          )}
+          <button
+            type="submit"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md shadow-md transition duration-300"
+          >
+            {isLogin ? 'Login' : 'Sign Up'}
+          </button>
+        </form>
+        <p className="mt-4 text-center text-sm text-gray-600 dark:text-gray-300">
+          {isLogin ? "Don't have an account?" : "Already have an account?"}{' '}
+          <button
+            type="button"
+            onClick={() => setIsLogin(!isLogin)}
+            className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-200 font-medium"
+          >
+            {isLogin ? 'Sign Up' : 'Login'}
+          </button>
+          <div className="mt-4 text-center">
+            <button
+              type="button"
+              onClick={handleGoogleLogin}
+              className="w-full flex items-center justify-center bg-white text-black font-medium border border-gray-300 rounded-md shadow-md py-2 px-4 hover:bg-gray-100"
+            >
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"
+                alt="Google Logo"
+                className="w-5 h-5 mr-2"
+              />
+              Continue with Google
+            </button>
+          </div>
+                  
+        </p>
+      </div>
+    </div>
+  );
+}
 
 // Reusable renderStars function
 const renderStars = (rating) => {
@@ -27,7 +146,7 @@ const renderStars = (rating) => {
 };
 
 // Gradient Definitions
-const gradient1 = 'linear-gradient(to bottom right, #00C0FF, #8A2BE2, #4CAF50, #C71585)';
+const gradient1 = 'linear-gradient(to bottom right, #d400ffff, #00C0FF)';
 const gradient2 = 'linear-gradient(to bottom right, #00BFFF, #32CD32, #FFD700)';
 
 // Data for Offer Partners
@@ -164,7 +283,7 @@ function LotteryDetailModal({ onClose }) {
 
   const calculateEndTime = () => {
     const now = new Date();
-    const endDate = new Date(now.getTime() + (5 * 24 * 60 * 60 * 1000) + (12 * 60 * 60 * 1000) + (45 * 60 * 1000) + (53 * 1000));
+    const endDate = new Date(now.getTime() + (5 * 24 * 60 * 60 * 1000) + (12 * 60 * 60 * 1000) + (45 * 60 * 60 * 1000) + (53 * 1000));
     return endDate;
   };
 
@@ -350,7 +469,7 @@ function LotteryDetailModal({ onClose }) {
 }
 
 // Modal Component
-function ItemDetailModal({ item, onClose, onViewLottery }) {
+function ItemDetailModal({ item, onClose, onViewLottery, handleProtectedClick }) {
   if (!item) return null;
 
   // Mock data for rewards to match screenshot
@@ -367,12 +486,20 @@ function ItemDetailModal({ item, onClose, onViewLottery }) {
   ];
 
   const handleActionClick = () => {
-    if (item.url) {
-      window.open(item.url, '_blank');
-    } else {
-      console.log(`Starting task: ${item.title}`);
-    }
-    onClose();
+    handleProtectedClick(() => {
+      if (item.url) {
+        window.open(item.url, '_blank');
+      } else {
+        console.log(`Starting task: ${item.title}`);
+      }
+      onClose();
+    });
+  };
+
+  const handleViewLotteryClick = () => {
+    handleProtectedClick(() => {
+      onViewLottery();
+    });
   };
 
   return (
@@ -406,7 +533,7 @@ function ItemDetailModal({ item, onClose, onViewLottery }) {
                   <span className="reward-value">{reward.value}</span>
                   {reward.tickets && <span className="reward-tickets">{reward.tickets} tickets</span>}
                   {reward.action === 'View' && (
-                    <button className="reward-view-button" onClick={onViewLottery}>View</button>
+                    <button className="reward-view-button" onClick={handleViewLotteryClick}>View</button>
                   )}
                 </li>
               ))}
@@ -463,7 +590,7 @@ const getCategoryIcon = (categoryId) => {
         </svg>
       );
     case 'games':
-      return <Gamepad size={24} />;
+      return <img src="/icon17.png" alt="Games" style={{ width: 24, height: 24 }} />;
     case 'watch-videos':
       return (
         <svg xmlns="http://www.w3.org/24/24" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-play-square">
@@ -477,7 +604,7 @@ const getCategoryIcon = (categoryId) => {
 };
 
 // Reusable Task Card Component
-function TaskCard({ task, onClick }) {
+function TaskCard({ task, onClick, handleProtectedClick }) {
   const [isHovered, setIsHovered] = useState(false);
 
   const getIconSrc = (type) => {
@@ -498,7 +625,7 @@ function TaskCard({ task, onClick }) {
 
   const handleShowClick = (e) => {
     e.stopPropagation();
-    onClick(task);
+    handleProtectedClick(() => onClick(task));
   };
 
   const getButtonText = (type) => {
@@ -530,12 +657,12 @@ function TaskCard({ task, onClick }) {
           className="task-icon"
           onError={(e) => e.target.src = 'https://placehold.co/40x40/808080/FFFFFF?text=I'}
         />
-        {task.type === 'GAME' && !task.isPremium && (
+        {/* {task.type === 'GAME' && !task.isPremium && (
           <div className="game-icon-badge">
             <Gamepad size={14} />
             <span>GAME</span>
           </div>
-        )}
+        )} */}
       </div>
 
       <div className="task-card-details-main">
@@ -580,7 +707,7 @@ function TaskCard({ task, onClick }) {
 }
 
 // New Reusable Game Card Component
-function GameCardComponent({ game, cardSize, gradient, handleShowButtonClick }) {
+function GameCardComponent({ game, cardSize, gradient, handleShowButtonClick, handleProtectedClick }) {
   const [isHovered, setIsHovered] = useState(false);
 
   const getIconSrc = (type) => {
@@ -609,6 +736,10 @@ function GameCardComponent({ game, cardSize, gradient, handleShowButtonClick }) 
     }
   };
 
+  const handleClick = (e) => {
+    handleProtectedClick(() => handleShowButtonClick(game, e));
+  };
+
   return (
     <div
       key={game.id}
@@ -622,8 +753,8 @@ function GameCardComponent({ game, cardSize, gradient, handleShowButtonClick }) 
         
       </div>
       {game.type === 'GAME' && (
-          <div className="game-icon-badge"> {/* Moved here */}
-            <Gamepad size={14} />
+          <div className="game-icon-badge">
+            {/* <img src="/icon17.png" alt="Game" style={{ width: 15, height: 15 }} /> */}
             <span>GAME</span>
           </div>
         )}
@@ -637,7 +768,7 @@ function GameCardComponent({ game, cardSize, gradient, handleShowButtonClick }) 
         <p className="game-condition-overlay">{game.condition}</p>
       </div>
       {isHovered && (
-        <button className="show-button" onClick={(e) => handleShowButtonClick(game, e)}>
+        <button className="show-button" onClick={handleClick}>
           <svg className="play-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="0" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="12" cy="12" r="10" fill="transparent" />
             <polygon points="10 8 16 12 10 16 10 8" fill="#FFFFFF"/>
@@ -650,11 +781,15 @@ function GameCardComponent({ game, cardSize, gradient, handleShowButtonClick }) 
 }
 
 // New Reusable Sidebar Category Card Component
-function SidebarCategoryCard({ category, isActive, onClick }) {
+function SidebarCategoryCard({ category, isActive, onClick, handleProtectedClick }) {
+  const handleClick = () => {
+    handleProtectedClick(() => onClick(category.id));
+  };
+
   return (
     <div
       className={`sidebar-category-card ${isActive ? 'active' : ''}`}
-      onClick={() => onClick(category.id)}
+      onClick={handleClick}
     >
       <div className="card-top-section">
         {getCategoryIcon(category.id)}
@@ -667,7 +802,7 @@ function SidebarCategoryCard({ category, isActive, onClick }) {
 }
 
 // Partner Card Component
-function PartnerCard({ partner }) {
+function PartnerCard({ partner, handleProtectedClick }) {
   const renderStars = (rating) => {
     const fullStars = Math.floor(rating);
     const emptyStars = 5 - fullStars;
@@ -681,10 +816,18 @@ function PartnerCard({ partner }) {
     return <div className="partner-stars">{stars}</div>;
   };
 
+  const handleClick = () => {
+    handleProtectedClick(() => {
+      console.log(`Clicked on partner: ${partner.name}`);
+      // Add specific partner action here if needed
+    });
+  };
+
   return (
     <div
       className={`partner-card ${partner.type === 'survey-card' ? 'survey-card-special' : ''}`}
       style={{ backgroundImage: partner.backgroundImage ? `url(${partner.backgroundImage})` : (partner.gradient ? partner.gradient : 'none') }}
+      onClick={handleClick} // Make the entire card clickable
     >
       {partner.bonusPercentage && (
         <div className="partner-bonus-badge">+{partner.bonusPercentage}%</div>
@@ -705,7 +848,7 @@ function PartnerCard({ partner }) {
 }
 
 // Main Tasks Listing Page with Filters and Sort
-function TasksListingPage({ onBack, initialCategory = 'all' }) {
+function TasksListingPage({ onBack, initialCategory = 'all', handleProtectedClick }) {
   const [rewardRange, setRewardRange] = useState([0, 1000]);
   const [estimatedTime, setEstimatedTime] = useState([0, 180]);
   const [selectedTaskType, setSelectedTaskType] = useState(initialCategory);
@@ -784,15 +927,15 @@ function TasksListingPage({ onBack, initialCategory = 'all' }) {
   }, [initialCategory]);
 
   const handleCategoryButtonClick = (typeId) => {
-    setSelectedTaskType(typeId);
+    handleProtectedClick(() => setSelectedTaskType(typeId));
   };
 
   const handleRewardRangeChange = (e) => {
-    setRewardRange([parseInt(e.target.value), rewardRange[1]]);
+    handleProtectedClick(() => setRewardRange([parseInt(e.target.value), rewardRange[1]]));
   };
 
   const handleEstimatedTimeChange = (e) => {
-    setEstimatedTime([parseInt(e.target.value), estimatedTime[1]]);
+    handleProtectedClick(() => setEstimatedTime([parseInt(e.target.value), estimatedTime[1]]));
   };
 
   const getHeaderTitle = () => {
@@ -831,6 +974,7 @@ function TasksListingPage({ onBack, initialCategory = 'all' }) {
                 category={category}
                 isActive={selectedTaskType === category.id}
                 onClick={handleCategoryButtonClick}
+                handleProtectedClick={handleProtectedClick}
               />
             ))}
           </div>
@@ -879,7 +1023,7 @@ function TasksListingPage({ onBack, initialCategory = 'all' }) {
             <h5 className="filter-group-title">Difficulty</h5>
             <select
               value={selectedDifficulty}
-              onChange={(e) => setSelectedDifficulty(e.target.value)}
+              onChange={(e) => handleProtectedClick(() => setSelectedDifficulty(e.target.value))}
               className="filter-select"
             >
               <option value="All">All</option>
@@ -889,7 +1033,7 @@ function TasksListingPage({ onBack, initialCategory = 'all' }) {
             </select>
           </div>
         </div>
-        <button className="back-button" onClick={onBack}>Back to Home</button>
+        <button className="back-button" onClick={() => handleProtectedClick(onBack)}>Back to Home</button>
       </aside>
 
       <main className="tasks-main-content">
@@ -898,7 +1042,7 @@ function TasksListingPage({ onBack, initialCategory = 'all' }) {
           <select
             id="sort-by"
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
+            onChange={(e) => handleProtectedClick(() => setSortBy(e.target.value))}
             className="filter-select"
           >
             <option value="Newest First">Newest First</option>
@@ -940,7 +1084,7 @@ function TasksListingPage({ onBack, initialCategory = 'all' }) {
             <h4>{categories.find(cat => cat.id === typeId)?.name || 'Unknown Category'}</h4>
             <div className="task-cards-grid">
               {groupedTasks()[typeId].map(task => (
-                <TaskCard key={task.id} task={task} onClick={setSelectedItem} />
+                <TaskCard key={task.id} task={task} onClick={setSelectedItem} handleProtectedClick={handleProtectedClick} />
               ))}
             </div>
           </div>
@@ -953,39 +1097,103 @@ function TasksListingPage({ onBack, initialCategory = 'all' }) {
           )}
       </main>
 
-      {selectedItem && <ItemDetailModal item={selectedItem} onClose={() => setSelectedItem(null)} onViewLottery={() => setShowLotteryModal(true)} />}
+      {selectedItem && <ItemDetailModal item={selectedItem} onClose={() => setSelectedItem(null)} onViewLottery={() => setShowLotteryModal(true)} handleProtectedClick={handleProtectedClick} />}
       {showLotteryModal && <LotteryDetailModal onClose={() => setShowLotteryModal(false)} />}
     </div>
   );
 }
+const NotificationBar = () => {
+  const notifications = [
+    { name: "Naimasfak", amount: "0.48", platform: "POLL.FY", avatar: "https://i.pravatar.cc/40?img=1", bg: "#1E90FF" },
+    { name: "Kambuh", amount: "71", platform: "AYET", avatar: "https://i.pravatar.cc/40?img=2", bg: "#20B2AA" },
+    { name: "rodolf", amount: "473", platform: "ADGATE", avatar: "https://i.pravatar.cc/40?img=3", bg: "#008080" },
+    { name: "gyyttrtt", amount: "225", platform: "ADGATE", avatar: "https://i.pravatar.cc/40?img=4", bg: "#00CED1" },
+    { name: "exigible", amount: "262", platform: "ADGATE", avatar: "https://i.pravatar.cc/40?img=5", bg: "#32CD32" },
+    { name: "exigible", amount: "225", platform: "ADGATE", avatar: "https://i.pravatar.cc/40?img=6", bg: "#32CD32" },
+    { name: ".", amount: "1200", platform: "REVENUEWALL", avatar: "https://i.pravatar.cc/40?img=7", bg: "#FF8C00" },
+    { name: "LTC", amount: "861", platform: "WITHDRAWAL", avatar: "https://i.pravatar.cc/40?img=8", bg: "#778899" },
+    { name: "LTC", amount: "473", platform: "WITHDRAWAL", avatar: "https://i.pravatar.cc/40?img=9", bg: "#708090" },
+  ];
 
-// Common Header Component
-const CommonHeader = ({ currentPage, setCurrentPage }) => {
   return (
-    <header className="home-header">
-      <div className="home-logo">GamePro</div>
-      <nav className="home-nav">
-        <span className={currentPage === 'home' ? 'active' : ''} onClick={() => setCurrentPage('home')}>
-          <Home size={20} /> Home
-        </span>
-        <span className={currentPage === 'dashboard' ? 'active' : ''} onClick={() => setCurrentPage('dashboard')}>
-          <LayoutDashboard size={20} /> Dashboard
-        </span>
-        <span className={currentPage === 'profile' ? 'active' : ''} onClick={() => setCurrentPage('profile')}>
-          <User size={20} /> Profile
-        </span>
-        <span className={currentPage === 'support' ? 'active' : ''} onClick={() => setCurrentPage('support')}>
-          <LifeBuoy size={20} /> Support
-        </span>
-        <span className={currentPage === 'refer' ? 'active' : ''} onClick={() => setCurrentPage('refer')}>
-          <Users size={20} /> Refer & Earn
-        </span>
-      </nav>
-    </header>
+    <div className="notification-bar">
+      <div className="notification-scroll">
+          {notifications.map((item, idx) => (
+            <div key={idx} className="notification-card">
+              <div className="notif-left">
+                <img src={item.avatar} alt={item.name} className="notif-avatar" />
+                <div className="notif-text">
+                  <div className="notif-header">
+                    <div className="notif-name">{item.name}</div>
+                    <div className="notif-amount">{item.amount}</div> {/* ✅ moved right here */}
+                  </div>
+                  <div className="notif-tag">{item.platform}</div>
+                </div>
+              </div>
+            </div>
+          ))}
+      </div>
+    </div>
   );
+
 };
 
-function HomePageContent({ setCurrentPage, currentPage }) {
+
+// Common Header Component
+const CommonHeader = ({ currentPage, setCurrentPage, isLoggedIn, handleProtectedClick, toggleLoginStatus }) => {
+  return (
+    <header className="home-header">
+      <div className="home-header-left">
+        <div className="home-logo">
+          <img src="/icon20.png" alt="GamePro Logo" style={{ width: '120px', height: 'auto' }} />
+        </div>
+
+        <nav className="home-nav">
+          <span className={currentPage === 'home' ? 'active' : ''} onClick={() => handleProtectedClick(() => setCurrentPage('home'))}>
+            <Home size={20} /> Home
+          </span>
+          
+          <span className={currentPage === 'profile' ? 'active' : ''} onClick={() => handleProtectedClick(() => setCurrentPage('profile'))}>
+            <User size={20} /> Profile
+          </span>
+          <span className={currentPage === 'support' ? 'active' : ''} onClick={() => handleProtectedClick(() => setCurrentPage('support'))}>
+            <LifeBuoy size={20} /> Support
+          </span>
+          <span className={currentPage === 'refer' ? 'active' : ''} onClick={() => handleProtectedClick(() => setCurrentPage('refer'))}>
+            <Users size={20} /> Refer&earn
+          </span>
+          <span className={currentPage === 'leader' ? 'active' : ''} onClick={() => handleProtectedClick(() => setCurrentPage('leader'))}>
+            <Users size={20} /> Leaderboard
+          </span>
+        </nav>
+      </div>
+
+      {/* New Right Section: Balance + Username */}
+      <div className="home-header-right">
+        <div className="user-balance">
+          <span className="balance-amount">$ {isLoggedIn ? '123.45' : '0'}</span>
+        </div>
+        <div className="user-profile">
+          <div className="user-avatar">
+            <img src="/icon21.png" alt="User Avatar" width={24} height={24} />
+          </div>
+          <span className="user-name">{isLoggedIn ? 'shivama' : 'Guest'}</span>
+        </div>
+        <button
+          onClick={toggleLoginStatus}
+          className="ml-4 px-3 py-1 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600 transition-colors"
+        >
+          {isLoggedIn ? 'Logout' : 'Login / Signup'}
+        </button>
+       
+      </div>
+    </header>
+  );
+ 
+
+};
+
+function HomePageContent({ setCurrentPage, currentPage, handleProtectedClick }) {
   const [selectedItem, setSelectedItem] = useState(null);
   const [showLotteryModal, setShowLotteryModal] = useState(false);
   // New state to track expanded sections
@@ -1041,6 +1249,7 @@ function HomePageContent({ setCurrentPage, currentPage }) {
   return (
      <div className="home-container">
       <main className="home-main-content">
+        <NotificationBar />
         {homePageSections.map((category) => {
           const sectionId = `section-${category.title.replace(/\s/g, '-')}`;
           const isExpanded = expandedSections[category.title];
@@ -1048,13 +1257,13 @@ function HomePageContent({ setCurrentPage, currentPage }) {
             <section key={category.title} className="game-section" id={sectionId}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
                 <h2 className="section-title-with-icon">
-                    {category.title === 'Gaming Offers' && <Gamepad size={24} />}
-                    {category.title === 'Other Offers' && <Gift size={24} />}
+                    {category.title === 'Gaming Offers'}
+                    {category.title === 'Other Offers'}
                     {category.title}
                 </h2>
                 <button
                   className="view-all-button"
-                  onClick={() => setExpandedSections(prev => ({ ...prev, [category.title]: !prev[category.title] }))}
+                  onClick={() => handleProtectedClick(() => setExpandedSections(prev => ({ ...prev, [category.title]: !prev[category.title] })))}
                 >
                   {isExpanded ? 'Show Less' : 'View All'}
                 </button>
@@ -1077,13 +1286,14 @@ function HomePageContent({ setCurrentPage, currentPage }) {
                         cardSize={category.cardSize}
                         gradient={game.gradient || category.gradient}
                         handleShowButtonClick={handleShowButtonClick}
+                        handleProtectedClick={handleProtectedClick}
                       />
                     </div>
                   ))}
                 </div>
               ) : (
                 <div className="carousel-wrapper">
-                  <button className="scroll-btn left" onClick={() => scrollLeft(category.title)}>&lt;</button>
+                  <button className="scroll-btn left" onClick={() => handleProtectedClick(() => scrollLeft(category.title))}>&lt;</button>
                   <div className="game-carousel" id={`carousel-${category.title.replace(/\s/g, '-')}`}>
                     {category.games.map(game => (
                       <div
@@ -1101,11 +1311,12 @@ function HomePageContent({ setCurrentPage, currentPage }) {
                           cardSize={category.cardSize}
                           gradient={game.gradient || category.gradient}
                           handleShowButtonClick={handleShowButtonClick}
+                          handleProtectedClick={handleProtectedClick}
                         />
                       </div>
                     ))}
                   </div>
-                  <button className="scroll-btn right" onClick={() => scrollRight(category.title)}>&gt;</button>
+                  <button className="scroll-btn right" onClick={() => handleProtectedClick(() => scrollRight(category.title))}>&gt;</button>
                 </div>
               )}
             </section>
@@ -1116,11 +1327,11 @@ function HomePageContent({ setCurrentPage, currentPage }) {
         <section className="featured-surveys-section game-section">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
             <h2 className="featured-surveys-title-with-icon">
-                <ClipboardList size={24} /> Featured Surveys
+                Featured Surveys
             </h2>
             <button
               className="view-all-button"
-              onClick={() => setExpandedSections(prev => ({ ...prev, 'Featured Surveys': !prev['Featured Surveys'] }))}
+              onClick={() => handleProtectedClick(() => setExpandedSections(prev => ({ ...prev, 'Featured Surveys': !prev['Featured Surveys'] })))}
             >
               {expandedSections['Featured Surveys'] ? 'Show Less' : 'View All'}
             </button>
@@ -1137,7 +1348,7 @@ function HomePageContent({ setCurrentPage, currentPage }) {
                       display: 'inline-block'
                     }}
                   >
-                    <div className="survey-card">
+                    <div className="survey-card" onClick={() => handleProtectedClick(() => setSelectedItem(premiumSurvey))}>
                       <div className="survey-card-top">
                         <img
                           src={premiumSurvey.image}
@@ -1166,7 +1377,7 @@ function HomePageContent({ setCurrentPage, currentPage }) {
                       display: 'inline-block'
                     }}
                   >
-                    <div className="survey-card">
+                    <div className="survey-card" onClick={() => handleProtectedClick(() => setSelectedItem(regularSurvey))}>
                       <div className="survey-card-top">
                         <img
                           src={regularSurvey.image}
@@ -1186,6 +1397,7 @@ function HomePageContent({ setCurrentPage, currentPage }) {
                     </div>
                   </div>
                 )}
+                {/* Locked surveys are not clickable, so no need for handleProtectedClick here */}
                 {lockedSurveys.map(task => (
                   <div className="gradient-card-wrapper"
                     key={task.id}
@@ -1221,7 +1433,7 @@ function HomePageContent({ setCurrentPage, currentPage }) {
             </div>
           ) : (
             <div className="carousel-wrapper" style={{ position: 'relative' }}>
-              <button className="scroll-btn left" onClick={() => scrollLeft('Featured Surveys')}>&lt;</button>
+              <button className="scroll-btn left" onClick={() => handleProtectedClick(() => scrollLeft('Featured Surveys'))}>&lt;</button>
               <div className="featured-surveys-carousel" id="carousel-Featured-Surveys">
                 {premiumSurvey && (
                   <div className="gradient-card-wrapper"
@@ -1232,7 +1444,7 @@ function HomePageContent({ setCurrentPage, currentPage }) {
                       display: 'inline-block'
                     }}
                   >
-                    <div className="survey-card">
+                    <div className="survey-card" onClick={() => handleProtectedClick(() => setSelectedItem(premiumSurvey))}>
                       <div className="survey-card-top">
                         <img
                           src={premiumSurvey.image}
@@ -1261,7 +1473,7 @@ function HomePageContent({ setCurrentPage, currentPage }) {
                       display: 'inline-block'
                     }}
                   >
-                    <div className="survey-card">
+                    <div className="survey-card" onClick={() => handleProtectedClick(() => setSelectedItem(regularSurvey))}>
                       <div className="survey-card-top">
                         <img
                           src={regularSurvey.image}
@@ -1281,6 +1493,7 @@ function HomePageContent({ setCurrentPage, currentPage }) {
                     </div>
                   </div>
                 )}
+                {/* Locked surveys are not clickable, so no need for handleProtectedClick here */}
                 {lockedSurveys.map(task => (
                   <div className="gradient-card-wrapper"
                     key={task.id}
@@ -1314,7 +1527,7 @@ function HomePageContent({ setCurrentPage, currentPage }) {
                   </div>
                 ))}
               </div>
-              <button className="scroll-btn right" onClick={() => scrollRight('Featured Surveys')}>&gt;</button>
+              <button className="scroll-btn right" onClick={() => handleProtectedClick(() => scrollRight('Featured Surveys'))}>&gt;</button>
 
               <div className="locked-surveys-message-central">
                   <Lock size={30} />
@@ -1328,24 +1541,25 @@ function HomePageContent({ setCurrentPage, currentPage }) {
         {/* Offer Partners Section */}
         <section className="offer-partners-section game-section">
           <h2 className="offer-partners-title">
-            <Handshake size={24} />
+            
             Offer Partners
-            <Info size={16} />
+            
           </h2>
           <div className="carousel-wrapper">
-            <button className="scroll-btn left" onClick={() => scrollLeft('Offer Partners')}>&lt;</button>
+            <button className="scroll-btn left" onClick={() => handleProtectedClick(() => scrollLeft('Offer Partners'))}>&lt;</button>
             <div className="offer-partners-grid" id="carousel-Offer-Partners">
               {offerPartners.map(partner => (
-                <PartnerCard key={partner.id} partner={partner} />
+                <PartnerCard key={partner.id} partner={partner} handleProtectedClick={handleProtectedClick} />
               ))}
             </div>
-            <button className="scroll-btn right" onClick={() => scrollRight('Offer Partners')}>&gt;</button>
+            <button className="scroll-btn right" onClick={() => handleProtectedClick(() => scrollRight('Offer Partners'))}>&gt;</button>
           </div>
         </section>
       </main>
 
-      {selectedItem && <ItemDetailModal item={selectedItem} onClose={() => setSelectedItem(null)} onViewLottery={() => setShowLotteryModal(true)} />}
+      {selectedItem && <ItemDetailModal item={selectedItem} onClose={() => setSelectedItem(null)} onViewLottery={() => setShowLotteryModal(true)} handleProtectedClick={handleProtectedClick} />}
       {showLotteryModal && <LotteryDetailModal onClose={() => setShowLotteryModal(false)} />}
+        <Footer />
     </div>
   );
 }
@@ -1353,6 +1567,35 @@ function HomePageContent({ setCurrentPage, currentPage }) {
 // This is the main App component that will be rendered.
 export default function App() {
   const [currentPage, setCurrentPage] = useState('home');
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Mock authentication state
+  const [showLoginModal, setShowLoginModal] = useState(false);
+
+  // Function to handle clicks on protected elements
+  const handleProtectedClick = (action) => {
+    if (isLoggedIn) {
+      action(); // If logged in, proceed with the original action
+    } else {
+      setShowLoginModal(true); // If not logged in, show the login modal
+    }
+  };
+
+  const handleLoginSuccess = () => {
+    setIsLoggedIn(true);
+    setShowLoginModal(false);
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setCurrentPage('home'); // Optionally redirect to home on logout
+  };
+
+  const toggleLoginStatus = () => {
+    if (isLoggedIn) {
+      handleLogout();
+    } else {
+      setShowLoginModal(true);
+    }
+  };
 
   const handleBackToHome = () => {
     setCurrentPage('home');
@@ -1360,17 +1603,18 @@ export default function App() {
 
   let content;
   if (typeof currentPage === 'object' && currentPage.name === 'tasks') {
-    content = <TasksListingPage onBack={handleBackToHome} initialCategory={currentPage.category} />;
+    content = <TasksListingPage onBack={handleBackToHome} initialCategory={currentPage.category} handleProtectedClick={handleProtectedClick} />;
   } else {
     switch (currentPage) {
       case 'home':
-        content = <HomePageContent setCurrentPage={setCurrentPage} currentPage={currentPage} />;
+        content = <HomePageContent setCurrentPage={setCurrentPage} currentPage={currentPage} handleProtectedClick={handleProtectedClick} />;
         break;
-      case 'dashboard':
-        content = <DashboardPage onBack={handleBackToHome} />;
-        break;
+      
       case 'profile':
         content = <ProfilePage onBack={handleBackToHome} />;
+        break;
+      case 'leader':
+        content = <LeaderPage onBack={handleBackToHome} />;
         break;
       case 'support':
         content = <SupportPage onBack={handleBackToHome} />;
@@ -1379,16 +1623,29 @@ export default function App() {
         content = <ReferEarnPage onBack={handleBackToHome} />;
         break;
       default:
-        content = <HomePageContent setCurrentPage={setCurrentPage} currentPage={currentPage} />;
+        content = <HomePageContent setCurrentPage={setCurrentPage} currentPage={currentPage} handleProtectedClick={handleProtectedClick} />;
     }
   }
 
   return (
     <>
-      <CommonHeader currentPage={currentPage} setCurrentPage={setCurrentPage} />
+      <CommonHeader
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        isLoggedIn={isLoggedIn}
+        handleProtectedClick={handleProtectedClick}
+        toggleLoginStatus={toggleLoginStatus}
+      />
       <div className="main-content-area">
         {content}
       </div>
+
+      {showLoginModal && (
+        <LoginSignupModal
+          onClose={() => setShowLoginModal(false)}
+          onLoginSuccess={handleLoginSuccess}
+        />
+      )}
     </>
   );
 }

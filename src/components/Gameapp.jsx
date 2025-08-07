@@ -50,7 +50,7 @@ const Gameapp = ({ user, openAuthModal, setQueuedGameLink }) => {
       amount: "$10.00",
       task: "Complete a task",
       type: "APP",
-      imageUrl: "https://www.marketjs.com/case-study/osn-on-the-run-html5-game-for-a-tv-network/image3.jpg",
+      imageUrl: "https://i.pinimg.com/736x/5e/06/06/5e0606fa24129d51e2fda7608e9b079a.jpg",
       gameLink: "https://osn.com/",
       progress: 50
     },
@@ -60,7 +60,7 @@ const Gameapp = ({ user, openAuthModal, setQueuedGameLink }) => {
       amount: "$100.00",
       task: "Reach level 25",
       type: "GAME",
-      imageUrl: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/578080/1ab55ce84484630645bdb49b383ebaee5412391b/ss_1ab55ce84484630645bdb49b383ebaee5412391b.1920x1080.jpg?t=1746590920",
+      imageUrl: "https://i.pinimg.com/736x/5e/06/06/5e0606fa24129d51e2fda7608e9b079a.jpg",
       gameLink: "https://www.pubg.com/",
       progress: 75
     }
