@@ -9,34 +9,82 @@ import SupportPage from './SupportPage.jsx';
 import ReferEarnPage from './refer.jsx';
 import Footer from './Footer.jsx'; // adjust the path if needed
 import DashboardPage from './Dashboard.jsx';
-
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc, getDoc } from "firebase/firestore";
+import { db } from "../firebase";
+// import { signInWithPopup } from "firebase/auth";
+// import { doc, getDoc, setDoc } from "firebase/firestore";
+// import { auth, provider } from "../firebase";
 // Login/Signup Modal Component
 function LoginSignupModal({ onClose, onLoginSuccess }) {
   const [isLogin, setIsLogin] = useState(true); // true for login, false for signup
   const [isAdminSignup, setIsAdminSignup] = useState(false); // New state for admin signup
 
-  const handleAuthAction = (e) => {
+  const handleAuthAction = async (e) => {
     e.preventDefault();
-    // In a real application, you would handle actual login/signup logic here.
-    // For this demonstration, we'll just simulate a successful login.
-    console.log(isLogin ? "Simulating Login..." : "Simulating Signup...");
-    console.log("Is Admin Signup:", isAdminSignup); // Log admin status
-    setTimeout(() => {
-      onLoginSuccess(isAdminSignup); // Pass admin status to onLoginSuccess
+
+    const email = e.target.email.value;
+    const password = e.target.password.value;
+
+    try {
+      if (isLogin) {
+        // LOGIN FLOW
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const userDoc = await getDoc(doc(db, "users", userCredential.user.uid));
+        const isAdmin = userDoc.exists() && userDoc.data().isAdmin === true;
+
+        onLoginSuccess(isAdmin); // ✅ Set admin state
+      } else {
+        // SIGNUP FLOW
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        await setDoc(doc(db, "users", user.uid), {
+          email: user.email,
+          isAdmin: isAdminSignup, // ✅ Save admin flag
+          createdAt: new Date()
+        });
+
+        onLoginSuccess(isAdminSignup);
+      }
+
       onClose();
-    }, 500); // Simulate network delay
+    } catch (error) {
+      console.error("Auth error:", error);
+      alert(error.message);
+    }
   };
+
 
   const handleGoogleLogin = async () => {
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-      console.log("Google login success", user);
-      onLoginSuccess(isAdminSignup); // Pass admin status to onLoginSuccess for Google login
-      onClose();        // Close the modal
+
+      const userRef = doc(db, "users", user.uid);
+      const userDoc = await getDoc(userRef);
+
+      let isAdmin = false;
+
+      if (!userDoc.exists()) {
+        // First-time Google user — save with isAdminSignup value
+        await setDoc(userRef, {
+          email: user.email,
+          isAdmin: isAdminSignup,
+          createdAt: new Date()
+        });
+        isAdmin = isAdminSignup;
+      } else {
+        // Returning user — get saved admin status
+        isAdmin = userDoc.data().isAdmin === true;
+      }
+
+      onLoginSuccess(isAdmin);
+      onClose();
     } catch (error) {
       console.error("Google login failed", error);
-      // Use a custom message box instead of alert()
+
+      // Display custom error popup
       const messageBox = document.createElement('div');
       messageBox.className = 'fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4';
       messageBox.innerHTML = `
@@ -49,7 +97,6 @@ function LoginSignupModal({ onClose, onLoginSuccess }) {
       document.body.appendChild(messageBox);
     }
   };
-
   return (
     <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-sm relative">
@@ -103,16 +150,16 @@ function LoginSignupModal({ onClose, onLoginSuccess }) {
                 />
               </div>
               <div className="flex items-center">
-                <input
+                {/* <input
                   type="checkbox"
                   id="admin-signup"
                   checked={isAdminSignup}
                   onChange={(e) => setIsAdminSignup(e.target.checked)}
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                />
-                <label htmlFor="admin-signup" className="ml-2 block text-sm text-gray-900 dark:text-gray-300">
+                /> */}
+                {/* <label htmlFor="admin-signup" className="ml-2 block text-sm text-gray-900 dark:text-gray-300">
                   Login as Admin
-                </label>
+                </label> */}
               </div>
             </>
           )}
@@ -1685,13 +1732,13 @@ export default function App() {
       setShowLoginModal(true); // If not logged in, show the login modal
     }
   };
-
   const handleLoginSuccess = (loggedInAsAdmin = false) => {
-    setIsLoggedIn(true);
-    setIsAdmin(loggedInAsAdmin); // Set admin status based on signup choice
-    setUserBalance(5); // Set login bonus to $5
-    setShowLoginModal(false);
+    setIsLoggedIn(true);               // Marks user as logged in
+    setIsAdmin(loggedInAsAdmin);      // Stores admin status in state
+    setUserBalance(5);                // Sets initial balance (bonus)
+    setShowLoginModal(false);         // Closes the modal
   };
+  
 
   const handleLogout = () => {
     setIsLoggedIn(false);
