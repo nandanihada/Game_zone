@@ -34,6 +34,7 @@ function App() {
         <Route path="/our-offer" element={<OurOffer />} />
         <Route path="/dash" element={<Dashpage />} />
         <Route path="/earn" element={<Earnpage />} />
+       
       </Routes>
     </Router>
   );

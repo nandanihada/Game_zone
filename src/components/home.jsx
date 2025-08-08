@@ -8,43 +8,47 @@ import ProfilePage from './profile.jsx';
 import SupportPage from './SupportPage.jsx';
 import ReferEarnPage from './refer.jsx';
 import Footer from './Footer.jsx'; // adjust the path if needed
+import DashboardPage from './Dashboard.jsx';
 
 // Login/Signup Modal Component
 function LoginSignupModal({ onClose, onLoginSuccess }) {
   const [isLogin, setIsLogin] = useState(true); // true for login, false for signup
-  
+  const [isAdminSignup, setIsAdminSignup] = useState(false); // New state for admin signup
+
   const handleAuthAction = (e) => {
     e.preventDefault();
     // In a real application, you would handle actual login/signup logic here.
     // For this demonstration, we'll just simulate a successful login.
     console.log(isLogin ? "Simulating Login..." : "Simulating Signup...");
+    console.log("Is Admin Signup:", isAdminSignup); // Log admin status
     setTimeout(() => {
-      onLoginSuccess();
+      onLoginSuccess(isAdminSignup); // Pass admin status to onLoginSuccess
       onClose();
     }, 500); // Simulate network delay
   };
-const handleGoogleLogin = async () => {
-  try {
-    const result = await signInWithPopup(auth, provider);
-    const user = result.user;
-    console.log("Google login success", user);
-    onLoginSuccess(); // Trigger your app's login flow
-    onClose();        // Close the modal
-  } catch (error) {
-    console.error("Google login failed", error);
-    // Use a custom message box instead of alert()
-    const messageBox = document.createElement('div');
-    messageBox.className = 'fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4';
-    messageBox.innerHTML = `
-      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-sm relative">
-        <h2 class="text-2xl font-bold text-center mb-6 text-gray-900 dark:text-white">Error</h2>
-        <p class="text-center text-gray-700 dark:text-gray-300 mb-6">Google login failed. Please try again.</p>
-        <button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md shadow-md transition duration-300" onclick="this.parentNode.parentNode.remove()">OK</button>
-      </div>
-    `;
-    document.body.appendChild(messageBox);
-  }
-};
+
+  const handleGoogleLogin = async () => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      console.log("Google login success", user);
+      onLoginSuccess(isAdminSignup); // Pass admin status to onLoginSuccess for Google login
+      onClose();        // Close the modal
+    } catch (error) {
+      console.error("Google login failed", error);
+      // Use a custom message box instead of alert()
+      const messageBox = document.createElement('div');
+      messageBox.className = 'fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4';
+      messageBox.innerHTML = `
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-sm relative">
+          <h2 class="text-2xl font-bold text-center mb-6 text-gray-900 dark:text-white">Error</h2>
+          <p class="text-center text-gray-700 dark:text-gray-300 mb-6">Google login failed. Please try again.</p>
+          <button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md shadow-md transition duration-300" onclick="this.parentNode.parentNode.remove()">OK</button>
+        </div>
+      `;
+      document.body.appendChild(messageBox);
+    }
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
@@ -85,18 +89,32 @@ const handleGoogleLogin = async () => {
             />
           </div>
           {!isLogin && (
-            <div>
-              <label htmlFor="confirm-password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Confirm Password
-              </label>
-              <input
-                type="password"
-                id="confirm-password"
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                placeholder="********"
-                required
-              />
-            </div>
+            <>
+              <div>
+                <label htmlFor="confirm-password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Confirm Password
+                </label>
+                <input
+                  type="password"
+                  id="confirm-password"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                  placeholder="********"
+                  required
+                />
+              </div>
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  id="admin-signup"
+                  checked={isAdminSignup}
+                  onChange={(e) => setIsAdminSignup(e.target.checked)}
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                />
+                <label htmlFor="admin-signup" className="ml-2 block text-sm text-gray-900 dark:text-gray-300">
+                  Login as Admin
+                </label>
+              </div>
+            </>
           )}
           <button
             type="submit"
@@ -128,7 +146,7 @@ const handleGoogleLogin = async () => {
               Continue with Google
             </button>
           </div>
-                  
+
         </p>
       </div>
     </div>
@@ -830,7 +848,7 @@ function GameCardComponent({ game, cardSize, gradient, handleShowButtonClick, ha
     >
       <div className="card-top-section relative">
         <img src={game.image} alt={game.title} className="game-icon" onError={(e) => e.target.src = 'https://placehold.co/40x40/808080/FFFFFF?text=G'} />
-        
+
       </div>
       {game.type === 'GAME' && (
           <div className="game-icon-badge">
@@ -1221,7 +1239,7 @@ const NotificationBar = () => {
 
 
 // Common Header Component
-const CommonHeader = ({ currentPage, setCurrentPage, isLoggedIn, handleProtectedClick, toggleLoginStatus, userBalance, openProfileModal }) => {
+const CommonHeader = ({ currentPage, setCurrentPage, isLoggedIn, handleProtectedClick, toggleLoginStatus, userBalance, openProfileModal, isAdmin }) => {
   return (
     <header className="home-header">
       <div className="home-header-left">
@@ -1233,7 +1251,7 @@ const CommonHeader = ({ currentPage, setCurrentPage, isLoggedIn, handleProtected
           <span className={currentPage === 'home' ? 'active' : ''} onClick={() => handleProtectedClick(() => setCurrentPage('home'))}>
             <Home size={20} /> Home
           </span>
-          
+
           <span className={currentPage === 'profile' ? 'active' : ''} onClick={() => handleProtectedClick(() => setCurrentPage('profile'))}>
             <User size={20} /> Profile
           </span>
@@ -1246,6 +1264,11 @@ const CommonHeader = ({ currentPage, setCurrentPage, isLoggedIn, handleProtected
           <span className={currentPage === 'leader' ? 'active' : ''} onClick={() => handleProtectedClick(() => setCurrentPage('leader'))}>
             <Users size={20} /> Leaderboard
           </span>
+          {isAdmin && ( // Conditionally render Dashboard link based on isAdmin prop
+            <span className={currentPage === 'Dashboard' ? 'active' : ''} onClick={() => handleProtectedClick(() => setCurrentPage('Dashboard'))}>
+              <LayoutDashboard size={20} /> Dashboard
+            </span>
+          )}
         </nav>
       </div>
 
@@ -1266,11 +1289,11 @@ const CommonHeader = ({ currentPage, setCurrentPage, isLoggedIn, handleProtected
         >
           {isLoggedIn ? 'Logout' : 'Login / Signup'}
         </button>
-       
+
       </div>
     </header>
   );
- 
+
 
 };
 
@@ -1622,9 +1645,9 @@ function HomePageContent({ setCurrentPage, currentPage, handleProtectedClick }) 
         {/* Offer Partners Section */}
         <section className="offer-partners-section game-section">
           <h2 className="offer-partners-title">
-            
+
             Offer Partners
-            
+
           </h2>
           <div className="carousel-wrapper">
             <button className="scroll-btn left" onClick={() => handleProtectedClick(() => scrollLeft('Offer Partners'))}>&lt;</button>
@@ -1649,6 +1672,7 @@ function HomePageContent({ setCurrentPage, currentPage, handleProtectedClick }) 
 export default function App() {
   const [currentPage, setCurrentPage] = useState('home');
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Mock authentication state
+  const [isAdmin, setIsAdmin] = useState(false); // New state for admin status
   const [userBalance, setUserBalance] = useState(0); // New state for user balance
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false); // New state for profile modal
@@ -1662,14 +1686,16 @@ export default function App() {
     }
   };
 
-  const handleLoginSuccess = () => {
+  const handleLoginSuccess = (loggedInAsAdmin = false) => {
     setIsLoggedIn(true);
+    setIsAdmin(loggedInAsAdmin); // Set admin status based on signup choice
     setUserBalance(5); // Set login bonus to $5
     setShowLoginModal(false);
   };
 
   const handleLogout = () => {
     setIsLoggedIn(false);
+    setIsAdmin(false); // Reset admin status on logout
     setUserBalance(0); // Reset balance on logout
     setCurrentPage('home'); // Optionally redirect to home on logout
   };
@@ -1710,12 +1736,15 @@ export default function App() {
       case 'home':
         content = <HomePageContent setCurrentPage={setCurrentPage} currentPage={currentPage} handleProtectedClick={handleProtectedClick} />;
         break;
-      
+
       case 'profile':
         content = <ProfilePage onBack={handleBackToHome} />;
         break;
       case 'leader':
         content = <LeaderPage onBack={handleBackToHome} />;
+        break;
+      case 'Dashboard':
+        content = <DashboardPage onBack={handleBackToHome} />;
         break;
       case 'support':
         content = <SupportPage onBack={handleBackToHome} />;
@@ -1738,6 +1767,7 @@ export default function App() {
         toggleLoginStatus={toggleLoginStatus}
         userBalance={userBalance} // Pass userBalance to CommonHeader
         openProfileModal={() => setShowProfileModal(true)} // Pass function to open profile modal
+        isAdmin={isAdmin} // Pass isAdmin prop to CommonHeader
       />
       <div className="main-content-area">
         {content}
