@@ -16,6 +16,19 @@ import { db } from "../firebase";
 // import { doc, getDoc, setDoc } from "firebase/firestore";
 // import { auth, provider } from "../firebase";
 // Login/Signup Modal Component
+const showContactMessage = () => {
+  const messageBox = document.createElement('div');
+  messageBox.className = 'fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4';
+  messageBox.innerHTML = `
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-sm relative text-center">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Welcome!</h2>
+      <p class="text-gray-700 dark:text-gray-300 mb-6">Our team will contact you soon.</p>
+      <button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md shadow-md transition duration-300" onclick="this.parentNode.parentNode.remove()">OK</button>
+    </div>
+  `;
+  document.body.appendChild(messageBox);
+};
+
 function LoginSignupModal({ onClose, onLoginSuccess }) {
   const [isLogin, setIsLogin] = useState(true); // true for login, false for signup
   const [isAdminSignup, setIsAdminSignup] = useState(false); // New state for admin signup
@@ -149,18 +162,18 @@ function LoginSignupModal({ onClose, onLoginSuccess }) {
                   required
                 />
               </div>
-              <div className="flex items-center">
-                {/* <input
+              {/* <div className="flex items-center">
+                <input
                   type="checkbox"
                   id="admin-signup"
                   checked={isAdminSignup}
                   onChange={(e) => setIsAdminSignup(e.target.checked)}
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                /> */}
-                {/* <label htmlFor="admin-signup" className="ml-2 block text-sm text-gray-900 dark:text-gray-300">
+                />
+                <label htmlFor="admin-signup" className="ml-2 block text-sm text-gray-900 dark:text-gray-300">
                   Login as Admin
-                </label> */}
-              </div>
+                </label>
+              </div> */}
             </>
           )}
           <button
@@ -179,7 +192,7 @@ function LoginSignupModal({ onClose, onLoginSuccess }) {
           >
             {isLogin ? 'Sign Up' : 'Login'}
           </button>
-          <div className="mt-4 text-center">
+          {/* <div className="mt-4 text-center">
             <button
               type="button"
               onClick={handleGoogleLogin}
@@ -192,7 +205,7 @@ function LoginSignupModal({ onClose, onLoginSuccess }) {
               />
               Continue with Google
             </button>
-          </div>
+          </div> */}
 
         </p>
       </div>
@@ -1736,7 +1749,8 @@ export default function App() {
     setIsLoggedIn(true);               // Marks user as logged in
     setIsAdmin(loggedInAsAdmin);      // Stores admin status in state
     setUserBalance(5);                // Sets initial balance (bonus)
-    setShowLoginModal(false);         // Closes the modal
+    setShowLoginModal(false);   
+    showContactMessage();       // Closes the modal
   };
   
 
