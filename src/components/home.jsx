@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import './home.css';
-import { Home, LayoutDashboard, User, LifeBuoy, Users, Gamepad, Lock, Handshake, Info, ClipboardList, Gift, X } from 'lucide-react';
+import { Home, LayoutDashboard, User, LifeBuoy, Users, Gamepad, Lock, Handshake, Info, ClipboardList, Gift, X, Wallet, TrendingUp, TrendingDown } from 'lucide-react';
 import { auth, provider } from '../firebase';  // adjust path if needed
 import { signInWithPopup } from 'firebase/auth';
 import LeaderPage from './leader.jsx';
@@ -12,7 +12,7 @@ import Footer from './Footer.jsx'; // adjust the path if needed
 // Login/Signup Modal Component
 function LoginSignupModal({ onClose, onLoginSuccess }) {
   const [isLogin, setIsLogin] = useState(true); // true for login, false for signup
-
+  
   const handleAuthAction = (e) => {
     e.preventDefault();
     // In a real application, you would handle actual login/signup logic here.
@@ -32,7 +32,17 @@ const handleGoogleLogin = async () => {
     onClose();        // Close the modal
   } catch (error) {
     console.error("Google login failed", error);
-    alert("Google login failed");
+    // Use a custom message box instead of alert()
+    const messageBox = document.createElement('div');
+    messageBox.className = 'fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4';
+    messageBox.innerHTML = `
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-sm relative">
+        <h2 class="text-2xl font-bold text-center mb-6 text-gray-900 dark:text-white">Error</h2>
+        <p class="text-center text-gray-700 dark:text-gray-300 mb-6">Google login failed. Please try again.</p>
+        <button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md shadow-md transition duration-300" onclick="this.parentNode.parentNode.remove()">OK</button>
+      </div>
+    `;
+    document.body.appendChild(messageBox);
   }
 };
 
@@ -124,6 +134,75 @@ const handleGoogleLogin = async () => {
     </div>
   );
 }
+
+// Profile Detail Modal Component
+function ProfileDetailModal({ onClose, userName, userBalance, userAvatar, onAddBalance, onWithdrawBalance }) {
+  const canWithdraw = userBalance >= 10;
+
+  const handleAddClick = () => {
+    // Simulate adding $10 for demonstration
+    onAddBalance(10);
+    onClose();
+  };
+
+  const handleWithdrawClick = () => {
+    // Simulate withdrawing $10 for demonstration
+    if (canWithdraw) {
+      onWithdrawBalance(10);
+      onClose();
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-sm relative">
+        <button
+          onClick={onClose}
+          className="absolute top-3 right-3 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+          aria-label="Close"
+        >
+          <X size={24} />
+        </button>
+        <h2 className="text-2xl font-bold text-center mb-6 text-gray-900 dark:text-white">
+          User Profile
+        </h2>
+        <div className="flex flex-col items-center space-y-4">
+          <div className="user-avatar">
+            <img src={userAvatar} alt="User Avatar" width={80} height={80} className="rounded-full" />
+          </div>
+          <span className="text-xl font-semibold text-gray-900 dark:text-white">{userName}</span>
+          <div className="flex items-center space-x-2 text-lg text-gray-700 dark:text-gray-300">
+            <Wallet size={20} />
+            <span>Balance: ${userBalance.toFixed(2)}</span>
+          </div>
+          <div className="flex space-x-4 mt-4">
+            <button
+              onClick={handleAddClick}
+              className="flex items-center px-4 py-2 bg-green-500 text-white rounded-md text-base hover:bg-green-600 transition-colors"
+            >
+              <TrendingUp size={20} className="mr-2" /> Add
+            </button>
+            <button
+              onClick={handleWithdrawClick}
+              disabled={!canWithdraw}
+              className={`flex items-center px-4 py-2 rounded-md text-base transition-colors ${
+                canWithdraw ? 'bg-red-500 text-white hover:bg-red-600' : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              }`}
+            >
+              <TrendingDown size={20} className="mr-2" /> Withdraw
+            </button>
+          </div>
+          {!canWithdraw && (
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+              You need at least $10 to withdraw.
+            </p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 
 // Reusable renderStars function
 const renderStars = (rating) => {
@@ -1140,7 +1219,7 @@ const NotificationBar = () => {
 
 
 // Common Header Component
-const CommonHeader = ({ currentPage, setCurrentPage, isLoggedIn, handleProtectedClick, toggleLoginStatus }) => {
+const CommonHeader = ({ currentPage, setCurrentPage, isLoggedIn, handleProtectedClick, toggleLoginStatus, userBalance, openProfileModal }) => {
   return (
     <header className="home-header">
       <div className="home-header-left">
@@ -1171,9 +1250,9 @@ const CommonHeader = ({ currentPage, setCurrentPage, isLoggedIn, handleProtected
       {/* New Right Section: Balance + Username */}
       <div className="home-header-right">
         <div className="user-balance">
-          <span className="balance-amount">$ {isLoggedIn ? '123.45' : '0'}</span>
+          <span className="balance-amount">$ {userBalance.toFixed(2)}</span>
         </div>
-        <div className="user-profile">
+        <div className="user-profile" onClick={openProfileModal}> {/* Added onClick handler */}
           <div className="user-avatar">
             <img src="/icon21.png" alt="User Avatar" width={24} height={24} />
           </div>
@@ -1568,7 +1647,9 @@ function HomePageContent({ setCurrentPage, currentPage, handleProtectedClick }) 
 export default function App() {
   const [currentPage, setCurrentPage] = useState('home');
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Mock authentication state
+  const [userBalance, setUserBalance] = useState(0); // New state for user balance
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showProfileModal, setShowProfileModal] = useState(false); // New state for profile modal
 
   // Function to handle clicks on protected elements
   const handleProtectedClick = (action) => {
@@ -1581,11 +1662,13 @@ export default function App() {
 
   const handleLoginSuccess = () => {
     setIsLoggedIn(true);
+    setUserBalance(5); // Set login bonus to $5
     setShowLoginModal(false);
   };
 
   const handleLogout = () => {
     setIsLoggedIn(false);
+    setUserBalance(0); // Reset balance on logout
     setCurrentPage('home'); // Optionally redirect to home on logout
   };
 
@@ -1599,6 +1682,22 @@ export default function App() {
 
   const handleBackToHome = () => {
     setCurrentPage('home');
+  };
+
+  const handleAddBalance = (amount) => {
+    setUserBalance(prevBalance => prevBalance + amount);
+    // In a real app, you'd integrate with a backend for actual transactions
+    console.log(`Added $${amount} to balance. New balance: $${userBalance + amount}`);
+  };
+
+  const handleWithdrawBalance = (amount) => {
+    if (userBalance >= amount) {
+      setUserBalance(prevBalance => prevBalance - amount);
+      // In a real app, you'd integrate with a backend for actual transactions
+      console.log(`Withdrew $${amount} from balance. New balance: $${userBalance - amount}`);
+    } else {
+      console.log("Insufficient balance for withdrawal.");
+    }
   };
 
   let content;
@@ -1635,6 +1734,8 @@ export default function App() {
         isLoggedIn={isLoggedIn}
         handleProtectedClick={handleProtectedClick}
         toggleLoginStatus={toggleLoginStatus}
+        userBalance={userBalance} // Pass userBalance to CommonHeader
+        openProfileModal={() => setShowProfileModal(true)} // Pass function to open profile modal
       />
       <div className="main-content-area">
         {content}
@@ -1644,6 +1745,17 @@ export default function App() {
         <LoginSignupModal
           onClose={() => setShowLoginModal(false)}
           onLoginSuccess={handleLoginSuccess}
+        />
+      )}
+
+      {showProfileModal && isLoggedIn && ( // Only show profile modal if logged in
+        <ProfileDetailModal
+          onClose={() => setShowProfileModal(false)}
+          userName="shivama" // Static username for now, can be dynamic
+          userAvatar="/icon21.png" // Static avatar for now
+          userBalance={userBalance}
+          onAddBalance={handleAddBalance}
+          onWithdrawBalance={handleWithdrawBalance}
         />
       )}
     </>
