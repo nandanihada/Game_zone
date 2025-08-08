@@ -140,8 +140,9 @@ function ProfileDetailModal({ onClose, userName, userBalance, userAvatar, onAddB
   const canWithdraw = userBalance >= 10;
 
   const handleAddClick = () => {
-    // Simulate adding $10 for demonstration
-    onAddBalance(10);
+    // Removed the automatic addition of $10.
+    // In a real application, this button would trigger a payment gateway or similar.
+    console.log("Add button clicked. Implement actual add money logic here.");
     onClose();
   };
 
@@ -1178,6 +1179,7 @@ function TasksListingPage({ onBack, initialCategory = 'all', handleProtectedClic
 
       {selectedItem && <ItemDetailModal item={selectedItem} onClose={() => setSelectedItem(null)} onViewLottery={() => setShowLotteryModal(true)} handleProtectedClick={handleProtectedClick} />}
       {showLotteryModal && <LotteryDetailModal onClose={() => setShowLotteryModal(false)} />}
+        <Footer />
     </div>
   );
 }
