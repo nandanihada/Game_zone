@@ -1,0 +1,107 @@
+[
+  {
+    "id": "campaign1",
+    "campaignName": "Summer Sale 2024",
+    "subjectLine": "Huge Discounts on All Items!",
+    "interactions": [
+      {
+        "type": "received",
+        "email": "user1@example.com",
+        "firstName": "John",
+        "lastName": "Doe",
+        "timestamp": "2025-08-06T10:12:50.618Z"
+      },
+      {
+        "type": "opened",
+        "email": "user1@example.com",
+        "firstName": "John",
+        "lastName": "Doe",
+        "timestamp": "2025-08-07T10:12:50.618Z"
+      },
+      {
+        "type": "clicked",
+        "email": "user1@example.com",
+        "firstName": "John",
+        "lastName": "Doe",
+        "timestamp": "2025-08-08T10:12:50.618Z"
+      },
+      {
+        "type": "received",
+        "email": "user2@example.com",
+        "firstName": "Jane",
+        "lastName": "Smith",
+        "timestamp": "2025-08-05T10:12:50.618Z"
+      },
+      {
+        "type": "opened",
+        "email": "user2@example.com",
+        "firstName": "Jane",
+        "lastName": "Smith",
+        "timestamp": "2025-08-06T10:12:50.618Z"
+      },
+      {
+        "type": "received",
+        "email": "user3@example.com",
+        "firstName": "Peter",
+        "lastName": "Jones",
+        "timestamp": "2025-08-04T10:12:50.618Z"
+      },
+      {
+        "type": "bounced",
+        "email": "user4@example.com",
+        "firstName": "Alice",
+        "lastName": "Brown",
+        "timestamp": "2025-08-09T10:12:50.618Z"
+      },
+      {
+        "type": "replied",
+        "email": "user1@example.com",
+        "firstName": "John",
+        "lastName": "Doe",
+        "timestamp": "2025-08-10T10:12:50.618Z"
+      }
+    ]
+  },
+  {
+    "id": "campaign2",
+    "campaignName": "Winter Collection Launch",
+    "subjectLine": "Discover Our New Arrivals!",
+    "interactions": [
+      {
+        "type": "received",
+        "email": "user5@example.com",
+        "firstName": "Chris",
+        "lastName": "Green",
+        "timestamp": "2025-08-01T10:12:50.618Z"
+      },
+      {
+        "type": "opened",
+        "email": "user5@example.com",
+        "firstName": "Chris",
+        "lastName": "Green",
+        "timestamp": "2025-08-02T10:12:50.618Z"
+      },
+      {
+        "type": "received",
+        "email": "user6@example.com",
+        "firstName": "Sarah",
+        "lastName": "White",
+        "timestamp": "2025-07-31T10:12:50.618Z"
+      },
+      {
+        "type": "opened",
+        "email": "user6@example.com",
+        "firstName": "Sarah",
+        "lastName": "White",
+        "timestamp": "2025-08-01T10:12:50.618Z"
+      },
+      {
+        "type": "clicked",
+        "email": "user6@example.com",
+        "firstName": "Sarah",
+        "lastName": "White",
+        "timestamp": "2025-08-02T10:12:50.618Z"
+      }
+    ]
+  }
+]
