@@ -197,7 +197,10 @@ const cheerio = require('cheerio');
 const bodyParser = require('body-parser');
 const { or } = require('firebase/firestore');
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:3000', // React dev server URL
+  credentials: true
+}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());

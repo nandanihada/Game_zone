@@ -1362,7 +1362,34 @@ function HomePageContent({ setCurrentPage, currentPage, handleProtectedClick }) 
   const [showLotteryModal, setShowLotteryModal] = useState(false);
   // New state to track expanded sections
   const [expandedSections, setExpandedSections] = useState({});
+  const [addedOffers, setAddedOffers] = useState([]);
+  const [loadingAddedOffers, setLoadingAddedOffers] = useState(true);
+  const [addedOffersError, setAddedOffersError] = useState(null);
+  
+  useEffect(() => {
+    let cancelled = false;
+    // const API_BASE = process.env.REACT_APP_API_BASE || ''; // set this or use proxy
+    const url = 'http://localhost:5000/api/games';
+    // const url = `${API_BASE}/api/games`; // if you set proxy in package.json, just '/api/games' works
 
+    const fetchAddedOffers = async () => {
+      setLoadingAddedOffers(true);
+      try {
+        const res = await fetch(url, { credentials: 'include' }); // simple fetch
+        if (!res.ok) throw new Error(`Fetch failed: ${res.status}`);
+        const data = await res.json();
+        if (!cancelled) setAddedOffers(data || []);
+      } catch (err) {
+        if (!cancelled) setAddedOffersError(err.message);
+        console.error('Failed loading added offers:', err);
+      } finally {
+        if (!cancelled) setLoadingAddedOffers(false);
+      }
+    };
+
+    fetchAddedOffers();
+    return () => { cancelled = true; };
+  }, []); // run once on mount
   const handleShowButtonClick = (item, e) => {
     e.stopPropagation();
     setSelectedItem(item);
@@ -1723,6 +1750,153 @@ function HomePageContent({ setCurrentPage, currentPage, handleProtectedClick }) 
 
       {selectedItem && <ItemDetailModal item={selectedItem} onClose={() => setSelectedItem(null)} onViewLottery={() => setShowLotteryModal(true)} handleProtectedClick={handleProtectedClick} />}
       {showLotteryModal && <LotteryDetailModal onClose={() => setShowLotteryModal(false)} />}
+      {/* ----------------- Added Offers ----------------- */}
+      <section className="game-section" id="section-Added-Offers" style={{ marginTop: 24 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+          <h2 className="section-title-with-icon">Added Offers</h2>
+          <button
+            className="view-all-button"
+            onClick={() => setExpandedSections(prev => ({ ...prev, ['Added Offers']: !prev['Added Offers'] }))}
+          >
+            {expandedSections['Added Offers'] ? 'Show Less' : 'View All'}
+          </button>
+        </div>
+                  
+        {loadingAddedOffers ? (
+          <div>Loading added offers…</div>
+        ) : addedOffersError ? (
+          <div className="text-red-500">Error loading offers: {addedOffersError}</div>
+        ) : addedOffers.length === 0 ? (
+          <div>No offers added yet.</div>
+        ) : (
+          <>
+            {expandedSections['Added Offers'] ? (
+              <div className="game-cards-grid">
+                {addedOffers.map(game => (
+                  <div
+                    key={game.id}
+                    className="gradient-card-wrapper"
+                    style={{
+                      padding: 2,
+                      borderRadius: 20,
+                      display: 'inline-block',
+                      width: 180,
+                      backgroundColor: '#1e1e2f',
+                      color: 'white'
+                    }}
+                  >
+                    <div style={{ overflow: 'hidden', borderRadius: '12px 12px 0 0' }}>
+                      <img
+                        src={game.image || game.icon || '/placehold.jpg'}
+                        alt={game.title}
+                        style={{ width: '100%', height: 120, objectFit: 'cover' }}
+                      />
+                    </div>
+                    <div style={{ padding: '8px 6px', textAlign: 'center' }}>
+                      <h4
+                        style={{
+                          margin: '4px 0',
+                          fontSize: '14px',
+                          fontWeight: 'bold',
+                          whiteSpace: 'nowrap',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis'
+                        }}
+                      >
+                        {game.title}
+                      </h4>
+                      <p style={{ margin: 0, fontSize: '12px', color: '#aaa' }}>
+                        {game.genre || 'Unknown Genre'}
+                      </p>
+                      <div style={{ marginTop: 4 }}>
+                        {Array.from({ length: 5 }).map((_, idx) => (
+                          <span
+                            key={idx}
+                            style={{
+                              color: idx < Math.round(Number(game.rating) || 0) ? '#FFD700' : '#555',
+                              fontSize: '14px'
+                            }}
+                          >
+                            ★
+                          </span>
+                        ))}
+                        <span style={{ marginLeft: 4, fontSize: '12px', color: '#aaa' }}>
+                          {Number(game.rating) ? Number(game.rating).toFixed(1) : '0.0'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="carousel-wrapper">
+                <button className="scroll-btn left" onClick={() => scrollLeft('Added Offers')}>&lt;</button>
+                <div className="game-carousel" id={`carousel-Added-Offers`}>
+                  {addedOffers.slice(0, 8).map(game => (
+                    <div
+                      key={game.id}
+                      className="gradient-card-wrapper"
+                      style={{
+                        padding: 2,
+                        borderRadius: 20,
+                        display: 'inline-block',
+                        width: 180,
+                        backgroundColor: '#1e1e2f',
+                        color: 'white'
+                      }}
+                    >
+                      <div style={{ overflow: 'hidden', borderRadius: '12px 12px 0 0' }}>
+                        <img
+                          src={game.image || game.icon || '/placehold.jpg'}
+                          alt={game.title}
+                          style={{ width: '100%', height: 120, objectFit: 'cover' }}
+                        />
+                      </div>
+                      <div style={{ padding: '8px 6px', textAlign: 'center' }}>
+                        <h4
+                          style={{
+                            margin: '4px 0',
+                            fontSize: '14px',
+                            fontWeight: 'bold',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis'
+                          }}
+                        >
+                          {game.title}
+                        </h4>
+                        <p style={{ margin: 0, fontSize: '12px', color: '#aaa' }}>
+                          {game.genre || 'Unknown Genre'}
+                        </p>
+                        <div style={{ marginTop: 4 }}>
+                          {Array.from({ length: 5 }).map((_, idx) => (
+                            <span
+                              key={idx}
+                              style={{
+                                color: idx < Math.round(Number(game.rating) || 0) ? '#FFD700' : '#555',
+                                fontSize: '14px'
+                              }}
+                            >
+                              ★
+                            </span>
+                          ))}
+                          <span style={{ marginLeft: 4, fontSize: '12px', color: '#aaa' }}>
+                            {Number(game.rating) ? Number(game.rating).toFixed(1) : '0.0'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <button className="scroll-btn right" onClick={() => scrollRight('Added Offers')}>&gt;</button>
+              </div>
+            )}
+          </>
+        )}
+      </section>
+      
+      
+      
         <Footer />
     </div>
   );
